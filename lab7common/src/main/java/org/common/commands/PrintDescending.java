@@ -1,5 +1,7 @@
 package org.common.commands;
 
+import lombok.SneakyThrows;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Comparator;
@@ -12,6 +14,7 @@ public class PrintDescending extends Command implements Serializable {
     private static final long serialVersionUID = "PrintDescending".hashCode();
 
 
+    @SneakyThrows
     @Override
     public void execute() {
         if (collection.getHashMap().isEmpty()){
@@ -22,7 +25,7 @@ public class PrintDescending extends Command implements Serializable {
                     .sorted(Comparator.reverseOrder())
                     .forEach(ticket -> responseManager.addToSend(ticket.toString() ,this));
         }
-        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
+        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getChannel().getRemoteAddress() +" выполнена");
         responseManager.send(this);
 
     }

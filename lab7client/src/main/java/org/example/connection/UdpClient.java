@@ -19,6 +19,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
+import java.nio.channels.SocketChannel;
 import java.util.*;
 
 import com.google.common.primitives.Bytes;
@@ -26,7 +27,7 @@ public class UdpClient  {
     private final int PACKET_SIZE = 1024;
     private final int DATA_SIZE = PACKET_SIZE - 1;
     private final CurrentConsole currentConsole = CurrentConsole.getInstance();
-private DatagramChannel client;
+private SocketChannel client;
     private UdpClient(){
     }
     @Getter
@@ -50,7 +51,7 @@ private DatagramChannel client;
         int i = 0;
            while (!channelIsOpen && i<10) {
                try {
-                       this.client = DatagramChannel.open().bind(null).connect(serverSocketAddress);
+                       this.client = SocketChannel.open(serverSocketAddress) ;
                        this.client.configureBlocking(false);
                        channelIsOpen=true;
                } catch (IOException e) {
@@ -66,7 +67,22 @@ private DatagramChannel client;
 
         }
     }
-
+    private void openChannel() {
+        boolean channelIsOpen = false;
+        int i = 0;
+        while (!channelIsOpen && i < 10) {
+            try {
+                this.client = SocketChannel.open(serverSocketAddress);
+                this.client.configureBlocking(false);
+                channelIsOpen = true;
+            } catch (IOException e) {
+                i++;
+            }
+        }
+        if (!channelIsOpen) {
+            currentConsole.print("Не подключиться к серверу");
+        }
+    }
 
 
 
@@ -91,28 +107,44 @@ private DatagramChannel client;
             }
 
         }
+        Selector selector = Selector.open();
+        client.register(selector, SelectionKey.OP_WRITE);
         for (byte[] packet : packets) {
             ByteBuffer buffer = ByteBuffer.wrap(packet);
-            client.send(buffer, serverSocketAddress);
-
-
+            try {
+                selector.select();
+                Set<SelectionKey> selectedKeys = selector.selectedKeys();
+                Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
+                while (keyIterator.hasNext()) {
+                    SelectionKey key = keyIterator.next();
+                    if (key.isWritable()) {
+                        client.write(buffer);
+                    }
+                }
+            }catch (IOException e){
+                openChannel();
+                client.write(buffer);
+            }
         }
+        selector.close();
    }
+
+
 
     private byte[] receiveData(int bufferSize,boolean isOnce) throws IOException,NoResponseException {
         var buffer = ByteBuffer.allocate(bufferSize);
         SocketAddress address = null;
         Selector selector = Selector.open();
         client.register(selector, SelectionKey.OP_READ);
-        long startTime = System.currentTimeMillis();
+
         int timeout = isOnce ? 1 : 5000; // Устанавливаем таймаут в зависимости от значения isOnce
-        address = waitResponse(selector,timeout,buffer);
+        var receivedBytes=waitResponse(selector,timeout,buffer);
         selector.close(); // Закрываем селектор после использования
-        if (address == null) throw new NoResponseException("Нет ответа более " + timeout / 1000 + " секунд. Проверьте соединение и повторите запрос");
+        if (receivedBytes == 0) throw new NoResponseException("Нет ответа более " + timeout / 1000 + " секунд. Проверьте соединение и повторите запрос");
         return buffer.array();
     }
 
-    private SocketAddress  waitResponse(Selector selector, int timeout, ByteBuffer buffer) throws IOException,NoResponseException {
+    private int  waitResponse(Selector selector, int timeout, ByteBuffer buffer) throws IOException,NoResponseException {
         selector.select(timeout); // Ожидаем таймаут
         Set<SelectionKey> keys = selector.selectedKeys();
         var iter = keys.iterator();
@@ -120,11 +152,11 @@ private DatagramChannel client;
             SelectionKey key = iter.next(); iter.remove();
             if (key.isValid()) {
                if (key.isReadable()) {
-                   return client.receive(buffer);
+                   return client.read(buffer);
                }
             }
         }
-        return null;
+        return 0;
     }
 
 

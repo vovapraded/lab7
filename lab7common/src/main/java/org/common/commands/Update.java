@@ -1,5 +1,6 @@
 package org.common.commands;
 
+import lombok.SneakyThrows;
 import org.common.utility.InvalidFormatException;
 import org.common.utility.TypesOfArgs;
 import org.common.utility.Validator;
@@ -17,6 +18,7 @@ public class Update extends Command implements Serializable {
 
 
 
+    @SneakyThrows
     public void execute(){
         var idStr = stringArg;
         Long id = null;
@@ -31,7 +33,7 @@ public class Update extends Command implements Serializable {
         ticketArg.setCreationDate(new Date());
         collection.updateTicket(ticketArg, getAuthorization().getLogin());
         responseManager.addToSend("Билет успешно введён",this);
-        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
+        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getChannel().getRemoteAddress() +" выполнена");
         responseManager.send(this);
 
     }

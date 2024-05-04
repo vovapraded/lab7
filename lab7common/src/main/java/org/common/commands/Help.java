@@ -1,5 +1,7 @@
 package org.common.commands;
 
+import lombok.SneakyThrows;
+
 import java.io.*;
 import java.util.Scanner;
 
@@ -11,6 +13,7 @@ public class Help extends Command implements Serializable {
     private static final long serialVersionUID = "Help".hashCode();
 
 
+    @SneakyThrows
     @Override
     public void execute() {
         String filePath = "/help.txt";
@@ -27,7 +30,7 @@ public class Help extends Command implements Serializable {
         } else {
             responseManager.addToSend("Файл help.txt не найден",this);
         }
-        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
+        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getChannel().getRemoteAddress() +" выполнена");
         responseManager.send(this);
     }
 

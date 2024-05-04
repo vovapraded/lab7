@@ -17,9 +17,9 @@ import static org.common.dto.QTicket.ticket;
 public class TicketDao implements CollectionInDatabaseManager {
     private final SessionFactory sessionFactory;
 
-    public TicketDao() {
+    public TicketDao(HibernateManager hibernateManager) {
 
-        sessionFactory = HibernateManager.getConfiguration().buildSessionFactory();
+        sessionFactory = hibernateManager.getConfiguration().buildSessionFactory();
     }
 
     @Override

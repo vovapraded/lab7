@@ -1,6 +1,7 @@
 package org.common.commands;
 
 
+import lombok.SneakyThrows;
 import org.common.dto.Ticket;
 import org.common.utility.InvalidFormatException;
 import org.common.utility.*;
@@ -19,6 +20,7 @@ public class FilterLessThanVenue extends Command implements Serializable {
 
 
 
+    @SneakyThrows
     @Override
     public void execute() {
         var capacityStr = stringArg;
@@ -32,7 +34,7 @@ public class FilterLessThanVenue extends Command implements Serializable {
             for (Ticket ticket : filtered){
                 responseManager.addToSend(ticket.toString(),this);
             }
-        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
+        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getChannel().getRemoteAddress() +" выполнена");
         responseManager.send(this);
 
     }

@@ -1,6 +1,7 @@
 package org.common.commands;
 
 
+import lombok.SneakyThrows;
 import org.common.utility.InvalidFormatException;
 import org.common.utility.TypesOfArgs;
 import org.common.utility.Validator;
@@ -17,6 +18,7 @@ public class RemoveGreaterKey extends Command implements  Serializable {
 
 
 
+    @SneakyThrows
     @Override
     public void execute() {
         Long id = null;
@@ -34,7 +36,7 @@ public class RemoveGreaterKey extends Command implements  Serializable {
             }else {
                 responseManager.addToSend("Нет таких элементов",this);
             }
-        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
+        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getChannel().getRemoteAddress() +" выполнена");
         responseManager.send(this);
 
 

@@ -16,9 +16,9 @@ import static org.example.entity.QUser.*;
 public class UserDao {
     private final SessionFactory sessionFactory;
 
-    public UserDao() {
+    public UserDao(HibernateManager hibernateManager) {
 
-        sessionFactory = HibernateManager.getConfiguration().buildSessionFactory();
+        sessionFactory = hibernateManager.getConfiguration().buildSessionFactory();
     }
 
     public ImmutablePair<BigInteger,String> getPasswordAndSaltByLogin(String login) throws FailedTransactionException{

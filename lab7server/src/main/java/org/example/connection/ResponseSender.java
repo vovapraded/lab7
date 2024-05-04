@@ -1,7 +1,7 @@
 package org.example.connection;
 
 import com.google.common.primitives.Bytes;
-import org.common.network.SendException;
+import lombok.SneakyThrows;
 import org.example.threads.ThreadHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,21 +9,20 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.DatagramChannel;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 import java.util.Arrays;
 
 public class ResponseSender {
     private final int PACKET_SIZE = 1024;
     private final int DATA_SIZE = PACKET_SIZE - 1;
-    private final DatagramChannel datagramChannel;
     private static final Logger logger = LoggerFactory.getLogger(ResponseSender.class);
 
 
-    public ResponseSender(DatagramChannel datagramChannel) {
-        this.datagramChannel = datagramChannel;
+    public ResponseSender() {
     }
 
-    public void sendData(byte[] data, SocketAddress address) throws IOException {
+    public void sendData(byte[] data, SocketChannel channel)  {
         byte[][] packets=new byte[(int)Math.ceil(data.length / (double)DATA_SIZE)][PACKET_SIZE];
         for (int i = 0; i<packets.length;i++){
             if (i == packets.length - 1) {
@@ -40,10 +39,16 @@ public class ResponseSender {
                 // Создаем буфер для текущего пакета
                 ByteBuffer buffer = ByteBuffer.wrap(packet);
                 try {
-                    datagramChannel.send(buffer, address);
-                    logger.debug("Пакет "+ (finalI + 1) + " отправлен клиенту "+address);
+                    channel.write(buffer);
+                    logger.debug("Пакет "+ (finalI + 1) + " отправлен клиенту "+channel.getRemoteAddress());
                 } catch (IOException e) {
-                    logger.error("Не удалось отправить пакет "+(finalI + 1)+" клиенту "+address);
+                    try {
+                        logger.error("Не удалось отправить пакет "+(finalI + 1)+" клиенту "+channel.getRemoteAddress());
+                    } catch (IOException ex) {
+                        logger.error("Не удалось отправить пакет "+(finalI + 1)+" клиенту с неизвестным адрессом");
+
+                    }
+
                 }
             });
 

@@ -1,5 +1,6 @@
 package org.example.managers;
 
+import lombok.SneakyThrows;
 import org.common.commands.Command;
 import org.common.managers.ResponseManager;
 import org.common.network.Response;
@@ -27,11 +28,12 @@ public class CurrentResponseManager implements ResponseManager {
         responses.get(command).getMessage().add(s);
 
     }
+    @SneakyThrows
     @Override
     public void send(Command command){
         var response = responses.get(command);
-        ResponsePublisher.sendResponse(response, response.getAddress());
-        logger.debug("Респонс на комманду "+command.getClass().getName()+" отправлен по адрессу "+response.getAddress());
+        ResponsePublisher.sendResponse(response, response.getChannel());
+        logger.debug("Респонс на комманду "+command.getClass().getName()+" отправлен по адрессу "+response.getChannel().getRemoteAddress());
 
     }
 }

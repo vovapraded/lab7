@@ -13,9 +13,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.DatagramChannel;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 import java.util.AbstractMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -34,7 +36,7 @@ public class UdpServer implements ResponseListener {
     private final int DATA_SIZE = PACKET_SIZE - 1;
 
     private static final Logger logger = LoggerFactory.getLogger(UdpServer.class);
-    private DatagramChannel datagramChannel;
+    private ServerSocketChannel serverSocketChannel;
     private final ResponseSender responseSender;
     private boolean running=true;
 
@@ -42,9 +44,9 @@ public class UdpServer implements ResponseListener {
         this.responseManager = responseManager;
         this.serverAddress = new InetSocketAddress(PropertyUtil.getAddress(),PropertyUtil.getPort());
         openNewSocket();
-        this.responseSender = new ResponseSender(datagramChannel);
+        this.responseSender = new ResponseSender();
         logger.debug("Открыт сокет");
-        ThreadHelper.getPoolForReceiving().submit(new PacketReceiver(datagramChannel,responseManager));
+        ThreadHelper.getPoolForReceiving().submit(new PacketReceiver(serverSocketChannel,responseManager));
         logger.debug("Ресивер пакетов запущен");
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         // Запускаем поток HashmapCleaner с интервалом в TIMEOUT миллисекунд
@@ -57,9 +59,9 @@ public class UdpServer implements ResponseListener {
 
     private void openNewSocket(){
         try {
-            this.datagramChannel = DatagramChannel.open();
-            datagramChannel.configureBlocking(false); // Устанавливаем неблокирующий режим
-            datagramChannel.bind(serverAddress);
+            this.serverSocketChannel =   ServerSocketChannel.open();
+            serverSocketChannel.bind(serverAddress);
+            serverSocketChannel.configureBlocking(false); // Устанавливаем неблокирующий режим
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -90,13 +92,11 @@ public class UdpServer implements ResponseListener {
 
 
     @Override
-    public void onResponse(Response response, SocketAddress address) {
+    public void onResponse(Response response, SocketChannel channel) {
         try {
-            responseSender.sendData(Serializer.serialize(response),address);
-        } catch (IOException e) {
-            logger.error("Не получилось отправить ответ клиенту: "+address);
+            responseSender.sendData(Serializer.serialize(response),channel);
         }catch (SerializeException e){
-            logger.error("Не получилось сериализовать ответ клиенту: "+address);
+            logger.error("Не получилось сериализовать ответ клиенту: "+channel);
         }
     }
 }

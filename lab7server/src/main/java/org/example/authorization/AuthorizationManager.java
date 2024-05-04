@@ -1,15 +1,18 @@
 package org.example.authorization;
 
+import lombok.Setter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.example.dao.FailedTransactionException;
 import org.example.dao.UserDao;
+import org.example.managers.HibernateManager;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 
 public class AuthorizationManager {
-    private static UserDao userDao =new UserDao();
+    @Setter
+    private static UserDao userDao;
     public static ImmutablePair<Boolean,Boolean> checkLoginAndPassword(String login,String password)  throws FailedTransactionException{
         var loginCorrect = false;
         var passwordCorrect = false;

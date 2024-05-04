@@ -1,5 +1,7 @@
 package org.common.commands;
 
+import lombok.SneakyThrows;
+
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -11,11 +13,12 @@ public class Clear extends Command implements Serializable {
     private static final long serialVersionUID = "Clear".hashCode();
 
 
+    @SneakyThrows
     @Override
     public void execute() {
         collection.clearCollection(getAuthorization().getLogin());
         responseManager.addToSend("Коллекция пользователя "+getAuthorization().getLogin()+" очищена",this);
-        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
+        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getChannel().getRemoteAddress() +" выполнена");
         responseManager.send(this);
     }
 

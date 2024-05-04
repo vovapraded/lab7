@@ -1,5 +1,6 @@
 package org.common.commands;
 
+import lombok.SneakyThrows;
 import org.common.utility.InvalidFormatException;
 import org.common.utility.TypesOfArgs;
 import org.common.utility.Validator;
@@ -15,6 +16,7 @@ public class RemoveKey extends Command implements Serializable {
     private static final long serialVersionUID = "RemoveKey".hashCode();
 
 
+    @SneakyThrows
     public void execute(){
         var idStr = stringArg;
         Long id = null;
@@ -26,7 +28,7 @@ public class RemoveKey extends Command implements Serializable {
         }
         collection.removeElement(id,getAuthorization().getLogin());
         responseManager.addToSend("Элемент удалён",this);
-        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
+        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getChannel().getRemoteAddress() +" выполнена");
         responseManager.send(this);
 
     }

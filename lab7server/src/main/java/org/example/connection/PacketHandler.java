@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.SocketAddress;
+import java.nio.channels.SocketChannel;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -22,30 +23,30 @@ public class PacketHandler extends Thread {
     private final CurrentResponseManager responseManager;
     private final int PACKET_SIZE = 1024;
     private final int DATA_SIZE = PACKET_SIZE - 1;
-    private ImmutablePair<SocketAddress,byte[]> addrAndPacket ;
+    private ImmutablePair<SocketChannel,byte[]> channelAndPacket;
     private ExecutorService poolForProcessing;
     @Getter
-    private static ConcurrentHashMap<SocketAddress, MutablePair<ArrayList<ImmutablePair<byte[],Byte>>,MutablePair<Byte,Long>>> hashMap = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<SocketChannel, MutablePair<ArrayList<ImmutablePair<byte[],Byte>>,MutablePair<Byte,Long>>> hashMap = new ConcurrentHashMap<>();
 
-    public PacketHandler(CurrentResponseManager responseManager, ImmutablePair<SocketAddress, byte[]> addrAndPacket) {
+    public PacketHandler(CurrentResponseManager responseManager, ImmutablePair<SocketChannel, byte[]> channelAndPacket) {
         this.responseManager = responseManager;
-        this.addrAndPacket = addrAndPacket;
+        this.channelAndPacket = channelAndPacket;
         this.poolForProcessing = ThreadHelper.getPoolForProcessing();
 
     }
     public void run() {
                 logger.debug("Обработчик пакетов запущен");
-                var addr = addrAndPacket.getLeft();
-                var packet = addrAndPacket.getRight();
-                handlePacket(addr, packet);
+                var channel = channelAndPacket.getLeft();
+                var packet = channelAndPacket.getRight();
+                handlePacket(channel, packet);
     }
 
-    private void handlePacket(SocketAddress address, byte[] data) {
-        hashMap.putIfAbsent (address,new MutablePair<>(new ArrayList(),new MutablePair<>(Byte.MAX_VALUE,System.currentTimeMillis())));
-        var pair = hashMap.get(address);
+    private void handlePacket(SocketChannel channel, byte[] data) {
+        hashMap.putIfAbsent (channel,new MutablePair<>(new ArrayList(),new MutablePair<>(Byte.MAX_VALUE,System.currentTimeMillis())));
+        var pair = hashMap.get(channel);
         var resultArray = pair.getLeft();
         var lastChunk = data[data.length - 1];
-        logger.debug("Пакет "+Math.abs(lastChunk)+" получен от клиента "+address);
+        logger.debug("Пакет "+Math.abs(lastChunk)+" получен от клиента "+channel);
         data = Arrays.copyOf(data, data.length - 1);
         synchronized (resultArray) {
             resultArray.add(new ImmutablePair<byte[], Byte>(data, (byte) Math.abs(lastChunk)));
@@ -56,8 +57,8 @@ public class PacketHandler extends Thread {
         var sizeOfRequest = pair.getRight().getLeft();
         if (sizeOfRequest == resultArray.size()){
             var result = sortPackets(resultArray);
-            handleRequest(address,result);
-            hashMap.remove(address);
+            handleRequest(channel,result);
+            hashMap.remove(channel);
         }
         pair.getRight().getLeft();
         pair.getRight().setRight(System.currentTimeMillis());
@@ -70,10 +71,10 @@ public class PacketHandler extends Thread {
                 Bytes.concat(arr1, arr2));
         return request;
     }
-    private void handleRequest(SocketAddress address, byte[] result) {
+    private void handleRequest(SocketChannel channel, byte[] result) {
         var command= Deserializer.deserialize(result, Command.class);
-        logger.debug("Команда "+ command.getClass().getName()+" получена с адресса "+address);
-        poolForProcessing.submit(new ExecutorOfCommands(command,address,responseManager));
+        logger.debug("Команда "+ command.getClass().getName()+" получена с адресса "+channel);
+        poolForProcessing.submit(new ExecutorOfCommands(command,channel,responseManager));
     }
 }
 

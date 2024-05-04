@@ -152,13 +152,29 @@
             <artifactId>lab7common</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
-
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-core -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>10.12.0</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
             <version>4.5.0-M1</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-maven-plugin -->
+        <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-database-postgresql -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+            <version>10.12.0</version>
+            <scope>runtime</scope>
+        </dependency>
+
+
 
 
         <!-- https://mvnrepository.com/artifact/com.mysema.maven/apt-maven-plugin -->
@@ -201,6 +217,8 @@
                     </execution>
                 </executions>
             </plugin>
+
+
             <!--     <plugin>-->
             <!--         <groupId>org.apache.maven.plugins</groupId>-->
             <!--         <artifactId>maven-enforcer-plugin</artifactId>-->

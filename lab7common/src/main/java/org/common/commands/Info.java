@@ -1,5 +1,7 @@
 package org.common.commands;
 
+import lombok.SneakyThrows;
+
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -11,12 +13,13 @@ public class Info extends Command implements Serializable {
     private static final long serialVersionUID = "Info".hashCode();
 
 
+    @SneakyThrows
     @Override
     public void execute(){
         String s = "Дата инициализации "+collection.getCurrentDate()+
                 ", Тип коллекции - HashMap, Кол-во элементов "+collection.getCountOfElements();
         responseManager.addToSend(s,this);
-        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
+        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getChannel().getRemoteAddress() +" выполнена");
         responseManager.send(this);
     }
     public void sendResponse(){

@@ -1,5 +1,6 @@
 package org.common.commands;
 
+import lombok.SneakyThrows;
 import org.common.dto.Ticket;
 import org.common.utility.*;
 
@@ -15,6 +16,7 @@ public class ReplaceIfGreater extends Command implements Serializable {
     private static final long serialVersionUID = "ReplaceIfGreater".hashCode();
 
 
+    @SneakyThrows
     public void execute(){
         var idStr = stringArg;
         try {
@@ -36,7 +38,7 @@ public class ReplaceIfGreater extends Command implements Serializable {
         else {
             responseManager.addToSend("Операция прошла успешно. Замена не произошла",this);
         }
-        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
+        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getChannel().getRemoteAddress() +" выполнена");
         responseManager.send(this);
 
     }

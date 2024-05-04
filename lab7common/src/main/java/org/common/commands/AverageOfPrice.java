@@ -1,5 +1,7 @@
 package org.common.commands;
 
+import lombok.SneakyThrows;
+
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -13,6 +15,7 @@ public class AverageOfPrice extends Command implements Serializable {
     private static final long serialVersionUID = "AverageOfPrice".hashCode();
 
 
+    @SneakyThrows
     @Override
     public void execute() {
         var average = collection.getAveragePrice();
@@ -21,7 +24,7 @@ public class AverageOfPrice extends Command implements Serializable {
         } else {
             responseManager.addToSend("Средняя цена " + average.getAsDouble(),this);
         }
-        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
+        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getChannel().getRemoteAddress() +" выполнена");
         responseManager.send(this);
     }
 

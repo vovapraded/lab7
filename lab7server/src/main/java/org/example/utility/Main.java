@@ -1,5 +1,6 @@
 package org.example.utility;
 
+import org.example.authorization.AuthorizationManager;
 import org.example.connection.PacketReceiver;
 import org.example.dao.TicketDao;
 import org.common.managers.Collection;
@@ -9,6 +10,7 @@ import org.example.connection.ResponsePublisher;
 import org.example.connection.UdpServer;
 import org.example.managers.*;
 
+import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,14 +24,19 @@ public class Main {
     public static void main(String[] args)  {
 
             try {
-                UserDao userDao = new UserDao();
-                userDao.getPasswordAndSaltByLogin("d");
+                Flyway flyway = Flyway.configure().loadDefaultConfigurationFiles().load();
+                System.out.println(flyway.info());
+                flyway.migrate();
                 logger.debug("Сервер запускается");
                 CurrentResponseManager responseManager = new CurrentResponseManager();
-                TicketDao dao = new TicketDao();
+                HibernateManager hibernateManager = new HibernateManager();
+                TicketDao ticketDao = new TicketDao(hibernateManager);
+                UserDao userDao = new UserDao(hibernateManager);
+                AuthorizationManager.setUserDao(userDao);
+
                 Collection collection = Collection.getInstance();
-                collection.setTicketDao(dao);
-                collection.addHashMap(dao.loadCollection());
+                collection.setTicketDao(ticketDao);
+                collection.addHashMap(ticketDao.loadCollection());
                 logger.debug("Коллекция загружена. Содержит " + collection.getHashMap().size() + " элементов");
 
 
