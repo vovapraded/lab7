@@ -24,21 +24,13 @@ public class ReplaceIfGreater extends Command implements Serializable {
             throw e;
         }
         Long id = Long.parseLong(idStr);
-        Ticket oldTicket = collection.getElement(id);
-        Ticket newTicket = ticketArg ;
         ticketArg.setCreatedBy(getAuthorization().getLogin());
-        if (newTicket.compareTo(oldTicket)>0){
-            collection.removeElement(id,getAuthorization().getLogin());
-            newTicket.setId(id);
-            collection.insertElement(newTicket);
-            responseManager.addToSend("Операция прошла успешно. Замена произошла",this);
-        }
-        else {
-            responseManager.addToSend("Операция прошла успешно. Замена не произошла",this);
-        }
+        ticketArg.setId(id);
+        var result=collection.replaceIfGreater(ticketArg);
+        var ne = result ? "" : "не ";
+        responseManager.addToSend("Замена "+ne+"произошла",this);
         loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
         responseManager.send(this);
-
     }
 
     @Override

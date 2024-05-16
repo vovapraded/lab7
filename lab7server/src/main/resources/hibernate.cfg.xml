@@ -15,7 +15,7 @@
     <property name="show_sql">true</property>
     <property name="format_sql">true</property>
     <property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
-    <property name="hibernate.connection.isolation">2</property> <!-- Для READ_COMMITTED -->
+    <property name="hibernate.connection.isolation">4</property> <!-- Для REPEATABLE READ -->
     <property name="hibernate.physical_naming_strategy">org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl</property>
     <mapping class="org.common.dto.Coordinates"/>
     <mapping class="org.common.dto.Ticket"/>

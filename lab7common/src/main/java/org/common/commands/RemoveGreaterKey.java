@@ -26,14 +26,9 @@ public class RemoveGreaterKey extends Command implements  Serializable {
             e.setCommand(this);
             throw e;
         }
-        long sizeBefore = collection.getCountOfElements();
+
             collection.removeGreaterKey(id,getAuthorization().getLogin());
-            long sizeAfter = collection.getCountOfElements();
-            if (sizeAfter != sizeBefore) {
-                responseManager.addToSend("Успешно удалено",this);
-            }else {
-                responseManager.addToSend("Нет таких элементов",this);
-            }
+            responseManager.addToSend("Операция успешно выполнена",this);
         loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
         responseManager.send(this);
 

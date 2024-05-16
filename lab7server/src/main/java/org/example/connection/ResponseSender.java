@@ -24,32 +24,29 @@ public class ResponseSender {
     }
 
     public void sendData(byte[] data, SocketAddress address) throws IOException {
-        byte[][] packets=new byte[(int)Math.ceil(data.length / (double)DATA_SIZE)][PACKET_SIZE];
-        for (int i = 0; i<packets.length;i++){
-            if (i == packets.length - 1) {
-                packets[i] = Bytes.concat(Arrays.copyOfRange(data,i*DATA_SIZE,(i+1)*DATA_SIZE), new byte[]{(byte) -(i+1)});
-            } else {
-                packets[i] = Bytes.concat(Arrays.copyOfRange(data,i*DATA_SIZE,(i+1)*DATA_SIZE), new byte[]{(byte) (i+1)});
-            }
-        }
-        for (int i = 0; i < packets.length; i++) {
-            byte[] packet = packets[i];            // Отправляем пакет на указанный адрес
+        var size = (int) Math.ceil(data.length / (double) DATA_SIZE);
+        for (int i = 0; i < size; i++) {
             int finalI = i;
-            ThreadHelper.getPoolForSending().submit(()->
+            ThreadHelper.getPoolForSending().submit(() ->
             {
-                // Создаем буфер для текущего пакета
-                ByteBuffer buffer = ByteBuffer.wrap(packet);
-                try {
-                    datagramChannel.send(buffer, address);
-                    logger.debug("Пакет "+ (finalI + 1) + " отправлен клиенту "+address);
-                } catch (IOException e) {
-                    logger.error("Не удалось отправить пакет "+(finalI + 1)+" клиенту "+address);
-                }
+                var packet = Bytes.concat(Arrays.copyOfRange(data, finalI * DATA_SIZE, (finalI + 1) * DATA_SIZE), new byte[]{(byte) -(finalI + 1)});
+                sendPacket(packet, finalI, address, size);
             });
-
-
-
         }
+
+
     }
 
+
+    private void sendPacket(byte[] packet, int i, SocketAddress address, int size) {
+        ByteBuffer buffer = ByteBuffer.wrap(packet);
+        try {
+            datagramChannel.send(buffer, address);
+            logger.debug("Пакет " + (i + 1) + " из " + size + " отправлен клиенту " + address);
+        } catch (IOException e) {
+            logger.error("Не удалось отправить пакет " + (i + 1) + " из " + size + " клиенту " + address);
+        }
+
+
+    }
 }
