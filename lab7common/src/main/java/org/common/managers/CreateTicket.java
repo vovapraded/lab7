@@ -19,11 +19,15 @@ public class CreateTicket {
     }
     public  Ticket createTicket(Long id) throws InvalidFormatException {
         String name = "";
-        while (name.isEmpty() || name.contains(" ")|| name.contains("\t")|| name.contains("\n")) {
+        while (name.isEmpty() || name.contains(" ")|| name.contains("\t")|| name.contains("\n")|| name.length()>128) {
             console.print("Введите название билета");
             name = console.getInputFromCommand(1, 1);
             if (name.isEmpty()|| name.contains(" ")|| name.contains("\t")|| name.contains("\n")) {
                 console.print("Имя не должно быть пустым, не должно содержать пробелов");
+            }
+            if (name.length()>128){
+                console.print("Имя не должно быть больше 128 символов");
+
             }
         }
         Long price = -1L;
@@ -116,11 +120,15 @@ public class CreateTicket {
         }
         //считываем venueName
         String venueName = "";
-        while (venueName.isEmpty()) {
+        while (venueName.isEmpty() || venueName.length()>128 ) {
             console.print("Введите Место встречи");
             venueName = console.getInputFromCommand(1, 1);
             if (venueName.isEmpty()) {
                 console.print("Неверный формат ввода, вы не ввели название места встречи");
+            }
+            if (venueName.length()>128){
+                console.print("Имя не должно быть больше 128 символов");
+
             }
         }
         //считываем venueCapacity

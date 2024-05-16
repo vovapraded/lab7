@@ -29,7 +29,12 @@ public class ResponseSender {
             int finalI = i;
             ThreadHelper.getPoolForSending().submit(() ->
             {
-                var packet = Bytes.concat(Arrays.copyOfRange(data, finalI * DATA_SIZE, (finalI + 1) * DATA_SIZE), new byte[]{(byte) -(finalI + 1)});
+                byte [] packet = null;
+                if (finalI == size-1){
+                    packet = Bytes.concat(Arrays.copyOfRange(data, finalI * DATA_SIZE, (finalI + 1) * DATA_SIZE), new byte[]{(byte) -(finalI + 1)});
+                }else {
+                    packet = Bytes.concat(Arrays.copyOfRange(data, finalI * DATA_SIZE, (finalI + 1) * DATA_SIZE), new byte[]{(byte) (finalI + 1)});
+                }
                 sendPacket(packet, finalI, address, size);
             });
         }
