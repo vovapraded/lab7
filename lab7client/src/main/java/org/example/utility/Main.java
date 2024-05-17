@@ -3,6 +3,7 @@ package org.example.utility;
 import java.io.IOException;
 
 import org.common.commands.authorization.AuthorizationCommand;
+import org.common.network.ConnectionException;
 import org.common.network.SendException;
 import org.common.serial.DeserializeException;
 import org.common.serial.SerializeException;
@@ -35,13 +36,14 @@ public class Main {
                    var command = creator.createCommand(cmd, arg2);
                     if (command!= null) {
                         try {
-                            udpClient.sendCommand(command);
-                            var resp = udpClient.getResponse(false);
+                            udpClient.getUdpSender().sendCommand(command);
+                            var resp = udpClient.getUdpReceiver().getResponse(false);
                             if (!resp.isPasswordCorrect() || !resp.isLoginCorrect()) {
                                 AuthorizationManager.resetAuth();
                             }
                             currentConsole.print(resp.getMessageBySingleString());
-                        } catch (NoResponseException | SendException | SerializeException | DeserializeException e) {
+                        } catch (NoResponseException | SendException | SerializeException | DeserializeException |
+                                 ConnectionException e) {
                             currentConsole.print(e.getMessage());
                         }
                     }

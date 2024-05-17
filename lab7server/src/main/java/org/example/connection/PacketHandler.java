@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutorService;
 public class PacketHandler extends Thread {
     private static final Logger logger = LoggerFactory.getLogger(PacketHandler.class);
     private final CurrentResponseManager responseManager;
-    private final int PACKET_SIZE = 1024;
+    private final int PACKET_SIZE = 10240;
     private final int DATA_SIZE = PACKET_SIZE - 1;
     private ImmutablePair<SocketAddress,byte[]> addrAndPacket ;
     private ExecutorService poolForProcessing;

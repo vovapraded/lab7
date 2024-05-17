@@ -1,6 +1,7 @@
 package org.example.commands;
 
 import org.common.commands.Command;
+import org.common.serial.DeserializeException;
 import org.example.connection.UdpClient;
 import org.example.utility.CurrentConsole;
 import org.example.utility.NoResponseException;
@@ -10,8 +11,8 @@ public class Empty extends Command implements ClientCommand {
     public void execute() {
        UdpClient udpClient = UdpClient.getInstance();
         try {
-            console.print(udpClient.getResponse(true).getMessageBySingleString());
-        }catch (NoResponseException e){
+            console.print(udpClient.getUdpReceiver().getResponse(true).getMessageBySingleString());
+        }catch (NoResponseException | DeserializeException e){
             console.print(e.getMessage());
         }
     }

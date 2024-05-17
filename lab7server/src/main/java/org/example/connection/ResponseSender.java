@@ -13,7 +13,7 @@ import java.nio.channels.DatagramChannel;
 import java.util.Arrays;
 
 public class ResponseSender {
-    private final int PACKET_SIZE = 1024;
+    private final int PACKET_SIZE = 10240;
     private final int DATA_SIZE = PACKET_SIZE - 1;
     private final DatagramChannel datagramChannel;
     private static final Logger logger = LoggerFactory.getLogger(ResponseSender.class);

@@ -7,6 +7,9 @@ import org.hibernate.type.SqlTypes;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 /**
  * a class for storing ticket data
@@ -28,7 +31,7 @@ public class Ticket extends ElementsWithId implements Comparable<Ticket>, Serial
     @JoinColumn(name = "coordinates_id")
     private Coordinates coordinates; //Поле не может быть null
     @Column(name = "creation_date")
-    private Date creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
+    private LocalDateTime creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
     private Long price; //Поле не может быть null, Значение поля должно быть больше 0
     private Long discount; //Поле может быть null, Значение поля должно быть больше 0, Максимальное значение поля: 100
     private Boolean refundable; //Поле может быть null
@@ -48,7 +51,7 @@ public class Ticket extends ElementsWithId implements Comparable<Ticket>, Serial
     public Ticket(String name,Coordinates coordinates,Long price,Long discount,Boolean refundable,TicketType type,Venue venue){
         this.name= name;
         this.coordinates=coordinates;
-        Date currentDate = new Date();
+        LocalDateTime currentDate =  LocalDateTime.now();
         this.creationDate=currentDate;
         this.price=price;
         this.discount = discount;
@@ -62,7 +65,7 @@ public class Ticket extends ElementsWithId implements Comparable<Ticket>, Serial
         this.id = id;
         this.name= name;
         this.coordinates=coordinates;
-        Date currentDate = new Date();
+        LocalDateTime currentDate =  LocalDateTime.now();
         this.creationDate=currentDate;
         this.price=price;
         this.discount = discount;
@@ -73,7 +76,7 @@ public class Ticket extends ElementsWithId implements Comparable<Ticket>, Serial
 
     //конструктор с датой и id
 
-    public Ticket(Long id,String name,Coordinates coordinates,Date creationDate,Long price,Long discount,Boolean refundable,TicketType type,Venue venue){
+    public Ticket(Long id, String name, Coordinates coordinates, LocalDateTime creationDate, Long price, Long discount, Boolean refundable, TicketType type, Venue venue){
         this.name= name;
         this.id = id;
         this.coordinates=coordinates;
@@ -101,7 +104,7 @@ public class Ticket extends ElementsWithId implements Comparable<Ticket>, Serial
         return "id "+id+
                 ", name "+name+
                 ", coordinates "+getCoordinates().toString()+
-                ", creationDate "+ creationDate+
+                ", creationDate "+ creationDate.format(DateTimeFormatter.ISO_DATE_TIME).toString().replace("T"," ")+
                 ", price " +price+
                 ", discount " +discount+
                 ", refundable " +refundable+
