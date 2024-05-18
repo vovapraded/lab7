@@ -6,6 +6,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.common.commands.Command;
 import org.common.serial.Deserializer;
+import org.common.utility.CodingUtil;
 import org.example.managers.CurrentResponseManager;
 import org.example.managers.ExecutorOfCommands;
 import org.example.threads.ThreadHelper;
@@ -20,12 +21,13 @@ import java.util.concurrent.ExecutorService;
 public class PacketHandler extends Thread {
     private static final Logger logger = LoggerFactory.getLogger(PacketHandler.class);
     private final CurrentResponseManager responseManager;
-    private final int PACKET_SIZE = 10240;
-    private final int DATA_SIZE = PACKET_SIZE - 1;
+    private final int PACKET_SIZE = 1024;
+    private final int DATA_SIZE = PACKET_SIZE - 4;
     private ImmutablePair<SocketAddress,byte[]> addrAndPacket ;
     private ExecutorService poolForProcessing;
+    //храним арайлист пакетов, также храним пару <sizeOfRequest,timeReceivingLast>
     @Getter
-    private static ConcurrentHashMap<SocketAddress, MutablePair<ArrayList<ImmutablePair<byte[],Byte>>,MutablePair<Byte,Long>>> hashMap = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<SocketAddress, MutablePair<ArrayList<ImmutablePair<byte[],Integer>>,MutablePair<Integer,Long>>> hashMap = new ConcurrentHashMap<>();
 
     public PacketHandler(CurrentResponseManager responseManager, ImmutablePair<SocketAddress, byte[]> addrAndPacket) {
         this.responseManager = responseManager;
@@ -41,17 +43,18 @@ public class PacketHandler extends Thread {
     }
 
     private void handlePacket(SocketAddress address, byte[] data) {
-        hashMap.putIfAbsent (address,new MutablePair<>(new ArrayList(),new MutablePair<>(Byte.MAX_VALUE,System.currentTimeMillis())));
+        hashMap.putIfAbsent (address,new MutablePair<>(new ArrayList(),new MutablePair<>(Integer.MAX_VALUE,System.currentTimeMillis())));
         var pair = hashMap.get(address);
         var resultArray = pair.getLeft();
-        var lastChunk = data[data.length - 1];
-        logger.debug("Пакет "+Math.abs(lastChunk)+" получен от клиента "+address);
-        data = Arrays.copyOf(data, data.length - 1);
+        var lastChunks = Arrays.copyOfRange( data, DATA_SIZE, PACKET_SIZE);
+        var packetNumber = CodingUtil.decodingInt(lastChunks);
+        logger.debug("Пакет "+Math.abs(packetNumber)+" получен от клиента "+address);
+        data = Arrays.copyOf(data, DATA_SIZE);
         synchronized (resultArray) {
-            resultArray.add(new ImmutablePair<byte[], Byte>(data, (byte) Math.abs(lastChunk)));
+            resultArray.add(new ImmutablePair<byte[], Integer>(data,  Math.abs(packetNumber)));
         }
-        if (lastChunk < 0 ) {
-                pair.getRight().setLeft((byte) Math.abs(lastChunk));
+        if (packetNumber < 0 ) {
+                pair.getRight().setLeft( Math.abs(packetNumber));
         }
         var sizeOfRequest = pair.getRight().getLeft();
         if (sizeOfRequest == resultArray.size()){
@@ -61,9 +64,9 @@ public class PacketHandler extends Thread {
         }
         pair.getRight().getLeft();
         pair.getRight().setRight(System.currentTimeMillis());
-        System.out.println(hashMap);
+
     }
-    private byte[] sortPackets(ArrayList<ImmutablePair<byte[],Byte>> result)  {
+    private byte[] sortPackets(ArrayList<ImmutablePair<byte[],Integer>> result)  {
         result.sort(Comparator.comparing(pair -> pair.getRight()));
         var request = result.stream().parallel()
                 .map((pair) -> pair.getLeft()).reduce(new byte[0], (arr1, arr2) ->

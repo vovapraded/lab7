@@ -7,6 +7,7 @@ import org.common.network.ConnectionException;
 import org.common.network.Response;
 import org.common.serial.DeserializeException;
 import org.common.serial.Deserializer;
+import org.common.utility.CodingUtil;
 import org.example.utility.NoResponseException;
 
 import java.io.IOException;
@@ -25,14 +26,14 @@ public class UdpReceiver {
     private final int PACKET_SIZE ;
     private final int DATA_SIZE ;
     private final int TIMEOUT = 5000;
-    private volatile byte  sizeOfResponse = Byte.MAX_VALUE;
+    private volatile int  sizeOfResponse = Integer.MAX_VALUE;
 
     private  final ExecutorService poolForReceiving = Executors.newFixedThreadPool(10);
 
     private final BlockingQueue<Future<ArrayList<byte[]>>> futures = new LinkedBlockingQueue<Future<ArrayList<byte[]>>>();
 
 
-    final List<ImmutablePair<byte[],Byte>> result = Collections.synchronizedList(new ArrayList<>());
+    final List<ImmutablePair<byte[],Integer>> result = Collections.synchronizedList(new ArrayList<>());
 
 
 
@@ -40,7 +41,7 @@ public class UdpReceiver {
 
     public UdpReceiver(int packetSize, DatagramChannel client) {
         PACKET_SIZE = packetSize;
-        DATA_SIZE =  PACKET_SIZE - 1;
+        DATA_SIZE =  PACKET_SIZE - 4;
         this.client = client;
     }
 
@@ -60,7 +61,6 @@ public class UdpReceiver {
                     buffer.get(data);
                     // Читаем данные из буфера
                     arrayData.add(data);
-                    System.out.println(Math.abs(data[bufferSize-1]));
 
                     buffer.clear();
                 }else {
@@ -156,13 +156,14 @@ public class UdpReceiver {
     }
         private void handleArrayData(ArrayList<byte[]> arrayData)  {
             for (byte[] data : arrayData){
-                var lastChunk = data[data.length - 1];
-                data = Arrays.copyOf(data, data.length - 1);
-                if (lastChunk < 0) {
-                    sizeOfResponse = (byte) -lastChunk;
+                var lastChunks = Arrays.copyOfRange( data, DATA_SIZE, PACKET_SIZE);
+                var packetNumber = CodingUtil.decodingInt(lastChunks);
+                data = Arrays.copyOf(data, DATA_SIZE);
+                if (packetNumber < 0) {
+                    sizeOfResponse =  -packetNumber;
                 }
                 synchronized (result) {
-                    result.add(new ImmutablePair<byte[], Byte>(data, (byte) Math.abs(lastChunk)));
+                    result.add(new ImmutablePair<byte[], Integer>(data,  Math.abs(packetNumber)));
                 }
                 if (result.size() == sizeOfResponse){
                     received = true;
@@ -182,7 +183,7 @@ public class UdpReceiver {
     private void init(){
         received = false;
         timeoutIsPassed = false;
-        sizeOfResponse = Byte.MAX_VALUE;
+        sizeOfResponse = Integer.MAX_VALUE;
         futures.clear();
         result.clear();
     }

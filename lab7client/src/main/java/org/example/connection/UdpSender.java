@@ -6,6 +6,7 @@ import org.common.commands.Command;
 import org.common.network.SendException;
 import org.common.serial.SerializeException;
 import org.common.serial.Serializer;
+import org.common.utility.CodingUtil;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -21,13 +22,14 @@ public class UdpSender {
 
     public UdpSender(int packetSize, DatagramChannel client, InetSocketAddress serverSocketAddress) {
         PACKET_SIZE = packetSize;
-        DATA_SIZE =  PACKET_SIZE - 1;
+        DATA_SIZE =  PACKET_SIZE - 4;
         this.client = client;
         this.serverSocketAddress = serverSocketAddress;
     }
 
     public void sendCommand(Command command) throws SerializeException {
         try {
+
             sendData(Serializer.serialize(command));
         } catch (IOException e) {
             throw new SendException("Ошибка отправки данных, поробуйте ещё раз");
@@ -40,10 +42,10 @@ public class UdpSender {
         for (int i = 0; i<packets.length;i++){
 
             if (i == packets.length - 1) {
-                packets[i] = Bytes.concat(Arrays.copyOfRange(data,i*DATA_SIZE,(i+1)*DATA_SIZE), new byte[]{(byte) -(i+1)});
+                packets[i] = Bytes.concat(Arrays.copyOfRange(data, i * DATA_SIZE, (i + 1) * DATA_SIZE), CodingUtil.encodingInt(-i - 1));
             }
             else {
-                packets[i] = Bytes.concat(Arrays.copyOfRange(data, i * DATA_SIZE, (i + 1) * DATA_SIZE), new byte[]{(byte) (i + 1)});
+                packets[i] = Bytes.concat(Arrays.copyOfRange(data, i * DATA_SIZE, (i + 1) * DATA_SIZE), CodingUtil.encodingInt(i + 1));
             }
 
         }

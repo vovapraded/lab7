@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 public class PacketReceiver extends Thread {
     private UdpServer udpServer;
-    private static final int PACKET_SIZE = 10240;
+    private static final int PACKET_SIZE = 1024;
     private final DatagramChannel datagramChannel;
     private final CurrentResponseManager responseManager;
     private Selector selector;

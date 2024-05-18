@@ -1,3 +1,5 @@
-alter table s409397.ticket
-    alter column creation_date type timestamp using creation_date::timestamp;
-
+ALTER TABLE s409397.ticket
+    ALTER COLUMN creation_date TYPE TIMESTAMP USING (creation_date)::timestamp;
+UPDATE flyway_schema_history
+SET installed_on = CURRENT_TIMESTAMP
+WHERE installed_on IS NULL;

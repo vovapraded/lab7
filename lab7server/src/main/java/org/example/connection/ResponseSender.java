@@ -2,6 +2,7 @@ package org.example.connection;
 
 import com.google.common.primitives.Bytes;
 import org.common.network.SendException;
+import org.common.utility.CodingUtil;
 import org.example.threads.ThreadHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,8 +14,8 @@ import java.nio.channels.DatagramChannel;
 import java.util.Arrays;
 
 public class ResponseSender {
-    private final int PACKET_SIZE = 10240;
-    private final int DATA_SIZE = PACKET_SIZE - 1;
+    private final int PACKET_SIZE = 1024;
+    private final int DATA_SIZE = PACKET_SIZE - 4;
     private final DatagramChannel datagramChannel;
     private static final Logger logger = LoggerFactory.getLogger(ResponseSender.class);
 
@@ -31,9 +32,9 @@ public class ResponseSender {
             {
                 byte [] packet = null;
                 if (finalI == size-1){
-                    packet = Bytes.concat(Arrays.copyOfRange(data, finalI * DATA_SIZE, (finalI + 1) * DATA_SIZE), new byte[]{(byte) -(finalI + 1)});
+                    packet = Bytes.concat(Arrays.copyOfRange(data, finalI * DATA_SIZE, (finalI + 1) * DATA_SIZE), CodingUtil.encodingInt( -(finalI + 1)));
                 }else {
-                    packet = Bytes.concat(Arrays.copyOfRange(data, finalI * DATA_SIZE, (finalI + 1) * DATA_SIZE), new byte[]{(byte) (finalI + 1)});
+                    packet = Bytes.concat(Arrays.copyOfRange(data, finalI * DATA_SIZE, (finalI + 1) * DATA_SIZE),CodingUtil.encodingInt((finalI + 1)));
                 }
                 sendPacket(packet, finalI, address, size);
             });

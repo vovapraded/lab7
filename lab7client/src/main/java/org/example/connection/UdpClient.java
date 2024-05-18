@@ -24,8 +24,8 @@ import java.util.concurrent.*;
 
 import com.google.common.primitives.Bytes;
 public class UdpClient  {
-    private final int PACKET_SIZE = 10240;
-    private final int DATA_SIZE = PACKET_SIZE - 1;
+    private final int PACKET_SIZE = 1024;
+    private final int DATA_SIZE = PACKET_SIZE - 4;
     private static final int RECEIVE_BUFFER_SIZE = 2 * 1024 * 1024; // 2 MB
 
     private final CurrentConsole currentConsole = CurrentConsole.getInstance();

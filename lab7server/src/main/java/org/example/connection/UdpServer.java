@@ -26,8 +26,9 @@ public class UdpServer implements ResponseListener {
     private final ByteBuffer buffer = ByteBuffer.allocate(1024);
 
     private final CurrentResponseManager responseManager;
-    private final int PACKET_SIZE = 10240;
-    private final int DATA_SIZE = PACKET_SIZE - 1;
+    private final int PACKET_SIZE = 1024;
+    private final int DATA_SIZE = PACKET_SIZE - 4;
+    private static final int RECEIVE_BUFFER_SIZE = 2 * 1024 * 1024; // 2 MB
 
     private static final Logger logger = LoggerFactory.getLogger(UdpServer.class);
     private DatagramChannel datagramChannel;
@@ -55,6 +56,7 @@ public class UdpServer implements ResponseListener {
             this.datagramChannel = DatagramChannel.open();
             datagramChannel.configureBlocking(false); // Устанавливаем неблокирующий режим
             datagramChannel.bind(serverAddress);
+            datagramChannel.socket().setReceiveBufferSize(RECEIVE_BUFFER_SIZE);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

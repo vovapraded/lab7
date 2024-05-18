@@ -14,6 +14,12 @@ import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.util.Properties;
+
 
 /**
  *Main class
@@ -24,9 +30,14 @@ public class Main {
     public static void main(String[] args)  {
 
             try {
-                Flyway flyway = Flyway.configure().loadDefaultConfigurationFiles().load();
-                System.out.println(flyway.info());
+
+                // Проверка подключения к базе данных
+
+                    Flyway flyway = Flyway.configure().loadDefaultConfigurationFiles()    .validateMigrationNaming(false)
+                            .load();
                 flyway.migrate();
+                System.out.println(flyway.info());
+
                 logger.debug("Сервер запускается");
                 CurrentResponseManager responseManager = new CurrentResponseManager();
                 HibernateManager hibernateManager = new HibernateManager();
