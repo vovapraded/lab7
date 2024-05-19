@@ -19,8 +19,8 @@ public class HashmapCleaner extends Thread {
         var hashMap = PacketHandler.getHashMap();
         long currentTime = System.currentTimeMillis();
         AtomicInteger removedCount = new AtomicInteger(0); // Используем AtomicInteger для атомарного инкремента
-        hashMap.values().removeIf(pair -> {
-            if (pair.getRight().getRight() + TIMEOUT < currentTime) {
+        hashMap.values().removeIf(receivedPacketsList -> {
+            if ( receivedPacketsList.getTimeOfLastPacket() + TIMEOUT < currentTime) {
                 removedCount.incrementAndGet(); // Увеличиваем счетчик при удалении
                 return true; // Удаляем запись
             }

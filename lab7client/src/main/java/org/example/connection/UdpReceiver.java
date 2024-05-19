@@ -29,10 +29,10 @@ public class UdpReceiver {
     private volatile int  sizeOfResponse = Integer.MAX_VALUE;
 
     private  final ExecutorService poolForReceiving = Executors.newFixedThreadPool(10);
-
+//очередь массивов пакетов
     private final BlockingQueue<Future<ArrayList<byte[]>>> futures = new LinkedBlockingQueue<Future<ArrayList<byte[]>>>();
 
-
+//Лист пакетов
     final List<ImmutablePair<byte[],Integer>> result = Collections.synchronizedList(new ArrayList<>());
 
 

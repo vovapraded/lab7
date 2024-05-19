@@ -27,7 +27,7 @@ public class PacketHandler extends Thread {
     private ExecutorService poolForProcessing;
     //храним арайлист пакетов, также храним пару <sizeOfRequest,timeReceivingLast>
     @Getter
-    private static ConcurrentHashMap<SocketAddress, MutablePair<ArrayList<ImmutablePair<byte[],Integer>>,MutablePair<Integer,Long>>> hashMap = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<SocketAddress, ReceivedPacketsList> hashMap = new ConcurrentHashMap<>();
 
     public PacketHandler(CurrentResponseManager responseManager, ImmutablePair<SocketAddress, byte[]> addrAndPacket) {
         this.responseManager = responseManager;
@@ -42,36 +42,43 @@ public class PacketHandler extends Thread {
                 handlePacket(addr, packet);
     }
 
-    private void handlePacket(SocketAddress address, byte[] data) {
-        hashMap.putIfAbsent (address,new MutablePair<>(new ArrayList(),new MutablePair<>(Integer.MAX_VALUE,System.currentTimeMillis())));
-        var pair = hashMap.get(address);
-        var resultArray = pair.getLeft();
-        var lastChunks = Arrays.copyOfRange( data, DATA_SIZE, PACKET_SIZE);
+    private void handlePacket(SocketAddress address, byte[] bytes) {
+        hashMap.putIfAbsent (address, new ReceivedPacketsList());
+        var receivedPacketsList = hashMap.get(address);
+        var resultArray = receivedPacketsList.getPackets();
+        var lastChunks = Arrays.copyOfRange( bytes, DATA_SIZE, PACKET_SIZE);
         var packetNumber = CodingUtil.decodingInt(lastChunks);
-        logger.debug("Пакет "+Math.abs(packetNumber)+" получен от клиента "+address);
-        data = Arrays.copyOf(data, DATA_SIZE);
+        var isLastPacket = packetNumber < 0;
+        packetNumber = Math.abs(packetNumber);
+        var data = Arrays.copyOf(bytes, DATA_SIZE);
+        ReceivedPacket packet = ReceivedPacket.builder()
+                .data(data)
+                .number(packetNumber)
+                .build();
+        logger.debug("Пакет "+packetNumber+" получен от клиента "+address);
+
         synchronized (resultArray) {
-            resultArray.add(new ImmutablePair<byte[], Integer>(data,  Math.abs(packetNumber)));
+            resultArray.add(packet);
         }
-        if (packetNumber < 0 ) {
-                pair.getRight().setLeft( Math.abs(packetNumber));
+        if (isLastPacket ) {
+                receivedPacketsList.setSizeOfRequest(packetNumber);
         }
-        var sizeOfRequest = pair.getRight().getLeft();
+        int sizeOfRequest;
+        sizeOfRequest = receivedPacketsList.getSizeOfRequest();
         if (sizeOfRequest == resultArray.size()){
             var result = sortPackets(resultArray);
             handleRequest(address,result);
             hashMap.remove(address);
         }
-        pair.getRight().getLeft();
-        pair.getRight().setRight(System.currentTimeMillis());
+            receivedPacketsList.setTimeOfLastPacket(System.currentTimeMillis());
+
 
     }
-    private byte[] sortPackets(ArrayList<ImmutablePair<byte[],Integer>> result)  {
-        result.sort(Comparator.comparing(pair -> pair.getRight()));
-        var request = result.stream().parallel()
-                .map((pair) -> pair.getLeft()).reduce(new byte[0], (arr1, arr2) ->
+    private byte[] sortPackets(ArrayList<ReceivedPacket> resultArray)  {
+        resultArray.sort(Comparator.comparing(packet -> packet.getNumber()));
+        return resultArray.stream().parallel()
+                .map((packet) -> packet.getData()).reduce(new byte[0], (arr1, arr2) ->
                 Bytes.concat(arr1, arr2));
-        return request;
     }
     private void handleRequest(SocketAddress address, byte[] result) {
         var command= Deserializer.deserialize(result, Command.class);
