@@ -4,9 +4,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.example</groupId>
+<!--    <groupId>org.example</groupId>-->
     <artifactId>lab7client</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+<!--    <modules>-->
+<!--    </modules>-->
+<!--    <parent>-->
+        <groupId>org.example</groupId>
+<!--        <artifactId>lab7clientParent</artifactId>-->
+<!--        <version>1.0-SNAPSHOT</version>-->
+<!--    </parent>-->
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -15,6 +23,12 @@
         <querydsl.version>5.0.0</querydsl.version>
 
     </properties>
+<!--    <modules>-->
+
+<!--        <module>../lab7common</module>-->
+<!--&lt;!&ndash;        <module>this</module>&ndash;&gt;-->
+<!--        <module>controller</module>-->
+<!--    </modules>-->
     <dependencies>
         <!-- https://mvnrepository.com/artifact/com.bihe0832.android/common-network -->
         <dependency>
@@ -115,14 +129,39 @@
             <version>19</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.example</groupId>
-            <artifactId>graphic</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.example</groupId>-->
+<!--            <artifactId>graphic</artifactId>-->
+<!--            <version>1.0-SNAPSHOT</version>-->
+<!--            <scope>compile</scope>-->
+<!--        </dependency>-->
 
     </dependencies>
+
+<!--      <build>-->
+<!--          <plugins>-->
+<!--              <plugin>-->
+<!--                  <groupId>org.apache.maven.plugins</groupId>-->
+<!--                  <artifactId>maven-assembly-plugin</artifactId>-->
+<!--                  <version>3.7.1</version>-->
+<!--                  -->
+<!--                  <configuration>-->
+<!--                      &lt;!&ndash; Используем свойство skip для исключения конкретного дочернего проекта &ndash;&gt;-->
+<!--&lt;!&ndash;                      <skip>controller</skip>&ndash;&gt;-->
+<!--                  </configuration>-->
+<!--                  <executions>-->
+<!--                      <execution>-->
+<!--                          <id>assemble</id>-->
+<!--                          <phase>package</phase>-->
+<!--                          <goals>-->
+<!--                              <goal>single</goal>-->
+<!--                          </goals>-->
+<!--                          &lt;!&ndash; Пример порядка сборки &ndash;&gt;-->
+<!--                      </execution>-->
+<!--                  </executions>-->
+<!--              </plugin>-->
+<!--          </plugins>-->
+<!--      </build>-->
 <!--    <build>-->
 <!--        <plugins>-->
 
@@ -162,6 +201,53 @@
 
 <!--        </plugins>-->
 
+<!--    </build>-->
+<!--    <profiles>-->
+<!--        <profile>-->
+<!--            <id>exclude-controller</id>-->
+<!--            <modules>-->
+<!--                <module>!controller</module>-->
+<!--            </modules>-->
+<!--        </profile>-->
+<!--    </profiles>-->
+<!--    <build>-->
+<!--        <pluginManagement>-->
+<!--            <plugins>-->
+<!--                &lt;!&ndash; Plugin configurations can go here &ndash;&gt;-->
+<!--                <plugin>-->
+<!--                    <groupId>org.apache.maven.plugins</groupId>-->
+<!--                    <artifactId>maven-compiler-plugin</artifactId>-->
+<!--                    <version>3.8.1</version>-->
+<!--                    <configuration>-->
+<!--                        <source>1.8</source>-->
+<!--                        <target>1.8</target>-->
+<!--                    </configuration>-->
+<!--                </plugin>-->
+<!--                <plugin>-->
+<!--                    <groupId>org.apache.maven.plugins</groupId>-->
+<!--                    <artifactId>maven-jar-plugin</artifactId>-->
+<!--                    <version>3.1.0</version>-->
+<!--                    <configuration>-->
+<!--                        <archive>-->
+<!--                            <manifest>-->
+<!--                                <addClasspath>true</addClasspath>-->
+<!--                                <mainClass>org.example.Main</mainClass> &lt;!&ndash; Замените на ваш основной класс &ndash;&gt;-->
+<!--                            </manifest>-->
+<!--                        </archive>-->
+<!--                    </configuration>-->
+<!--                </plugin>-->
+<!--            </plugins>-->
+<!--        </pluginManagement>-->
+<!--        <plugins>-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-compiler-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <source>17</source>-->
+<!--                    <target>17</target>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+<!--        </plugins>-->
 <!--    </build>-->
 
 </project>

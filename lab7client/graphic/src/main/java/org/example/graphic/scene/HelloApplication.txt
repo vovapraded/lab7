@@ -1,6 +1,5 @@
 package org.example.graphic.scene;
 
-import com.dlsc.formsfx.model.util.ResourceBundleService;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
@@ -15,12 +14,8 @@ import javafx.stage.Stage;
 import org.example.graphic.localizator.Localizator;
 import org.example.graphic.node.PlaceholderTextField;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.spi.ResourceBundleProvider;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,30 +23,25 @@ public class HelloApplication extends Application {
     private Localizator localizator;
 //    private final String defaultBundle;
     private  String bundle;
+    private final HashMap<Node,String > nodeAndPropertyKeys = new HashMap<Node,String >();
 
     @Override
-
     public void start(Stage primaryStage) {
         Locale.setDefault(Locale.UK);
-        Localizator localizator = new Localizator();
+        localizator = new Localizator();
 
-
-
-        ComboBox<String> comboBox = new ComboBox<>();
-        comboBox.getItems().addAll("en EN","ru RU", "en IE", "nl NL","sq AL");
-        comboBox.setValue("EN");
-        comboBox.setOnAction(e -> {
+        ComboBox<String> changeLocale = new ComboBox<>();
+        changeLocale.getItems().addAll("en EN","ru RU", "en IE", "nl NL","sq AL");
+        changeLocale.setValue("EN");
+        changeLocale.setOnAction(e -> {
             System.out.println("A");
-            var value = comboBox.getValue();
+            var value = changeLocale.getValue();
             localizator.setBundle(ResourceBundle.getBundle("locales.gui",
                     new Locale(value.split(" ")[0],value.split(" ")[1])));
-            System.out.println(localizator.getBundle().getLocale());
-            System.out.println("ABOBA");
+                    updateTexts();
 
-
-
-        });//        Label label = new Label(,comboBox);
-//        label.setContentDisplay(ContentDisplay.BOTTOM);
+        });//        Label labelForChangeLocale = new Label(,changeLocale);
+//        labelForChangeLocale.setContentDisplay(ContentDisplay.BOTTOM);
         // Создаем GridPane
         GridPane gridPane = new GridPane();
         gridPane.setPadding(new Insets(10)); // отступ от границ окна
@@ -61,12 +51,11 @@ public class HelloApplication extends Application {
         GridPane loginForm = new GridPane();
         loginForm.setHgap(5); // горизонтальные промежутки между столбцами
         loginForm.setVgap(5);
-        PlaceholderTextField inputLogin = new PlaceholderTextField(localizator.getKeyString("loginLabel"));
-        PlaceholderTextField inputPassword = new PlaceholderTextField(localizator.getKeyString("passwordLabel"));
+        PlaceholderTextField inputLogin = new PlaceholderTextField("");
+        PlaceholderTextField inputPassword = new PlaceholderTextField("");
 
-        Label label = new Label(localizator.getKeyString("changeLocaleLabel"),comboBox);
-        label.setContentDisplay(ContentDisplay.BOTTOM);
-
+        Label labelForChangeLocale = new Label("",changeLocale);
+        labelForChangeLocale.setContentDisplay(ContentDisplay.BOTTOM);
 
 
 
@@ -81,21 +70,22 @@ public class HelloApplication extends Application {
         loginForm.add(buttonBox,0,2);
 
         // Создаем кнопки
-        Button register = new Button(localizator.getKeyString("RegisterLabel"));
-        register.setOnAction(e -> primaryStage.close());
+        Button register = new Button();
 
-        Button login = new Button(localizator.getKeyString("LoginLabel"));
+//        register.setOnAction(e -> );
+
+        Button login = new Button();
         login.setOnAction(e -> primaryStage.setIconified(true));
 
         // Добавляем кнопки в HBox
         buttonBox.getChildren().addAll(login, register);
         GridPane.setHalignment(loginForm, HPos.CENTER);
         GridPane.setValignment(loginForm, VPos.CENTER);
-        GridPane.setHalignment(label, HPos.RIGHT);
-        GridPane.setValignment(label, VPos.BOTTOM);
+        GridPane.setHalignment(labelForChangeLocale, HPos.RIGHT);
+        GridPane.setValignment(labelForChangeLocale, VPos.BOTTOM);
         // Добавляем HBox в GridPane в ячейку (0, 0)
         gridPane.add(loginForm, 0, 0);
-        gridPane.add(label,0,1);
+        gridPane.add(labelForChangeLocale,0,1);
 
         GridPane.setMargin(loginForm, new Insets(0, 0, 0, 0)); // добавляем отступы если нужно
 
@@ -118,6 +108,7 @@ public class HelloApplication extends Application {
 
         // Устанавливаем заголовок окна
         primaryStage.setTitle("GridPane Example");
+
         scene.setOnMousePressed(event -> {
             // Перебираем все узлы в корневом узле и проверяем, было ли нажатие внутри какого-либо узла
             boolean clickInsideNode = false;
@@ -138,7 +129,12 @@ public class HelloApplication extends Application {
                 System.out.println("Clicked outside!");
             }
         });
-
+        nodeAndPropertyKeys.put(login,"LoginLabel");
+        nodeAndPropertyKeys.put(register,"RegisterLabel");
+        nodeAndPropertyKeys.put(labelForChangeLocale,"changeLocaleLabel");
+        nodeAndPropertyKeys.put(inputLogin,"loginLabel");
+        nodeAndPropertyKeys.put(inputPassword,"passwordLabel");
+        updateTexts();
         // Показываем Stage
         primaryStage.show();
 
@@ -164,11 +160,19 @@ public class HelloApplication extends Application {
         }
         return  handle(nodes);
     }
-//    private void updateTexts(List<Node> nodes) {
-//        nodes.stream().forEach();
-//        label.u(bundle.getString("label.text"));
-//        button.setText(bundle.getString("button.text"));
-//    }
+    private void updateTexts() {
+        nodeAndPropertyKeys.keySet().forEach(node -> {
+            if (node instanceof Button){
+                 ((Button) node).setText(localizator.getKeyString(nodeAndPropertyKeys.get(node)));
+            }else if (node instanceof Label){
+                ((Label) node).setText(localizator.getKeyString(nodeAndPropertyKeys.get(node)));
+            }
+            else if (node instanceof PlaceholderTextField){
+                ((PlaceholderTextField) node).setPlaceholderText(localizator.getKeyString(nodeAndPropertyKeys.get(node)));
+            }
+        });
+
+    }
 
     public static void main(String[] args) {
         launch(args);
