@@ -1,7 +1,7 @@
 package org.example.connection;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.tuple.ImmutablePair;
+
 import org.common.commands.Command;
 import org.common.network.Response;
 import org.common.network.SendException;
@@ -22,13 +22,13 @@ import java.nio.channels.Selector;
 import java.util.*;
 import java.util.concurrent.*;
 
-import com.google.common.primitives.Bytes;
+
 public class UdpClient  {
     private final int PACKET_SIZE = 1024;
     private final int DATA_SIZE = PACKET_SIZE - 4;
     private static final int RECEIVE_BUFFER_SIZE = 2 * 1024 * 1024; // 2 MB
 
-    private final CurrentConsole currentConsole = CurrentConsole.getInstance();
+    private final Console currentConsole = CurrentConsole.getInstance();
 
 
     private final DatagramChannel client;
@@ -51,7 +51,6 @@ public class UdpClient  {
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }
-        currentConsole.print("Пытаемся открыть канал для соединения с сервером");
         boolean channelIsOpen = false;
         try {
             this.client = DatagramChannel.open().bind(null).connect(serverSocketAddress);
@@ -62,8 +61,6 @@ public class UdpClient  {
             throw new RuntimeException(e);
         }
 
-        currentConsole.print("Канал открыт");
-        currentConsole.printHello();
     }
 @Getter
     private final UdpSender udpSender = new UdpSender(PACKET_SIZE,client,serverSocketAddress);

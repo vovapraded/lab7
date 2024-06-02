@@ -133,7 +133,7 @@ public class UdpReceiver {
                     try {
                         return receiveData(PACKET_SIZE, selector.selectedKeys());
                     } catch (IOException e) {
-                        throw new ConnectionException("Ошибка подключения");
+                        throw new ConnectionException("ConnectionError");
                     }
                 },poolForReceiving);
                 futures.put(future);

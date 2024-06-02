@@ -10,7 +10,6 @@ public class PropertyUtil {
     private static final   Properties properties = new Properties();
       static {
         try (InputStream inputStream = PropertyUtil.class.getClassLoader().getResourceAsStream("app.properties")) {
-            System.out.println(inputStream);
             properties.load(inputStream);
         } catch (IOException e) {
             e.printStackTrace();

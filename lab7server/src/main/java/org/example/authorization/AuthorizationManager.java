@@ -32,7 +32,7 @@ public class AuthorizationManager {
     }
     public static void register(String login,String password)  throws FailedTransactionException  {
         if (!loginIsUnique(login))
-            throw new AuthorizationException("Пользователь с таким логином уже существует");
+            throw new AuthorizationException("UsernameIsBusy");
         saveNewPassword(login,password);
     }
     private static void saveNewPassword(String login,String password) throws FailedTransactionException {

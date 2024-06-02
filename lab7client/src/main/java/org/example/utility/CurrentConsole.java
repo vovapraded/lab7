@@ -3,10 +3,12 @@ package org.example.utility;
 import lombok.NoArgsConstructor;
 import org.common.utility.*;
 import org.common.utility.Console;
+import org.example.Main;
 import org.example.commands.ExecuteScript;
 
 
 import java.io.*;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -17,8 +19,20 @@ import static lombok.AccessLevel.PRIVATE;
  */
 @NoArgsConstructor(access = PRIVATE)
 public class CurrentConsole implements Console {
-    public static CurrentConsole getInstance() {
-        return INSTANCE;
+    public static Console getInstance() {
+
+        return
+            (Console) Proxy.newProxyInstance(
+                    CurrentConsole.class.getClassLoader(),
+                    new Class<?>[]{Console.class},
+                    (proxy, method, args) -> {
+                        if ("print".equals(method.getName())) {
+                            Main.sendMessageToController((String) args[0]);
+                            return null;
+                        }
+                        return method.invoke(INSTANCE, args);
+                    });
+
     }
 
     private static final CurrentConsole INSTANCE= new CurrentConsole();

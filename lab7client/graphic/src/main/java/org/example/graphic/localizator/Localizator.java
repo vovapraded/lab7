@@ -1,5 +1,6 @@
 package org.example.graphic.localizator;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,11 +11,14 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
 import java.util.ResourceBundle;
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Localizator {
     @Getter
     @Setter
     private ResourceBundle bundle = ResourceBundle.getBundle("locales.gui");
+
+    @Getter
+    private final static Localizator instance = new Localizator();
 
     public Localizator(ResourceBundle bundle) {
         this.bundle = bundle;

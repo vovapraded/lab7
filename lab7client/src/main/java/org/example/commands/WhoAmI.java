@@ -9,7 +9,7 @@ public class WhoAmI extends Command implements ClientCommand{
     public void execute() {
         var login = PropertyUtil.getLogin();
         if (login == null)
-            console.print("Вы не авторизованны");
+            console.print("NotLoginIn");
         else
             console.print(login);
     }

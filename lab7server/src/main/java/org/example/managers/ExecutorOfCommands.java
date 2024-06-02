@@ -114,9 +114,9 @@ public void run(){
             if ( !isAuthorized ){
                 logger.debug("Команда "+command.getClass().getName()+" не выполнена, клиент "+responseManager.getResponse(command).getAddress()+" не авторизован");
                 if (!responseManager.getResponse(command).isLoginCorrect())
-                    throw  new AuthorizationException( "Вы не авторизованы, неверный логин");
+                    throw  new AuthorizationException( "NotLoginInInvalidUsername");
                 else if (!responseManager.getResponse(command).isPasswordCorrect())
-                    throw  new AuthorizationException( "Вы не авторизованы, неверный пароль");
+                    throw  new AuthorizationException( "NotLoginInInvalidPassword");
 
             }
 

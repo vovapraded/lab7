@@ -1,54 +1,34 @@
 package org.example.graphic.scene;
 
-import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-public class MainScene extends Application {
-
-    @Override
-    public void start(Stage primaryStage) {
-        // Создаем GridPane
-        GridPane gridPane = new GridPane();
-
-        // Создаем HBox для кнопок и устанавливаем отступы
-        HBox buttonBox = new HBox(5); // отступ 5 между кнопками
-        buttonBox.setPadding(new Insets(10)); // отступ от границ окна
-        buttonBox.setAlignment(Pos.TOP_RIGHT); // выравнивание по правому верхнему углу
-
-        // Создаем кнопки
-        Button login = new Button("Login");
-        login.setOnAction(e -> primaryStage.close());
-
-        Button register = new Button("Register");
-        register.setOnAction(e -> primaryStage.setIconified(true));
-
-        // Добавляем кнопки в HBox
-        buttonBox.getChildren().addAll(register, login);
+public class MainScene extends MyScene  {
+    private ComboBox<String> changeLocale;
+    public void createMainScene() {
+        GridPane root = new GridPane();
+        root.setAlignment(Pos.BOTTOM_RIGHT);
+        changeLocale = createChangeLocaleBox();
+        Button logOut = new Button("");
+        nodeAndPropertyKeys.put(logOut,"LogOut");
+        logOut.setOnAction(e -> Application.switchToLoginScene());
+        root.add(logOut,0,0);
+        root.add(changeLocale,0,1);
 
 
-        // Создаем сцену
-        Scene scene = new Scene(gridPane, 800, 600); // начальный размер сцены
-
-        // Устанавливаем сцену на Stage
-        primaryStage.setScene(scene);
-
-        // Делаем окно максимально возможным (но не полноэкранным)
-        primaryStage.setMaximized(true);
-
-        // Устанавливаем заголовок окна
-        primaryStage.setTitle("GridPane Example");
-
-        // Показываем Stage
-        primaryStage.show();
+        scene = new Scene(root, 800, 600);
+        System.out.println(localizator);
     }
 
-    public static void main(String[] args) {
-        launch(args);
+    @Override
+    public void updateValueChangeLocale() {
+        updateValueChangeLocale(changeLocale);
     }
 }
