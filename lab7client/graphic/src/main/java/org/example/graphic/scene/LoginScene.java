@@ -25,7 +25,7 @@ public class LoginScene extends MyScene {
 
 
     public void createLoginScene(){
-         changeLocale = createChangeLocaleBox();
+         createChangeLocaleBox();
         //        Label labelForChangeLocale = new Label(,changeLocale);
 //        labelForChangeLocale.setContentDisplay(ContentDisplay.BOTTOM);
         // Создаем GridPane
@@ -40,8 +40,8 @@ public class LoginScene extends MyScene {
         PlaceholderTextField inputLogin = new PlaceholderTextField("");
         PlaceholderTextField inputPassword = new PlaceholderTextField("");
 
-        Label labelForChangeLocale = new Label("",changeLocale);
-        labelForChangeLocale.setContentDisplay(ContentDisplay.BOTTOM);
+//        Label labelForChangeLocale = new Label("",changeLocale);
+//        labelForChangeLocale.setContentDisplay(ContentDisplay.BOTTOM);
 
 
 
@@ -63,7 +63,9 @@ public class LoginScene extends MyScene {
                 var message=controller.register(inputLogin.getText(),inputPassword.getText());
                 Popup.showDialog(localizator.getKeyString(message));
                 if (message.equals("SuccessRegisterAndLoggedIn")){
+                    Application.setLogin(inputLogin.getText());
                     Application.switchToMainScene();
+
                 }
             } catch (Exception ex) {
                 Popup.showError(localizator.getKeyString(ex.getMessage()));
@@ -76,6 +78,7 @@ public class LoginScene extends MyScene {
             try {
                 var message=controller.login(inputLogin.getText(),inputPassword.getText());
                 Popup.showDialog(localizator.getKeyString(message));
+                Application.setLogin(inputLogin.getText());
                 Application.switchToMainScene();
 
             } catch (Exception ex) {
@@ -88,11 +91,12 @@ public class LoginScene extends MyScene {
         buttonBox.getChildren().addAll(login, register);
         GridPane.setHalignment(loginForm, HPos.CENTER);
         GridPane.setValignment(loginForm, VPos.CENTER);
-        GridPane.setHalignment(labelForChangeLocale, HPos.RIGHT);
-        GridPane.setValignment(labelForChangeLocale, VPos.BOTTOM);
+        GridPane.setHalignment(changeLocaleLabel, HPos.RIGHT);
+        GridPane.setValignment(changeLocaleLabel, VPos.BOTTOM);
         // Добавляем HBox в GridPane в ячейку (0, 0)
         gridPane.add(loginForm, 0, 0);
-        gridPane.add(labelForChangeLocale,0,1);
+        gridPane.add(changeLocaleLabel,0,1);
+
 
         GridPane.setMargin(loginForm, new Insets(0, 0, 0, 0)); // добавляем отступы если нужно
 
@@ -108,7 +112,7 @@ public class LoginScene extends MyScene {
         
         nodeAndPropertyKeys.put(login,"LoginLabel");
         nodeAndPropertyKeys.put(register,"RegisterLabel");
-        nodeAndPropertyKeys.put(labelForChangeLocale,"changeLocaleLabel");
+//        nodeAndPropertyKeys.put(labelForChangeLocale,"changeLocaleLabel");
         nodeAndPropertyKeys.put(inputLogin,"loginLabel");
         nodeAndPropertyKeys.put(inputPassword,"passwordLabel");
         scene = new Scene(gridPane, 400, 300);

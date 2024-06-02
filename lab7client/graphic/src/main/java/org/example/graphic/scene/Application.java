@@ -3,6 +3,7 @@ package org.example.graphic.scene;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import lombok.Getter;
+import lombok.Setter;
 import org.example.graphic.scene.util.BackgroundClickableMaker;
 
 public class Application extends javafx.application.Application {
@@ -11,6 +12,8 @@ public class Application extends javafx.application.Application {
     private static final BackgroundClickableMaker backgroundClickableMaker = new BackgroundClickableMaker();
     private static  LoginScene loginSceneObj;
     private static  MainScene mainSceneObj;
+    @Getter @Setter
+    private static String login;
 
     @Override
     public void start(Stage stage) throws Exception {
