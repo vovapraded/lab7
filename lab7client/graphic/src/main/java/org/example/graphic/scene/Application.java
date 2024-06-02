@@ -37,16 +37,18 @@ public class Application extends javafx.application.Application {
             backgroundClickableMaker.make(mainSceneObj.scene);
         }
         primaryStage.setTitle("Main");
+        mainSceneObj.updateValueChangeLocale();
+        mainSceneObj.updateTexts();
         primaryStage.setScene(mainSceneObj.scene);
 
 
     }
 
     public  static  void switchToLoginScene() {
-
-        primaryStage.setScene(loginSceneObj.scene);
         loginSceneObj.updateValueChangeLocale();
         loginSceneObj.updateTexts();
+        primaryStage.setScene(loginSceneObj.scene);
+
 
 
     }

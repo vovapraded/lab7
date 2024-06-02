@@ -17,6 +17,7 @@ public abstract class MyScene {
     protected Scene scene;
     protected final HashMap<Node,String > nodeAndPropertyKeys = new HashMap<Node,String >();
     protected Localizator localizator = Localizator.getInstance();
+    protected ComboBox<String> changeLocale;
     static {
         Locale.setDefault(Locale.UK);
     }
@@ -34,9 +35,9 @@ public abstract class MyScene {
         });
     }
     protected ComboBox<String> createChangeLocaleBox() {
-        ComboBox<String> changeLocale = new ComboBox<>();
+        changeLocale = new ComboBox<>();
         changeLocale.getItems().addAll("en GB", "ru RU", "en IE", "nl NL", "sq AL");
-        updateValueChangeLocale(changeLocale);
+        updateValueChangeLocale();
         changeLocale.setOnAction(e -> {
             var value = changeLocale.getValue();
             localizator.setBundle(ResourceBundle.getBundle("locales.gui",
@@ -48,7 +49,7 @@ public abstract class MyScene {
         return changeLocale;
     }
 
-    public void updateValueChangeLocale(ComboBox<String> changeLocale) {
+    public void updateValueChangeLocale() {
         var lang = localizator.getBundle().getLocale().getLanguage().toLowerCase();
         var country = localizator.getBundle().getLocale().getCountry().toUpperCase();
         var locale = lang+" "+country;
@@ -57,5 +58,4 @@ public abstract class MyScene {
         System.out.println(locale);
         changeLocale.setValue(locale);
     }
-    public abstract void updateValueChangeLocale();
 }

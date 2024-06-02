@@ -11,7 +11,6 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class MainScene extends MyScene  {
-    private ComboBox<String> changeLocale;
     public void createMainScene() {
         GridPane root = new GridPane();
         root.setAlignment(Pos.BOTTOM_RIGHT);
@@ -22,13 +21,9 @@ public class MainScene extends MyScene  {
         root.add(logOut,0,0);
         root.add(changeLocale,0,1);
 
-
         scene = new Scene(root, 800, 600);
         System.out.println(localizator);
     }
 
-    @Override
-    public void updateValueChangeLocale() {
-        updateValueChangeLocale(changeLocale);
-    }
+
 }

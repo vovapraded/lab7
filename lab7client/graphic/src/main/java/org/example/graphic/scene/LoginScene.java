@@ -22,7 +22,6 @@ public class LoginScene extends MyScene {
 //    private final String defaultBundle;
 //    private  String bundle;
     private final MyController controller = new MyController();
-    private ComboBox<String> changeLocale;
 
 
     public void createLoginScene(){
@@ -120,11 +119,7 @@ public class LoginScene extends MyScene {
 
     }
 
-    @Override
-    public void updateValueChangeLocale() {
-            updateValueChangeLocale(changeLocale);
 
-    }
 
 
 //    private void switchToMainScene() {
