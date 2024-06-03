@@ -1,14 +1,16 @@
 package org.example.managers;
 
 import org.common.commands.Command;
+import org.common.dto.Ticket;
 import org.common.managers.ResponseManager;
 import org.common.network.Response;
 import org.example.connection.ResponsePublisher;
-import org.example.utility.Main;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class CurrentResponseManager implements ResponseManager {
     private static final Logger logger = LoggerFactory.getLogger(CurrentResponseManager.class);
@@ -27,6 +29,15 @@ public class CurrentResponseManager implements ResponseManager {
         responses.get(command).getMessage().add(s);
 
     }
+
+    @Override
+    public void addToSend(List<Ticket> tickets, Command command) {
+        if (responses.get(command).getTickets()==null){
+            responses.get(command).setTickets( new ArrayList<Ticket>());
+        }
+        responses.get(command).getTickets().addAll(tickets);
+    }
+
     @Override
     public void send(Command command){
         var response = responses.get(command);

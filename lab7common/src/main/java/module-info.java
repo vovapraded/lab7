@@ -3,6 +3,8 @@ module lab7common {
     requires jakarta.persistence;
     requires org.hibernate.orm.core;
     requires com.querydsl.core;
+    requires com.querydsl.jpa;
+
     requires java.desktop;
     exports org.common;
     exports org.common.utility;
@@ -11,6 +13,9 @@ module lab7common {
     exports org.common.commands;
     exports org.common.commands.authorization;
     exports org.common.commands.inner.objects;
+    exports org.common.dto;
+    exports org.common.managers;
+    exports org.common.dao.interfaces;
 
 
 }

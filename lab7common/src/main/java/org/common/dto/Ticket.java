@@ -112,4 +112,20 @@ public class Ticket extends ElementsWithId implements Comparable<Ticket>, Serial
                 ", venue " + venue.toString()+
                 ", created by " + createdBy;
     }
+    public Long getVenueCapacity() {
+        return venue != null ? venue.getCapacity() : null;
+    }
+    public String getVenueName() {
+        return venue != null ? venue.getName() : null;
+    }
+    public VenueType getVenueType() {
+        return venue != null ? venue.getVenueType() : null;
+    }
+    public Double getCoordinatesX() {
+        return coordinates != null ? coordinates.getX() : null;
+    }
+    public Long getCoordinatesY() {
+        return coordinates != null ? coordinates.getY() : null;
+    }
 }
+

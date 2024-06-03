@@ -1,6 +1,7 @@
 package org.example.connector.to.controller;
 
 import org.common.commands.Command;
+import org.common.dto.Ticket;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,11 @@ public class ConsoleEventPublisher {
     public void sendMessageToController(String message) {
         for (ConsoleEventListener listener : listeners) {
             listener.onEvent(message);
+        }
+    }
+    public void sendTicketsToController(List<Ticket> tickets) {
+        for (ConsoleEventListener listener : listeners) {
+            listener.onEvent(tickets);
         }
     }
 }

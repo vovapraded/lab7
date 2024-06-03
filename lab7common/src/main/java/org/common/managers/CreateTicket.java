@@ -20,24 +20,24 @@ public class CreateTicket {
     public  Ticket createTicket(Long id) throws InvalidFormatException {
         String name = "";
         while (name.isEmpty() || name.contains(" ")|| name.contains("\t")|| name.contains("\n")|| name.length()>128) {
-            console.print("Введите название билета");
+            console.sendToController("Введите название билета");
             name = console.getInputFromCommand(1, 1);
             if (name.isEmpty()|| name.contains(" ")|| name.contains("\t")|| name.contains("\n")) {
-                console.print("Имя не должно быть пустым, не должно содержать пробелов");
+                console.sendToController("Имя не должно быть пустым, не должно содержать пробелов");
             }
             if (name.length()>128){
-                console.print("Имя не должно быть больше 128 символов");
+                console.sendToController("Имя не должно быть больше 128 символов");
 
             }
         }
         Long price = -1L;
         while (price <= 0) {
-            console.print("Введите цену");
+            console.sendToController("Введите цену");
             String priceStr = console.getInputFromCommand(1, 1);
             if (!Validator.validate(priceStr, TypesOfArgs.Long, false)) {
-                console.print("Цена должна быть числом больше 0");
+                console.sendToController("Цена должна быть числом больше 0");
             } else if (Long.parseLong(priceStr) <= 0) {
-                console.print("Цена должна быть числом больше 0");
+                console.sendToController("Цена должна быть числом больше 0");
             } else {
                 price = Long.parseLong(priceStr);
             }
@@ -46,7 +46,7 @@ public class CreateTicket {
 
         Long discount = -1L;
         while (discount != null && discount <= 0  ) {
-            console.print("Введите скидку или пустую строку");
+            console.sendToController("Введите скидку или пустую строку");
             String discountStr = console.getInputFromCommand(0, 1);
             if (Validator.validate(discountStr, TypesOfArgs.Long, false)) {
                 discount = Long.parseLong(discountStr);
@@ -55,17 +55,17 @@ public class CreateTicket {
                 break;
             }
             if (discount <= 0) {
-                console.print("Скидка, если есть, должна быть числом больше 0");
+                console.sendToController("Скидка, если есть, должна быть числом больше 0");
             }
         }
 
 
         Boolean refundable = null;
-        console.print("Введите возможность возврата или пустую строку");
+        console.sendToController("Введите возможность возврата или пустую строку");
         String refaundableStr = console.getInputFromCommand(0, 1);
         while (!Validator.validate(refaundableStr, TypesOfArgs.Boolean, true)) {
-            console.print("Возможность возврата, если есть, должна быть \"true\" или \"false\"");
-            console.print("Введите возможность возврата или пустую строку");
+            console.sendToController("Возможность возврата, если есть, должна быть \"true\" или \"false\"");
+            console.sendToController("Введите возможность возврата или пустую строку");
             refaundableStr = console.getInputFromCommand(0, 1);
         }
         if (!refaundableStr.isEmpty()) {
@@ -76,17 +76,17 @@ public class CreateTicket {
 //        считываем ticketType
 
         String ticketTypeStr = "";
-        console.print("Введите тип билета");
+        console.sendToController("Введите тип билета");
         for (
                 TicketType type : TicketType.values()) {
-            console.print(type.name());
+            console.sendToController(type.name());
         }
         ticketTypeStr = console.getInputFromCommand(1, 1);
         while (!Validator.validate(ticketTypeStr, TypesOfArgs.TicketType, false)) {
-            console.print("Вы неверно ввели тип билета");
-            console.print("Введите тип билета");
+            console.sendToController("Вы неверно ввели тип билета");
+            console.sendToController("Введите тип билета");
             for (TicketType type : TicketType.values()) {
-                console.print(type.name());
+                console.sendToController(type.name());
             }
             ticketTypeStr = console.getInputFromCommand(1, 1);
         }
@@ -94,10 +94,10 @@ public class CreateTicket {
         Double x = null;
         //считываем x
         while (x == null) {
-            console.print("Введите координату X, где X число c плавающей точкой");
+            console.sendToController("Введите координату X, где X число c плавающей точкой");
             String xstr = console.getInputFromCommand(1, 1);
             if (!Validator.validate(xstr, TypesOfArgs.Double, false)) {
-                console.print("X должен быть числом с плавающей точкой");
+                console.sendToController("X должен быть числом с плавающей точкой");
             } else {
                 x = Double.parseDouble(xstr);
             }
@@ -106,14 +106,14 @@ public class CreateTicket {
         String ystr;
         //считываем y
         while (y <= -618) {
-            console.print("Введите координату Y, где Y целое число > -618");
+            console.sendToController("Введите координату Y, где Y целое число > -618");
             ystr = console.getInputFromCommand(1, 1);
             if (!Validator.validate(ystr, TypesOfArgs.Long, false)) {
-                console.print("Y должен быть числом");
+                console.sendToController("Y должен быть числом");
             } else {
                 y = (long) Long.parseLong(ystr);
                 if (y <= -618) {
-                    console.print("Y должен быть больше -618");
+                    console.sendToController("Y должен быть больше -618");
                 }
 
             }
@@ -121,20 +121,20 @@ public class CreateTicket {
         //считываем venueName
         String venueName = "";
         while (venueName.isEmpty() || venueName.length()>128 ) {
-            console.print("Введите Место встречи");
+            console.sendToController("Введите Место встречи");
             venueName = console.getInputFromCommand(1, 1);
             if (venueName.isEmpty()) {
-                console.print("Неверный формат ввода, вы не ввели название места встречи");
+                console.sendToController("Неверный формат ввода, вы не ввели название места встречи");
             }
             if (venueName.length()>128){
-                console.print("Имя не должно быть больше 128 символов");
+                console.sendToController("Имя не должно быть больше 128 символов");
 
             }
         }
         //считываем venueCapacity
         Long venueCapacity = -1L;
         while (venueCapacity <= 0) {
-            console.print("Введите вместимость места встречи или пустую строку");
+            console.sendToController("Введите вместимость места встречи или пустую строку");
             String venueCapacityStr = console.getInputFromCommand(0, 1);
             if (venueCapacityStr.isEmpty()) {
                 venueCapacity = null;
@@ -143,16 +143,16 @@ public class CreateTicket {
                 venueCapacity = Long.parseLong(venueCapacityStr);
             }
             if (venueCapacity <= 0) {
-                console.print("Вместимость должна быть больше нуля");
+                console.sendToController("Вместимость должна быть больше нуля");
             }
 
         }
         //считываем venueType
         VenueType venueType = null;
         while (venueType == null) {
-            console.print("Введите тип места встречи из предложенных или пустую строку");
+            console.sendToController("Введите тип места встречи из предложенных или пустую строку");
             for (VenueType type : VenueType.values()) {
-                console.print(type.name());
+                console.sendToController(type.name());
             }
             String input = console.getInputFromCommand(0, 1);
             if (Validator.validate(input, TypesOfArgs.VenueType, false)) {
@@ -160,7 +160,7 @@ public class CreateTicket {
             } else if (input.isEmpty()) {
                 break;
             } else {
-                console.print("Вы неверно ввели тип места встречи");
+                console.sendToController("Вы неверно ввели тип места встречи");
             }
         }
         Venue venue = new Venue(venueType, venueCapacity, venueName);

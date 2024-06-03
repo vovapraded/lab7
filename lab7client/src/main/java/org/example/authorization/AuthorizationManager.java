@@ -39,9 +39,9 @@ public class AuthorizationManager {
     }
 
     private static ImmutablePair<String,String> inputLoginAndPassword(){
-        currentConsole.print("Введите логин:");
+        currentConsole.sendToController("Введите логин:");
         var login = currentConsole.getInputFromCommand(1,1);
-        currentConsole.print("Введите пароль:");
+        currentConsole.sendToController("Введите пароль:");
         var password = currentConsole.getInputFromCommand(1,1);
         return new ImmutablePair<>(login,password);
     }

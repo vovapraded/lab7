@@ -8,6 +8,7 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.text.Text;
 import lombok.Getter;
+import org.controller.MyController;
 import org.example.graphic.localizator.Localizator;
 import org.example.graphic.node.PlaceholderTextField;
 
@@ -20,6 +21,8 @@ public abstract class MyScene {
     protected final HashMap<Node,String > nodeAndPropertyKeys = new HashMap<Node,String >();
     protected Localizator localizator = Localizator.getInstance();
     protected Label changeLocaleLabel;
+    protected final static MyController controller = new MyController();
+
     static {
         Locale.setDefault(Locale.UK);
     }

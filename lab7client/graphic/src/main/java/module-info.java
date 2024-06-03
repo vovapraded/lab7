@@ -14,6 +14,7 @@ module org.example.graphic {
     // Экспорт пакета для использования в других модулях, включая javafx.graphics
     exports org.example.graphic.scene;
     requires controller;
+    requires lab7common;
 
 
 }

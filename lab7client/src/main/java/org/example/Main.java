@@ -2,6 +2,7 @@ package org.example;
 
 import lombok.Getter;
 import org.common.commands.Command;
+import org.common.dto.Ticket;
 import org.common.utility.Console;
 import org.example.authorization.AuthorizationManager;
 import org.example.commands.ClientCommand;
@@ -10,6 +11,8 @@ import org.example.connector.to.controller.ConsoleEventPublisher;
 import org.example.utility.CurrentConsole;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *Main class
@@ -29,6 +32,9 @@ public class Main {
     public static void sendMessageToController(String message){
         consoleEventPublisher.sendMessageToController(message);
     }
+    public static void sendTicketsToController(List<Ticket> tickets){
+        consoleEventPublisher.sendTicketsToController(tickets);
+    }
     public static void handleCommand(Command command) throws Exception{
                     //получаем команду
                     //если команда не клиентская
@@ -38,7 +44,15 @@ public class Main {
                             if (!resp.isPasswordCorrect() || !resp.isLoginCorrect()) {
                                 AuthorizationManager.resetAuth();
                             }
-                            currentConsole.print(resp.getMessageBySingleString());
+                            var message = resp.getMessageBySingleString();
+                            if (!message.isBlank()){
+                                currentConsole.sendToController(message);
+                            }
+                            if (resp.getTickets()!=null){
+                                currentConsole.sendToController(resp.getTickets());
+                            }
+
+
 
 
                     }else {

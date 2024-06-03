@@ -21,7 +21,6 @@ public class LoginScene extends MyScene {
 //    private Stage primaryStage;
 //    private final String defaultBundle;
 //    private  String bundle;
-    private final MyController controller = new MyController();
 
 
     public void createLoginScene(){

@@ -1,6 +1,7 @@
 package org.example.utility;
 
 import lombok.NoArgsConstructor;
+import org.common.dto.Ticket;
 import org.common.utility.*;
 import org.common.utility.Console;
 import org.example.Main;
@@ -10,6 +11,7 @@ import org.example.commands.ExecuteScript;
 import java.io.*;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import static lombok.AccessLevel.PRIVATE;
@@ -45,7 +47,7 @@ public class CurrentConsole implements Console {
     }
     @Override
     public void printHello(){
-        print("Добро пожаловать!\n" +
+        sendToController("Добро пожаловать!\n" +
                 "Введите login или register для авторизации");
     }
 
@@ -66,7 +68,7 @@ public class CurrentConsole implements Console {
             System.exit(0);
         }
 
-        print("Чтение файла "+stack.get(stack.size()-1)+" окончено");
+        sendToController("Чтение файла "+stack.get(stack.size()-1)+" окончено");
         stack.remove(stack.size()-1);
         ExecuteScript.setStack(stack);
         stackScanners.remove(stackScanners.size()-1);
@@ -87,19 +89,27 @@ public class CurrentConsole implements Console {
     @Override
 
     public String getInputFromCommand(int minCountOfArgs,int maxCountOfArgs){
-        this.print("Для отмены операции введите /");
+        this.sendToController("Для отмены операции введите /");
         String input = this.getInput();
         if (input.equals("/")){
             goToMenu();
         }
         int countOfArgs = input.split(" ",-1).length ;
         if (countOfArgs < minCountOfArgs || countOfArgs>maxCountOfArgs ){
-            print("Неверное число аргументов");
+            sendToController("Неверное число аргументов");
             return getInputFromCommand(minCountOfArgs,maxCountOfArgs);
         }
         return input;
     }
 
+    @Override
+    public void sendToController(String s) {
+        Main.sendMessageToController(s);
+    }
+    @Override
+    public void sendToController(List<Ticket> tickets) {
+        Main.sendTicketsToController(tickets);
+    }
 
 
     public void checkScanner(){

@@ -1,6 +1,8 @@
 package org.example.graphic.scene;
 
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,14 +45,26 @@ public class Application extends javafx.application.Application {
         mainSceneObj.updateValueChangeLocale();
         mainSceneObj.updateTexts();
         primaryStage.setScene(mainSceneObj.scene);
+//        primaryStage.setFullScreen(true);
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
 
+        // Настройка размеров и позиции окна
+        primaryStage.setX(screenBounds.getMinX());
+        primaryStage.setY(screenBounds.getMinY());
+        primaryStage.setWidth(screenBounds.getWidth());
+        primaryStage.setHeight(screenBounds.getHeight());
 
     }
 
     public  static  void switchToLoginScene() {
         loginSceneObj.updateValueChangeLocale();
         loginSceneObj.updateTexts();
+        primaryStage.setWidth(400);
+        primaryStage.setHeight(300);
         primaryStage.setScene(loginSceneObj.scene);
+        primaryStage.centerOnScreen();
+
+
 
 
 

@@ -105,7 +105,7 @@ public class UdpReceiver {
             throw e;
         }
 
-        if (!received) throw new NoResponseException("Нет ответа");
+        if (!received) throw new NoResponseException("NoResponse");
         var binaryResponse=sortPackets();
         var response = Deserializer.deserialize(binaryResponse, Response.class);
         return response;

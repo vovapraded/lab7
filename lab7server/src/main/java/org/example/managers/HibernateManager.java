@@ -1,7 +1,6 @@
 package org.example.managers;
 
 import org.common.utility.ConnectToDatabaseException;
-import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 public class HibernateManager {

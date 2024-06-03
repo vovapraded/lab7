@@ -15,13 +15,14 @@ public class Show extends Command implements Serializable {
 
     @Override
     public void execute() {
-        if (collection.getHashMap().isEmpty()) {
-            responseManager.addToSend("Коллекция пуста",this);
-        } else {
-            collection.getHashMap().values().stream()
+
+            var tickets  = collection.getHashMap().values().stream()
                     .sorted()
-                    .forEach(ticket -> responseManager.addToSend(ticket.toString(),this) );
-        }
+                    .toList();
+            responseManager.addToSend(tickets,this);
+        System.out.println("ОТПРАВИЛИ");
+
+
         loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
         responseManager.send(this);
     }
