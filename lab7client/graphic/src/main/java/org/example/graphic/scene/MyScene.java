@@ -2,15 +2,13 @@ package org.example.graphic.scene;
 
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.text.Text;
 import lombok.Getter;
 import org.controller.MyController;
 import org.example.graphic.localizator.Localizator;
 import org.example.graphic.node.PlaceholderTextField;
+import org.example.graphic.node.TableColumnAdapter;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -38,7 +36,8 @@ public abstract class MyScene {
                 ((PlaceholderTextField) node).setPlaceholderText(localizator.getKeyString(nodeAndPropertyKeys.get(node)));
             }else if (node instanceof Text){
                 ((Text) node).setText(localizator.getKeyString(nodeAndPropertyKeys.get(node)));
-
+            }else if (node instanceof TableColumnAdapter){
+                ((TableColumnAdapter) node).getTableColumn().setText(localizator.getKeyString(nodeAndPropertyKeys.get(node)));
             }
         });
     }
@@ -70,4 +69,5 @@ public abstract class MyScene {
         var changeLocale = (ComboBox<String>) changeLocaleLabel.getLabelFor();
         changeLocale.setValue(locale);
     }
+
 }

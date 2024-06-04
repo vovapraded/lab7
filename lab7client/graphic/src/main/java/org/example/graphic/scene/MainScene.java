@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -14,6 +15,7 @@ import javafx.scene.text.Text;
 import javafx.util.Callback;
 import lombok.SneakyThrows;
 import org.common.dto.*;
+import org.example.graphic.node.TableColumnAdapter;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -80,8 +82,9 @@ public class MainScene extends MyScene {
     private TableView<Ticket> createTable() {
         table = new TableView<>();
         table.setPadding(new Insets(30));
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        TableColumn<Ticket, Long> id = new TableColumn<>("Id");
+        TableColumn<Ticket, Long> id = new TableColumn<>("");
         id.setCellValueFactory(new PropertyValueFactory<>("id"));
 
         TableColumn<Ticket, String> name = new TableColumn<>("Name");
@@ -94,7 +97,9 @@ public class MainScene extends MyScene {
         price.setCellValueFactory(new PropertyValueFactory<>("price"));
         price.setSortable(true);
 
+
         price.setSortType(TableColumn.SortType.ASCENDING);
+//        price.setText();
 
 
         TableColumn<Ticket, Long> discount = new TableColumn<>("Discount");
@@ -159,7 +164,28 @@ public class MainScene extends MyScene {
                 return false;
         });
 
+        nodeAndPropertyKeys.put(new TableColumnAdapter(id),"IdLabel");
+        nodeAndPropertyKeys.put(new TableColumnAdapter(name),"NameLabel");
+        nodeAndPropertyKeys.put(new TableColumnAdapter(price),"PriceLabel");
+        nodeAndPropertyKeys.put(new TableColumnAdapter(discount),"DiscountLabel");
+        nodeAndPropertyKeys.put(new TableColumnAdapter(refundable),"RefundableLabel");
+        nodeAndPropertyKeys.put(new TableColumnAdapter(createdBy),"CreatedByLabel");
+        nodeAndPropertyKeys.put(new TableColumnAdapter(creationDate),"CreationDateLabel");
+        nodeAndPropertyKeys.put(new TableColumnAdapter(ticketType),"TypeLabel");
+        nodeAndPropertyKeys.put(new TableColumnAdapter(venueName),"NameLabel");
+        nodeAndPropertyKeys.put(new TableColumnAdapter(venueType),"TypeLabel");
+        nodeAndPropertyKeys.put(new TableColumnAdapter(venueCapacity),"CapacityLabel");
+        nodeAndPropertyKeys.put(new TableColumnAdapter(x),"xLabel");
+        nodeAndPropertyKeys.put(new TableColumnAdapter(y),"yLabel");
+        nodeAndPropertyKeys.put(new TableColumnAdapter(ticketDetailsColumn),"TicketDetailsLabel");
+        nodeAndPropertyKeys.put(new TableColumnAdapter(coordinatesDetails),"CoordinatesDetailsLabel");
+        nodeAndPropertyKeys.put(new TableColumnAdapter(venueDetailsColumn),"VenueDetailsLabel");
 
+
+
+
+
+        updateTexts();
 
         return table;
     }
@@ -176,6 +202,7 @@ public class MainScene extends MyScene {
 
         ObservableList<Ticket> pageData = FXCollections.observableArrayList(sortedData.subList(fromIndex, toIndex));
         table.setItems(pageData);
+
 
 
         VBox box = new VBox(table);
