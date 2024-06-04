@@ -1,86 +1,54 @@
-package org.example.graphic.scene;
+package org.example.graphic.scene.main;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Pagination;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.*;
-import javafx.scene.text.Text;
-import javafx.util.Callback;
+import javafx.scene.layout.VBox;
 import lombok.SneakyThrows;
-import org.common.dto.*;
+import org.common.dto.Ticket;
+import org.common.dto.TicketType;
+import org.common.dto.VenueType;
+import org.controller.MyController;
 import org.example.graphic.node.TableColumnAdapter;
+import org.example.graphic.scene.MyScene;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.HashMap;
 
-public class MainScene extends MyScene {
+public class CreatorTable {
+    private  TableView<Ticket> table;
+    private SortedList<Ticket> sortedData; // SortedList для поддержания сортировки
+    private final TicketStorage ticketStorage;
+    private HashMap<Node,String > nodeAndPropertyKeys = new HashMap<Node,String >();
+    private final  MyController controller = MyController.getInstance();
+    private final MainScene mainScene;
+    private Pagination pagination;
     private static final int ROWS_PER_PAGE = 10; // Количество строк на страницу
 
-    private SortedList<Ticket> sortedData; // SortedList для поддержания сортировки
-    private ObservableList<Ticket> data;
-    private Pagination pagination;
-    private TableView<Ticket> table;
 
-    public void createMainScene() {
-        BorderPane root = new BorderPane();
-        Button logOut = new Button("");
-        Text loginLabel1 = new Text();
-        Text loginLabel2 = new Text(": " + Application.getLogin());
-        HBox username = new HBox(loginLabel1, loginLabel2);
-        VBox userBox = new VBox(username, logOut);
-        HBox userBoxWrapper = new HBox(userBox);
-        userBoxWrapper.setAlignment(Pos.TOP_RIGHT);
-        userBox.setPadding(new Insets(20));
-        userBox.setSpacing(10);
 
-        createChangeLocaleBox();
-        nodeAndPropertyKeys.put(logOut, "LogOut");
-        nodeAndPropertyKeys.put(loginLabel1, "LoginLabel");
-        logOut.setOnAction(e -> Application.switchToLoginScene());
-        root.setTop(userBoxWrapper);
-
-        HBox changeLocaleWrapper = new HBox(changeLocaleLabel);
-        changeLocaleWrapper.setPadding(new Insets(20));
-        changeLocaleWrapper.setAlignment(Pos.BOTTOM_RIGHT);
-        root.setBottom(changeLocaleWrapper);
-
+    public Pagination init(){
         pagination = createPagination();
-        root.setCenter(pagination);
-        table = createTable();
-
-        scene = new Scene(root, 800, 600);
-
-        
-
+        createTable();
+        return pagination;
     }
 
-    @SneakyThrows
-    private Pagination createPagination() {
-        data = FXCollections.observableArrayList(controller.show());
-        sortedData = new SortedList<>(data);
-//        sortedData.comparatorProperty().addListener((obs, oldComparator, newComparator) -> {
-//            // Устанавливаем новый компаратор
-//            sortedData.setComparator(newComparator);
-//            // Обновляем содержимое таблицы на первой странице пагинации
-//        });
-
-
-        int totalPageCount = (int) Math.ceil((double) sortedData.size() / ROWS_PER_PAGE);
-        Pagination pagination = new Pagination(totalPageCount, 0);
-        pagination.setPageFactory(this::createPage);
-        return pagination;
+    public CreatorTable(TicketStorage ticketStorage, MainScene mainScene) {
+        this.ticketStorage = ticketStorage;
+        this.nodeAndPropertyKeys = mainScene.getNodeAndPropertyKeys();
+        this.mainScene = mainScene;
     }
 
     @SneakyThrows
     private TableView<Ticket> createTable() {
-        table = new TableView<>();
+        table = new TableView<Ticket>();
         table.setPadding(new Insets(30));
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
@@ -143,25 +111,25 @@ public class MainScene extends MyScene {
 //        table.getSelectionModel().clearAndSelect(3);
         table.setSortPolicy(var1 -> {
 
-                var comparator = var1.getComparator();
-                if (comparator == null){
-                    price.setSortType(TableColumn.SortType.ASCENDING);
-                    
+            var comparator = var1.getComparator();
+            if (comparator == null){
+                price.setSortType(TableColumn.SortType.ASCENDING);
 
-                    
+
+
 
 
 //                    sortedData.setComparator(Comparator.naturalOrder());
 //                    pagination.setPageFactory(pageIndex -> createPage(pageIndex));
-                    return true;
-                }
-                if (comparator.equals(sortedData.getComparator())){
-                    comparator = comparator.reversed();
-                }
-                sortedData.setComparator(comparator);
+                return true;
+            }
+            if (comparator.equals(sortedData.getComparator())){
+                comparator = comparator.reversed();
+            }
+            sortedData.setComparator(comparator);
 //                FXCollections.sort(sortedData, sortedData.getComparator());
             pagination.setPageFactory(pageIndex -> createPage(pageIndex));
-                return false;
+            return false;
         });
 
         nodeAndPropertyKeys.put(new TableColumnAdapter(id),"IdLabel");
@@ -180,15 +148,26 @@ public class MainScene extends MyScene {
         nodeAndPropertyKeys.put(new TableColumnAdapter(ticketDetailsColumn),"TicketDetailsLabel");
         nodeAndPropertyKeys.put(new TableColumnAdapter(coordinatesDetails),"CoordinatesDetailsLabel");
         nodeAndPropertyKeys.put(new TableColumnAdapter(venueDetailsColumn),"VenueDetailsLabel");
-
-
-
-
-
-        updateTexts();
-
+        mainScene.updateTexts();
         return table;
     }
+    @SneakyThrows
+    private Pagination createPagination() {
+        sortedData = new SortedList<>(ticketStorage.getData());
+//        sortedData.comparatorProperty().addListener((obs, oldComparator, newComparator) -> {
+//            // Устанавливаем новый компаратор
+//            sortedData.setComparator(newComparator);
+//            // Обновляем содержимое таблицы на первой странице пагинации
+//        });
+
+
+        int totalPageCount = (int) Math.ceil((double) sortedData.size() / ROWS_PER_PAGE);
+        Pagination pagination = new Pagination(totalPageCount, 0);
+        pagination.setPageFactory(this::createPage);
+        return pagination;
+    }
+
+
 
     private VBox createPage(int pageIndex) {
         int fromIndex = pageIndex * ROWS_PER_PAGE;
@@ -197,7 +176,7 @@ public class MainScene extends MyScene {
         if (sortedData.getComparator() == null) {
             sortedData.setComparator(Comparator.naturalOrder());
         }
-        
+
 
 
         ObservableList<Ticket> pageData = FXCollections.observableArrayList(sortedData.subList(fromIndex, toIndex));

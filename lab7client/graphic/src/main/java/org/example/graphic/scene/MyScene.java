@@ -16,16 +16,17 @@ import java.util.ResourceBundle;
 
 public abstract class MyScene {
     protected Scene scene;
+    @Getter
     protected final HashMap<Node,String > nodeAndPropertyKeys = new HashMap<Node,String >();
     protected Localizator localizator = Localizator.getInstance();
     protected Label changeLocaleLabel;
-    protected final static MyController controller = new MyController();
+    protected final static MyController controller = MyController.getInstance();
 
     static {
         Locale.setDefault(Locale.UK);
     }
 
-    protected void updateTexts() {
+    public void updateTexts() {
         nodeAndPropertyKeys.keySet().forEach(node -> {
             if (node instanceof Button){
                 ((Button) node).setText(localizator.getKeyString(nodeAndPropertyKeys.get(node)));

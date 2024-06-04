@@ -1,5 +1,8 @@
 package org.controller;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.common.commands.Command;
 import org.common.commands.Show;
 import org.common.commands.authorization.Login;
@@ -10,11 +13,13 @@ import org.controller.connector.to.client.ConsoleEventListenerImpl;
 import org.example.Main;
 
 import java.util.List;
-
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MyController {
-    {
+     {
         Initializer.init();
     }
+    @Getter
+    private static final MyController instance = new MyController();
     private final ConsoleEventListenerImpl listener = Initializer.getListener();
     private final Authorization authorization = new Authorization();
     public  String login(String login,String password) throws Exception {
