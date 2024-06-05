@@ -65,16 +65,15 @@ public class ZoomableCartesianPlot {
         gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
         tickets.forEach( ticket -> {
             drawTicket(gc,ticket.getTicket().getCoordinatesX(),ticket.getTicket().getCoordinatesY(),
-                    zoomFactor,ticket.getColor());
+                    zoomFactor,ticket.getColor(),ticket.getTicket().getName());
         });
 
     }
-    private void drawTicket(GraphicsContext gc, double coordX, double coordY, double zoomFactor,Color color) {
+    private void drawTicket(GraphicsContext gc, double coordX, double coordY, double zoomFactor,Color color,String text) {
         double rectWidth = RECT_WIDTH_IN_LOCAL * WIDTH / INITIAL_MAX_X / 2 / zoomFactor;
         double rectHeight = RECT_HEIGHT_IN_LOCAL * HEIGHT / INITIAL_MAX_Y / 2 / zoomFactor;
         // Текст
-        String text = "Ticket";
-        Font font = new Font("Arial", 12); // Установите желаемый шрифт и размер
+        Font font = new Font("Arial", 6/zoomFactor); // Установите желаемый шрифт и размер
         gc.setFont(font);
 
         // Получаем границы текста
