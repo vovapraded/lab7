@@ -9,7 +9,6 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 
 public class ZoomableCartesianPlot {
 
@@ -19,8 +18,8 @@ public class ZoomableCartesianPlot {
     private final Integer RECT_HEIGHT_IN_LOCAL = 100;
     private final Integer WIDTH = 400;
     private final Integer HEIGHT = 400;
-    private final Integer ZERO_Y = 400;
-    private final Integer ZERO_X = 400;
+    private final Integer ZERO_Y = WIDTH/2;
+    private final Integer ZERO_X = HEIGHT/2;
     private final Double INITIAL_MAX_X = 1000.0;
     private final Double INITIAL_MAX_Y = 1000.0;
 
@@ -28,8 +27,8 @@ public class ZoomableCartesianPlot {
 
     public StackPane createMap() {
         var axes = createAxes(1);
-         canvas = new Canvas(800,800);
-        drawShape(canvas.getGraphicsContext2D(),-4,4,1);
+         canvas = new Canvas(WIDTH,HEIGHT);
+        drawTicket(canvas.getGraphicsContext2D(),-4,4,1);
 
         StackPane layout = new StackPane(canvas,axes);
         layout.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
@@ -40,7 +39,7 @@ public class ZoomableCartesianPlot {
 
         return layout;
     }
-    private void drawShape(GraphicsContext gc,double coordX,double coordY,double zoomFactor) {
+    private void drawTicket(GraphicsContext gc, double coordX, double coordY, double zoomFactor) {
         gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
 
         gc.setStroke(Color.BLUE);
@@ -138,7 +137,7 @@ public class ZoomableCartesianPlot {
 
     private class ZoomHandler implements EventHandler<ScrollEvent> {
         private static final double MAX_ZOOM = Double.MAX_VALUE;
-        private static final double MIN_ZOOM = 0.04;
+        private static final double MIN_ZOOM = 0.01;
 
         private double zoomFactor = 1;
 
@@ -151,7 +150,7 @@ public class ZoomableCartesianPlot {
             } else if (event.getDeltaY() > 0) {
                 zoomFactor = Math.min(MAX_ZOOM, zoomFactor * 1.1);
             }
-            drawShape(canvas.getGraphicsContext2D(),-4,4,zoomFactor);
+            drawTicket(canvas.getGraphicsContext2D(),-4,4,zoomFactor);
 
             Axes axes = createAxes(zoomFactor);
 
