@@ -1,6 +1,7 @@
 package org.example.graphic.scene.main;
 
 import javafx.beans.binding.Bindings;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.*;
 import javafx.scene.canvas.Canvas;
@@ -9,6 +10,13 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import org.common.dto.Ticket;
+
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 public class ZoomableCartesianPlot {
 
@@ -22,13 +30,27 @@ public class ZoomableCartesianPlot {
     private final Integer ZERO_X = HEIGHT/2;
     private final Double INITIAL_MAX_X = 1000.0;
     private final Double INITIAL_MAX_Y = 1000.0;
+    private final ObservableList<WrappedTicket> tickets;
 
 
+    public ZoomableCartesianPlot(ObservableList<WrappedTicket> tickets) {
+        this.tickets = tickets;
+        canvas = new Canvas(WIDTH,HEIGHT);
+
+    }
+    private  Color getRandomColor(){
+        Random random = new Random();
+        double red = random.nextDouble();
+        double green = random.nextDouble();
+        double blue = random.nextDouble();
+        Color randomColor = new Color(red, green, blue, 0.2);
+        return randomColor;
+    }
 
     public StackPane createMap() {
         var axes = createAxes(1);
-         canvas = new Canvas(WIDTH,HEIGHT);
-        drawTicket(canvas.getGraphicsContext2D(),-4,4,1);
+
+        drawTickets(canvas.getGraphicsContext2D(),1);
 
         StackPane layout = new StackPane(canvas,axes);
         layout.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
@@ -39,8 +61,40 @@ public class ZoomableCartesianPlot {
 
         return layout;
     }
-    private void drawTicket(GraphicsContext gc, double coordX, double coordY, double zoomFactor) {
+    private void drawTickets(GraphicsContext gc,double zoomFactor){
         gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
+        tickets.forEach( ticket -> {
+            drawTicket(gc,ticket.getTicket().getCoordinatesX(),ticket.getTicket().getCoordinatesY(),
+                    zoomFactor,ticket.getColor());
+        });
+
+    }
+    private void drawTicket(GraphicsContext gc, double coordX, double coordY, double zoomFactor,Color color) {
+        double rectWidth = RECT_WIDTH_IN_LOCAL * WIDTH / INITIAL_MAX_X / 2 / zoomFactor;
+        double rectHeight = RECT_HEIGHT_IN_LOCAL * HEIGHT / INITIAL_MAX_Y / 2 / zoomFactor;
+        // Текст
+        String text = "Ticket";
+        Font font = new Font("Arial", 12); // Установите желаемый шрифт и размер
+        gc.setFont(font);
+
+        // Получаем границы текста
+        Text textNode = new Text(text);
+        textNode.setFont(font);
+        Bounds textBounds = textNode.getBoundsInLocal();
+        var leftUpPoint = localToGlobal(coordX,coordY,zoomFactor);
+
+        // Рассчитываем координаты для центрирования текста внутри прямоугольника
+        double textX = leftUpPoint.getX() - (textBounds.getWidth() / 2); // Координата x текста
+        double textY = leftUpPoint.getY() + (textBounds.getHeight() / 2); // Координата y текста
+
+        // Отображаем текст
+        gc.setFill(Color.BLACK);
+        gc.fillText(text, textX, textY);
+
+
+
+        coordX-=RECT_WIDTH_IN_LOCAL/2;
+        coordY+=RECT_HEIGHT_IN_LOCAL/2;
 
         gc.setStroke(Color.BLUE);
         gc.setLineWidth(2);
@@ -51,8 +105,14 @@ public class ZoomableCartesianPlot {
 //        System.out.println(pointL.getX()/zoomFactor);
 //        System.out.println(pointL.getY()/zoomFactor);
         System.out.println(pointG);
-        gc.strokeRect(pointG.getX(), pointG.getY(), RECT_WIDTH_IN_LOCAL*WIDTH/INITIAL_MAX_X/2 /zoomFactor,RECT_HEIGHT_IN_LOCAL*HEIGHT/INITIAL_MAX_Y/2 /zoomFactor);
-    //        gc.strokeRect();
+        gc.setFill(color);
+        gc.fillRect(pointG.getX(), pointG.getY(), rectWidth,rectHeight);
+        gc.strokeRect(pointG.getX(), pointG.getY(), rectWidth,rectHeight);
+
+
+
+
+        //        gc.strokeRect();
     }
     private Point2D globalToLocal(double coordX, double coordY,double zoomFactor) {
         double x = coordX-ZERO_X;
@@ -150,7 +210,7 @@ public class ZoomableCartesianPlot {
             } else if (event.getDeltaY() > 0) {
                 zoomFactor = Math.min(MAX_ZOOM, zoomFactor * 1.1);
             }
-            drawTicket(canvas.getGraphicsContext2D(),-4,4,zoomFactor);
+            drawTickets(canvas.getGraphicsContext2D(),zoomFactor);
 
             Axes axes = createAxes(zoomFactor);
 

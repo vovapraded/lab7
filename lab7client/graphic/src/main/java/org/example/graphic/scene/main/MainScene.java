@@ -30,6 +30,7 @@ import org.example.graphic.scene.MyScene;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.List;
 
 public class MainScene extends MyScene {
 
@@ -65,7 +66,7 @@ public class MainScene extends MyScene {
         changeLocaleWrapper.setPadding(new Insets(20));
         changeLocaleWrapper.setAlignment(Pos.BOTTOM_RIGHT);
         root.setBottom(changeLocaleWrapper);
-        ZoomableCartesianPlot zoomableCartesianPlot = new ZoomableCartesianPlot();
+        ZoomableCartesianPlot zoomableCartesianPlot = new ZoomableCartesianPlot(ticketStorage.getWrappedData());
         root.setCenter(zoomableCartesianPlot.createMap());
 //        ZoomableCanvasWithAxes zoomableCanvasWithAxes = new ZoomableCanvasWithAxes();
 //        root.setCenter(zoomableCanvasWithAxes.getMainPane());
@@ -88,11 +89,5 @@ public class MainScene extends MyScene {
 
 
 
-
-//    private void drawShapes(GraphicsContext gc) {
-//        gc.strokeRect(50, 50, 700, 700);
-//        gc.strokeLine(50, 50, 750, 750);
-//        gc.strokeLine(750, 50, 50, 750);
-//    }
 
 }
