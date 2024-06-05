@@ -65,7 +65,8 @@ public class MainScene extends MyScene {
         changeLocaleWrapper.setPadding(new Insets(20));
         changeLocaleWrapper.setAlignment(Pos.BOTTOM_RIGHT);
         root.setBottom(changeLocaleWrapper);
-
+        ZoomableCartesianPlot zoomableCartesianPlot = new ZoomableCartesianPlot();
+        root.setCenter(zoomableCartesianPlot.createMap());
 //        ZoomableCanvasWithAxes zoomableCanvasWithAxes = new ZoomableCanvasWithAxes();
 //        root.setCenter(zoomableCanvasWithAxes.getMainPane());
 
@@ -78,7 +79,7 @@ public class MainScene extends MyScene {
 //        root.setCenter(pagination);
 //        table = createTable();
 
-        scene = new Scene(root, 800, 600);
+        scene = new Scene(root, 900, 800);
 
         
 
