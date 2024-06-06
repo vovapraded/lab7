@@ -7,9 +7,11 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import org.common.dto.Ticket;
 import org.common.dto.TicketType;
@@ -23,13 +25,18 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 public class CreatorTable {
+    @Getter
     private  TableView<Ticket> table;
+    @Getter
     private SortedList<Ticket> sortedData; // SortedList для поддержания сортировки
     private final TicketStorage ticketStorage;
     private HashMap<Node,String > nodeAndPropertyKeys = new HashMap<Node,String >();
     private final  MyController controller = MyController.getInstance();
     private final MainScene mainScene;
+    @Getter
     private Pagination pagination;
+    @Getter
+
     private static final int ROWS_PER_PAGE = 10; // Количество строк на страницу
 
 
@@ -49,7 +56,7 @@ public class CreatorTable {
     @SneakyThrows
     private TableView<Ticket> createTable() {
         table = new TableView<Ticket>();
-        table.setPadding(new Insets(30));
+        table.setPadding(new Insets(10));
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         TableColumn<Ticket, Long> id = new TableColumn<>("");
@@ -130,6 +137,18 @@ public class CreatorTable {
 //                FXCollections.sort(sortedData, sortedData.getComparator());
             pagination.setPageFactory(pageIndex -> createPage(pageIndex));
             return false;
+        });
+        table.setRowFactory(tv -> {
+            TableRow<Ticket> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (!row.isEmpty()) {
+                    Ticket rowData = row.getItem();
+                    int index = sortedData.indexOf(rowData);
+                    System.out.println("Clicked on index: " + index);
+                }
+            });
+
+            return row;
         });
 
         nodeAndPropertyKeys.put(new TableColumnAdapter(id),"IdLabel");

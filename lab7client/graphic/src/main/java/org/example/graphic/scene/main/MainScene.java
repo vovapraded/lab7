@@ -66,19 +66,21 @@ public class MainScene extends MyScene {
         changeLocaleWrapper.setPadding(new Insets(20));
         changeLocaleWrapper.setAlignment(Pos.BOTTOM_RIGHT);
         root.setBottom(changeLocaleWrapper);
-        ZoomableCartesianPlot zoomableCartesianPlot = new ZoomableCartesianPlot(ticketStorage.getWrappedData());
-        root.setCenter(zoomableCartesianPlot.createMap());
-//        ZoomableCanvasWithAxes zoomableCanvasWithAxes = new ZoomableCanvasWithAxes();
-//        root.setCenter(zoomableCanvasWithAxes.getMainPane());
+        CreatorTable creatorTable = new CreatorTable(ticketStorage,this);
+        var pagination = creatorTable.init();
+        ZoomableCartesianPlot  zoomableCartesianPlot = new ZoomableCartesianPlot(ticketStorage.getWrappedData());
+        zoomableCartesianPlot.setCreatorTable(creatorTable);
+        var map = zoomableCartesianPlot.createMap();
 
-//        CreatorMap creatorMap = new CreatorMap(ticketStorage);
-//        var scrollPane = creatorMap.createGraphicContext();
-//        root.setCenter(scrollPane);
+        HBox tableAndPlot = new HBox(pagination,map);
+        tableAndPlot.setAlignment(Pos.CENTER);
+        tableAndPlot.setPadding(new Insets(10,30,10,10));
 
-//        CreatorTable creatorTable = new CreatorTable(ticketStorage,this);
-//        var pagination = creatorTable.init();
-//        root.setCenter(pagination);
-//        table = createTable();
+        root.setCenter(tableAndPlot);
+
+
+
+
 
         scene = new Scene(root, 900, 800);
 

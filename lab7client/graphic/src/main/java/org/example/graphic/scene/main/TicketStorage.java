@@ -20,7 +20,7 @@ public class TicketStorage {
 
     public TicketStorage() {
         try {
-            data = FXCollections.observableArrayList(MyController.getInstance().show().subList(5,10));
+            data = FXCollections.observableArrayList(MyController.getInstance().show());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -1,5 +1,6 @@
 package org.example.graphic.scene.main;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -7,20 +8,21 @@ import javafx.geometry.*;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.control.Pagination;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import lombok.Setter;
 import org.common.dto.Ticket;
 
-import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 public class ZoomableCartesianPlot {
-
-
+@Setter
+    private CreatorTable creatorTable;
     private Canvas canvas ;
     private final Integer RECT_WIDTH_IN_LOCAL = 100;
     private final Integer RECT_HEIGHT_IN_LOCAL = 100;
@@ -31,7 +33,7 @@ public class ZoomableCartesianPlot {
     private final Double INITIAL_MAX_X = 1000.0;
     private final Double INITIAL_MAX_Y = 1000.0;
     private final ObservableList<WrappedTicket> tickets;
-
+    private  StackPane layout;
 
     public ZoomableCartesianPlot(ObservableList<WrappedTicket> tickets) {
         this.tickets = tickets;
@@ -47,15 +49,17 @@ public class ZoomableCartesianPlot {
         return randomColor;
     }
 
+
     public StackPane createMap() {
         var axes = createAxes(1);
 
+
+        layout = new StackPane(axes,canvas);
         drawTickets(canvas.getGraphicsContext2D(),1);
 
-        StackPane layout = new StackPane(canvas,axes);
         layout.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         layout.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-        layout.setPadding(new Insets(0));
+        layout.setPadding(new Insets(12));
         layout.setOnScroll(new ZoomHandler());
         layout.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
@@ -63,23 +67,63 @@ public class ZoomableCartesianPlot {
     }
     private void drawTickets(GraphicsContext gc,double zoomFactor){
         gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
-        tickets.forEach( ticket -> {
-            drawTicket(gc,ticket.getTicket().getCoordinatesX(),ticket.getTicket().getCoordinatesY(),
-                    zoomFactor,ticket.getColor(),ticket.getTicket().getName());
-        });
-
-    }
-    private void drawTicket(GraphicsContext gc, double coordX, double coordY, double zoomFactor,Color color,String text) {
         double rectWidth = RECT_WIDTH_IN_LOCAL * WIDTH / INITIAL_MAX_X / 2 / zoomFactor;
         double rectHeight = RECT_HEIGHT_IN_LOCAL * HEIGHT / INITIAL_MAX_Y / 2 / zoomFactor;
+        tickets.forEach( ticket -> {
+            drawTicket(gc,zoomFactor,ticket,rectWidth,rectHeight);
+        });
+        setCanvasOnClick(zoomFactor,rectWidth,rectHeight);
+
+    }
+    private void setCanvasOnClick(double zoomFactor,double rectWidth,double rectHeight) {
+        var pagination = creatorTable.getPagination();
+        var ticketTable = creatorTable.getTable();
+        canvas.setOnMouseClicked(event -> {
+            System.out.println("A");
+            double mouseX = event.getX();
+            double mouseY = event.getY();
+            var flag = false;
+            // Проверяем, попадает ли точка клика в какой-либо прямоугольник
+            for (WrappedTicket wrappedTicket : tickets) {
+                var ticket = wrappedTicket.getTicket();
+                var point = localToGlobal(ticket.getCoordinatesX(),ticket.getCoordinatesY(),zoomFactor);
+                double rectX = point.getX();
+                double rectY = point.getY();
+
+
+                if (mouseX >= rectX-rectWidth/2 && mouseX <= rectX + rectWidth/2 &&
+                        mouseY >= rectY - rectHeight/2 && mouseY <= rectY + rectHeight/2) {
+                    // Найден прямоугольник, на который было нажатие
+                    // Вы можете выполнить необходимые действия здесь
+                    int index = creatorTable.getSortedData().indexOf(wrappedTicket.getTicket());
+                    System.out.println(index);
+                    if (index >= 0) {
+                        handleRectangleClick(wrappedTicket.getTicket(),pagination,index);
+                    }
+                    break; // Мы нашли прямоугольник, больше проверять не нужно
+                }
+
+            }
+            if (!flag){
+                ticketTable.getSelectionModel().clearSelection();
+            }
+        });
+    }
+    private void drawTicket(GraphicsContext gc, double zoomFactor, WrappedTicket wrappedTicket,double rectWidth,double rectHeight) {
+
+        var ticket = wrappedTicket.getTicket();
         // Текст
         Font font = new Font("Arial", 6/zoomFactor); // Установите желаемый шрифт и размер
         gc.setFont(font);
 
         // Получаем границы текста
-        Text textNode = new Text(text);
+        Text textNode = new Text(ticket.getName());
         textNode.setFont(font);
         Bounds textBounds = textNode.getBoundsInLocal();
+
+        var coordX = ticket.getCoordinatesX();
+        var coordY = ticket.getCoordinatesY();
+
         var leftUpPoint = localToGlobal(coordX,coordY,zoomFactor);
 
         // Рассчитываем координаты для центрирования текста внутри прямоугольника
@@ -88,7 +132,7 @@ public class ZoomableCartesianPlot {
 
         // Отображаем текст
         gc.setFill(Color.BLACK);
-        gc.fillText(text, textX, textY);
+        gc.fillText(ticket.getName(), textX, textY);
 
 
 
@@ -104,14 +148,34 @@ public class ZoomableCartesianPlot {
 //        System.out.println(pointL.getX()/zoomFactor);
 //        System.out.println(pointL.getY()/zoomFactor);
         System.out.println(pointG);
-        gc.setFill(color);
-        gc.fillRect(pointG.getX(), pointG.getY(), rectWidth,rectHeight);
-        gc.strokeRect(pointG.getX(), pointG.getY(), rectWidth,rectHeight);
+        gc.setFill(wrappedTicket.getColor());
+        var x = pointG.getX();
+        var y = pointG.getY();
+        gc.strokeRect(x,y,rectWidth,rectHeight);
+        gc.fillRect(x,y,rectWidth,rectHeight);
+
+
 
 
 
 
         //        gc.strokeRect();
+    }
+    private void handleRectangleClick(Ticket ticket, Pagination pagination, int index) {
+        index += 1;
+        System.out.println("ABOBA");
+        var itemsPerPage = CreatorTable.getROWS_PER_PAGE();
+        var indexOfPage = (int) Math.ceil((double) index / itemsPerPage )-1;
+        pagination.setCurrentPageIndex(indexOfPage);
+        // Найдите индекс билета в списке таблиц
+        System.out.println(index);
+        System.out.println(indexOfPage);
+
+        int finalIndex = (index-1 )% itemsPerPage;
+        Platform.runLater(() -> {
+            creatorTable.getTable().getSelectionModel().clearAndSelect((finalIndex));
+        });
+
     }
     private Point2D globalToLocal(double coordX, double coordY,double zoomFactor) {
         double x = coordX-ZERO_X;
@@ -214,7 +278,7 @@ public class ZoomableCartesianPlot {
             Axes axes = createAxes(zoomFactor);
 
             Pane parent = (Pane) event.getSource();
-            parent.getChildren().setAll(canvas,axes);
+            parent.getChildren().setAll(axes,canvas);
 
         }
     }

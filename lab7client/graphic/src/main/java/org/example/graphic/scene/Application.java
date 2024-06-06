@@ -42,7 +42,7 @@ public class Application extends javafx.application.Application {
             TicketStorage ticketStorage = new TicketStorage();
             mainSceneObj = new MainScene(ticketStorage);
             mainSceneObj.createMainScene();
-            backgroundClickableMaker.make(mainSceneObj.scene);
+//            backgroundClickableMaker.make(mainSceneObj.scene);
             primaryStage.setScene(mainSceneObj.scene);
         }
         mainSceneObj.updateValueChangeLocale();
