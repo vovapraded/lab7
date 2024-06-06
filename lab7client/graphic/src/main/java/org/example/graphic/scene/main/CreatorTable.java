@@ -170,7 +170,7 @@ public class CreatorTable {
         nodeAndPropertyKeys.put(new TableColumnAdapter(ticketDetailsColumn),"TicketDetailsLabel");
         nodeAndPropertyKeys.put(new TableColumnAdapter(coordinatesDetails),"CoordinatesDetailsLabel");
         nodeAndPropertyKeys.put(new TableColumnAdapter(venueDetailsColumn),"VenueDetailsLabel");
-        mainScene.updateTexts();
+        mainScene.updateTextUI();
         setOnMouseClicked();
         return table;
     }

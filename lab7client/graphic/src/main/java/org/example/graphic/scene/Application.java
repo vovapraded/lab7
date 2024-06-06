@@ -1,7 +1,5 @@
 package org.example.graphic.scene;
 
-import javafx.geometry.Rectangle2D;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,7 +29,7 @@ public class Application extends javafx.application.Application {
         primaryStage.setScene(loginSceneObj.scene);
         // Устанавливаем заголовок окна
         primaryStage.setTitle("Login");
-        loginSceneObj.updateTexts();
+        loginSceneObj.updateTextUI();
         primaryStage.show();
     }
     public static void switchToMainScene() {
@@ -47,7 +45,7 @@ public class Application extends javafx.application.Application {
             primaryStage.setScene(mainSceneObj.scene);
         }
         mainSceneObj.updateValueChangeLocale();
-        mainSceneObj.updateTexts();
+        mainSceneObj.updateTextUI();
         primaryStage.setScene(mainSceneObj.scene);
 
 //        primaryStage.show();
@@ -60,7 +58,7 @@ public class Application extends javafx.application.Application {
 //
 //        else{
 //        mainSceneObj.updateValueChangeLocale();
-//        mainSceneObj.updateTexts();
+//        mainSceneObj.updateTextUI();
 }
 //        primaryStage.setFullScreen(true);
 
@@ -69,7 +67,7 @@ public class Application extends javafx.application.Application {
 
     public  static  void switchToLoginScene() {
         loginSceneObj.updateValueChangeLocale();
-        loginSceneObj.updateTexts();
+        loginSceneObj.updateTextUI();
         primaryStage.setWidth(400);
         primaryStage.setHeight(300);
         primaryStage.setScene(loginSceneObj.scene);

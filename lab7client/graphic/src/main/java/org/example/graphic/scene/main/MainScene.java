@@ -22,17 +22,19 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 import javafx.util.Callback;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import org.common.dto.*;
 import org.example.graphic.node.TableColumnAdapter;
 import org.example.graphic.scene.Application;
 import org.example.graphic.scene.MyScene;
 import org.example.graphic.scene.main.command.filter.FilterPanel;
+import org.example.graphic.scene.main.command.insert.InsertPanel;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
-
+@Getter
 public class MainScene extends MyScene {
 
 
@@ -42,6 +44,10 @@ public class MainScene extends MyScene {
     public MainScene(TicketStorage ticketStorage) {
         this.ticketStorage = ticketStorage;
     }
+
+    private FilterPanel filterPanel = new FilterPanel();
+    private InsertPanel insertPanel = new InsertPanel();
+
 
 
     public void createMainScene() {
@@ -54,9 +60,14 @@ public class MainScene extends MyScene {
         VBox userBox = new VBox(username, logOut);
         BorderPane stripOnTop = new BorderPane();
         stripOnTop.setRight(userBox);
+        HBox commandPanel = new HBox();
+        commandPanel.setSpacing(10);
+        stripOnTop.setCenter(commandPanel);
 
-        FilterPanel filterPanel = new FilterPanel();
-        stripOnTop.setCenter(filterPanel.createButton(nodeAndPropertyKeys));
+
+        commandPanel.getChildren().addAll(filterPanel.createButton(nodeAndPropertyKeys),
+               insertPanel.createButton(nodeAndPropertyKeys));
+        commandPanel.setAlignment(Pos.CENTER);
         userBox.setPadding(new Insets(20));
         userBox.setSpacing(10);
 
@@ -95,9 +106,18 @@ public class MainScene extends MyScene {
         
 
     }
+    private void updateDialogButtonsText(){
+        if (insertPanel.getDialog()!=null){
+            insertPanel.updateButtons();
+        }
+        if (filterPanel.getDialog()!=null){
+            filterPanel.updateButtons();
+        }
+    }
 
-
-
-
-
+    @Override
+    public void updateTextUI() {
+        updateText();
+        updateDialogButtonsText();
+    }
 }

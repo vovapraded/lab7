@@ -25,8 +25,10 @@ public abstract class MyScene {
     static {
         Locale.setDefault(Locale.UK);
     }
-
-    public void updateTexts() {
+    public void updateTextUI(){
+        updateText();
+    }
+    public void updateText() {
         nodeAndPropertyKeys.keySet().forEach(node -> {
             if (node instanceof Button){
                 ((Button) node).setText(localizator.getKeyString(nodeAndPropertyKeys.get(node)));
@@ -44,6 +46,7 @@ public abstract class MyScene {
             }
         });
     }
+    
     protected void createChangeLocaleBox() {
         var changeLocale = new ComboBox<String>();
         changeLocaleLabel = new Label("",changeLocale);
@@ -56,7 +59,7 @@ public abstract class MyScene {
             var value = changeLocale.getValue();
             localizator.setBundle(ResourceBundle.getBundle("locales.gui",
                     new Locale(value.split(" ")[0], value.split(" ")[1])));
-            updateTexts();
+            updateTextUI();
         });
 
 
