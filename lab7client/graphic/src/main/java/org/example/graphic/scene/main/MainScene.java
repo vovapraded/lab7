@@ -27,6 +27,7 @@ import org.common.dto.*;
 import org.example.graphic.node.TableColumnAdapter;
 import org.example.graphic.scene.Application;
 import org.example.graphic.scene.MyScene;
+import org.example.graphic.scene.main.command.filter.FilterPanel;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -51,8 +52,11 @@ public class MainScene extends MyScene {
         Text loginLabel2 = new Text(": " + Application.getLogin());
         HBox username = new HBox(loginLabel1, loginLabel2);
         VBox userBox = new VBox(username, logOut);
-        HBox userBoxWrapper = new HBox(userBox);
-        userBoxWrapper.setAlignment(Pos.TOP_RIGHT);
+        BorderPane stripOnTop = new BorderPane();
+        stripOnTop.setRight(userBox);
+
+        FilterPanel filterPanel = new FilterPanel();
+        stripOnTop.setCenter(filterPanel.createButton(nodeAndPropertyKeys));
         userBox.setPadding(new Insets(20));
         userBox.setSpacing(10);
 
@@ -60,7 +64,7 @@ public class MainScene extends MyScene {
         nodeAndPropertyKeys.put(logOut, "LogOut");
         nodeAndPropertyKeys.put(loginLabel1, "LoginLabel");
         logOut.setOnAction(e -> Application.switchToLoginScene());
-        root.setTop(userBoxWrapper);
+        root.setTop(stripOnTop);
 
         HBox changeLocaleWrapper = new HBox(changeLocaleLabel);
         changeLocaleWrapper.setPadding(new Insets(20));

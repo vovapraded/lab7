@@ -1,9 +1,18 @@
 package org.example.graphic.scene;
 
 import javafx.application.Platform;
-import javafx.scene.control.Alert;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
+import org.common.dto.TicketType;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.stream.Collectors;
 
 public class Popup {
 
@@ -32,20 +41,8 @@ public class Popup {
         });
 
     }
-    public static void showLoading() {
-        Platform.runLater(() -> {
 
-            Alert alert = new Alert(AlertType.INFORMATION);
-            alert.initModality(Modality.APPLICATION_MODAL);
-//        alert.initOwner(Application.getPrimaryStage());
 
-            alert.setTitle("Loading");
-            alert.setHeaderText(null);
-            alert.getDialogPane().getButtonTypes().clear();
-            alert.show();
-        });
-
-    }
 
 
 }

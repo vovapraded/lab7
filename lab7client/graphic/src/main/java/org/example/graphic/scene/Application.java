@@ -14,6 +14,7 @@ public class Application extends javafx.application.Application {
     private static  Stage primaryStage;
     private static final BackgroundClickableMaker backgroundClickableMaker = new BackgroundClickableMaker();
     private static  LoginScene loginSceneObj;
+    @Getter
     private static MainScene mainSceneObj;
     @Getter @Setter
     private static String login;

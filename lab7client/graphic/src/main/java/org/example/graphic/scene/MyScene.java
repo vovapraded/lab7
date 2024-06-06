@@ -39,6 +39,8 @@ public abstract class MyScene {
                 ((Text) node).setText(localizator.getKeyString(nodeAndPropertyKeys.get(node)));
             }else if (node instanceof TableColumnAdapter){
                 ((TableColumnAdapter) node).getTableColumn().setText(localizator.getKeyString(nodeAndPropertyKeys.get(node)));
+            }else if(node instanceof ComboBox<?>){
+                ((ComboBox) node).setPromptText(localizator.getKeyString(nodeAndPropertyKeys.get(node)));
             }
         });
     }
