@@ -66,10 +66,14 @@ public class MainScene extends MyScene {
         changeLocaleWrapper.setPadding(new Insets(20));
         changeLocaleWrapper.setAlignment(Pos.BOTTOM_RIGHT);
         root.setBottom(changeLocaleWrapper);
+
         CreatorTable creatorTable = new CreatorTable(ticketStorage,this);
-        var pagination = creatorTable.init();
         ZoomableCartesianPlot  zoomableCartesianPlot = new ZoomableCartesianPlot(ticketStorage.getWrappedData());
+
+        creatorTable.setZoomableCartesianPlot(zoomableCartesianPlot);
         zoomableCartesianPlot.setCreatorTable(creatorTable);
+
+        var pagination = creatorTable.init();
         var map = zoomableCartesianPlot.createMap();
 
         HBox tableAndPlot = new HBox(pagination,map);

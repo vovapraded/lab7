@@ -32,5 +32,20 @@ public class Popup {
         });
 
     }
+    public static void showLoading() {
+        Platform.runLater(() -> {
+
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.initModality(Modality.APPLICATION_MODAL);
+//        alert.initOwner(Application.getPrimaryStage());
+
+            alert.setTitle("Loading");
+            alert.setHeaderText(null);
+            alert.getDialogPane().getButtonTypes().clear();
+            alert.show();
+        });
+
+    }
+
 
 }

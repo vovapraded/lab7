@@ -9,7 +9,6 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Pagination;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -17,8 +16,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import lombok.Setter;
 import org.common.dto.Ticket;
+import org.example.graphic.scene.Popup;
 
+import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ZoomableCartesianPlot {
 @Setter
@@ -34,6 +36,7 @@ public class ZoomableCartesianPlot {
     private final Double INITIAL_MAX_Y = 1000.0;
     private final ObservableList<WrappedTicket> tickets;
     private  StackPane layout;
+    private Long idOfSelected;
 
     public ZoomableCartesianPlot(ObservableList<WrappedTicket> tickets) {
         this.tickets = tickets;
@@ -69,9 +72,21 @@ public class ZoomableCartesianPlot {
         gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
         double rectWidth = RECT_WIDTH_IN_LOCAL * WIDTH / INITIAL_MAX_X / 2 / zoomFactor;
         double rectHeight = RECT_HEIGHT_IN_LOCAL * HEIGHT / INITIAL_MAX_Y / 2 / zoomFactor;
+        AtomicReference<WrappedTicket> selectedTicket = new AtomicReference<>();
         tickets.forEach( ticket -> {
+            if (!Objects.equals(idOfSelected, ticket.getTicket().getId())){
+                drawTicket(gc,zoomFactor,ticket,rectWidth,rectHeight);
+            } else {
+                selectedTicket.set(ticket);
+            }
+            });
+        if (selectedTicket.get()!=null ){
+            var ticket =selectedTicket.get();
+            var color = ticket.getColor();
+            ticket.setColor(Color.WHITE);
             drawTicket(gc,zoomFactor,ticket,rectWidth,rectHeight);
-        });
+            ticket.setColor(color);
+        }
         setCanvasOnClick(zoomFactor,rectWidth,rectHeight);
 
     }
@@ -131,12 +146,12 @@ public class ZoomableCartesianPlot {
         double textY = leftUpPoint.getY() + (textBounds.getHeight() / 2); // Координата y текста
 
         // Отображаем текст
-        gc.setFill(Color.BLACK);
-        gc.fillText(ticket.getName(), textX, textY);
 
 
 
-        coordX-=RECT_WIDTH_IN_LOCAL/2;
+
+
+        coordX-= (double) RECT_WIDTH_IN_LOCAL /2;
         coordY+=RECT_HEIGHT_IN_LOCAL/2;
 
         gc.setStroke(Color.BLUE);
@@ -154,19 +169,22 @@ public class ZoomableCartesianPlot {
         gc.strokeRect(x,y,rectWidth,rectHeight);
         gc.fillRect(x,y,rectWidth,rectHeight);
 
+        gc.setFill(Color.BLACK);
+        gc.fillText(ticket.getName(), textX, textY);
 
 
 
 
 
-        //        gc.strokeRect();
     }
     private void handleRectangleClick(Ticket ticket, Pagination pagination, int index) {
         index += 1;
         System.out.println("ABOBA");
         var itemsPerPage = CreatorTable.getROWS_PER_PAGE();
         var indexOfPage = (int) Math.ceil((double) index / itemsPerPage )-1;
+
         pagination.setCurrentPageIndex(indexOfPage);
+
         // Найдите индекс билета в списке таблиц
         System.out.println(index);
         System.out.println(indexOfPage);
@@ -281,5 +299,10 @@ public class ZoomableCartesianPlot {
             parent.getChildren().setAll(axes,canvas);
 
         }
+    }
+    public void setIdOfSelected(Long id){
+        this.idOfSelected = id;
+        var zoomHandler = (ZoomHandler)layout.getOnScroll();
+        drawTickets(canvas.getGraphicsContext2D(),zoomHandler.zoomFactor);
     }
 }

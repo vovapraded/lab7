@@ -12,6 +12,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import org.common.dto.Ticket;
 import org.common.dto.TicketType;
@@ -38,6 +39,8 @@ public class CreatorTable {
     @Getter
 
     private static final int ROWS_PER_PAGE = 10; // Количество строк на страницу
+    @Getter @Setter
+    private ZoomableCartesianPlot zoomableCartesianPlot;
 
 
 
@@ -168,7 +171,18 @@ public class CreatorTable {
         nodeAndPropertyKeys.put(new TableColumnAdapter(coordinatesDetails),"CoordinatesDetailsLabel");
         nodeAndPropertyKeys.put(new TableColumnAdapter(venueDetailsColumn),"VenueDetailsLabel");
         mainScene.updateTexts();
+        setOnMouseClicked();
         return table;
+    }
+    private void setOnMouseClicked(){
+        table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                Ticket selectedTicket = newSelection;
+                zoomableCartesianPlot.setIdOfSelected(newSelection.getId());
+            }else {
+                zoomableCartesianPlot.setIdOfSelected(-1L);
+            }
+        });
     }
     @SneakyThrows
     private Pagination createPagination() {
@@ -186,7 +200,7 @@ public class CreatorTable {
         return pagination;
     }
 
-
+private  VBox box = new VBox();
 
     private VBox createPage(int pageIndex) {
         int fromIndex = pageIndex * ROWS_PER_PAGE;
@@ -195,15 +209,10 @@ public class CreatorTable {
         if (sortedData.getComparator() == null) {
             sortedData.setComparator(Comparator.naturalOrder());
         }
-
-
-
         ObservableList<Ticket> pageData = FXCollections.observableArrayList(sortedData.subList(fromIndex, toIndex));
         table.setItems(pageData);
-
-
-
-        VBox box = new VBox(table);
+        box.getChildren().add(table);
+        System.out.println(box.getChildren());
         box.setPadding(new Insets(20));
         return box;
     }
