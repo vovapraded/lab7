@@ -196,13 +196,13 @@ public class CreatorTable {
         int totalPageCount = (int) Math.ceil((double) sortedData.size() / ROWS_PER_PAGE);
         pagination = new Pagination(totalPageCount, 0);
         pagination.setPageFactory(this::createPage);
-        pagination.currentPageIndexProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                initPage(newValue.intValue());
-                System.out.println("поменялась страница");
-            }
-        });
+//        pagination.currentPageIndexProperty().addListener(new ChangeListener<Number>() {
+//            @Override
+//            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+//                initPage(newValue.intValue());
+//                System.out.println("поменялась страница");
+//            }
+//        });
         pagination.setMinSize(800,400);
 
         return pagination;

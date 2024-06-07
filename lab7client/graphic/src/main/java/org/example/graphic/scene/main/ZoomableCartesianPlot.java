@@ -14,6 +14,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import lombok.Getter;
 import lombok.Setter;
 import org.common.dto.Ticket;
 import org.example.graphic.scene.Popup;
@@ -34,7 +35,8 @@ public class ZoomableCartesianPlot {
     private final Integer ZERO_X = HEIGHT/2;
     private final Double INITIAL_MAX_X = 1000.0;
     private final Double INITIAL_MAX_Y = 1000.0;
-    private final ObservableList<WrappedTicket> tickets;
+    @Setter
+    private  ObservableList<WrappedTicket> tickets;
     private  StackPane layout;
     private Long idOfSelected;
 

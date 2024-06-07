@@ -14,6 +14,7 @@ import org.common.dto.*;
 import org.controller.MyController;
 import org.example.graphic.scene.Application;
 import org.example.graphic.scene.Popup;
+import org.example.graphic.scene.main.WrappedTicket;
 import org.example.graphic.scene.main.command.Panel;
 
 import java.lang.reflect.Method;
@@ -89,14 +90,18 @@ public class InsertPanel extends Panel {
 
         try {
             Popup.showDialog(controller.insert(ticket));;
+            var ticketStorage = Application.getMainSceneObj().getTicketStorage();
+            ticketStorage.getData().add(ticket);
+            ticketStorage.filter();
+
+            Application.getMainSceneObj().getCreatorTable().updatePagination();
+            Application.getMainSceneObj().getZoomableCartesianPlot().setTickets(ticketStorage.getWrappedData());
+
+            Application.getMainSceneObj().getZoomableCartesianPlot().updateMap();
         }catch (Exception e){
             Popup.showError(e.getMessage());
         }
 
-        Application.getMainSceneObj().getTicketStorage().getData().add(ticket);
-        Application.getMainSceneObj().getTicketStorage().filter();
-        Application.getMainSceneObj().getCreatorTable().updatePagination();
-        Application.getMainSceneObj().getZoomableCartesianPlot().updateMap();
 
 
 
