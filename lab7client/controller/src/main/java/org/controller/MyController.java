@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.common.commands.Command;
+import org.common.commands.Insert;
 import org.common.commands.Show;
 import org.common.commands.authorization.Login;
 import org.common.commands.authorization.Register;
@@ -42,6 +43,15 @@ public class MyController {
         Show command = new Show();
         sendCommand(command);
         return  listener.getTickets();
+    }
+    public String insert(Ticket ticket) throws Exception {
+
+        Insert command = new Insert();
+        command.setTicketArg(ticket);
+        command.setStringArg(ticket.getId().toString());
+        sendCommand(command);
+        return  listener.getMessage();
+
     }
     private  void sendCommand(Command command) throws Exception {
         command.setAuthorization(authorization);

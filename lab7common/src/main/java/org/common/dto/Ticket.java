@@ -15,6 +15,8 @@ import java.util.Date;
  * a class for storing ticket data
  */
 @EqualsAndHashCode(callSuper = true)
+@Builder
+@AllArgsConstructor
 @Getter
 @Setter
 @Data

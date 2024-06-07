@@ -7,6 +7,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import lombok.Getter;
 import org.example.graphic.localizator.Localizator;
+import org.example.graphic.scene.Popup;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,7 +63,11 @@ public abstract class Panel {
                 currentPageInd+=1;
                 changeOnAnotherForm(gridPane);
             }else {
-                onApply();
+                try {
+                    onApply();
+                } catch (Exception e) {
+                    Popup.showError(e.getMessage());
+                }
                 return;
             }
             event.consume();  // предотвратить закрытие диалога
@@ -71,7 +76,7 @@ public abstract class Panel {
         });
     }
 
-    protected abstract void onApply() ;
+    protected abstract void onApply() throws Exception;
 
     private void generateCancelButtonType(){
         cancelButtonType = new ButtonType(localizator.getKeyString("CancelLabel"), ButtonBar.ButtonData.CANCEL_CLOSE);

@@ -305,4 +305,10 @@ public class ZoomableCartesianPlot {
         var zoomHandler = (ZoomHandler)layout.getOnScroll();
         drawTickets(canvas.getGraphicsContext2D(),zoomHandler.zoomFactor);
     }
+    public void updateMap() {
+        // Очистить графический контекст канваса
+        canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        // Повторно нарисовать билеты на канвасе с учетом текущего масштаба
+        drawTickets(canvas.getGraphicsContext2D(), ((ZoomHandler) layout.getOnScroll()).zoomFactor);
+    }
 }

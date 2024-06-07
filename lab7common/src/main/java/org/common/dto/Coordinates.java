@@ -1,6 +1,8 @@
 package org.common.dto;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
@@ -13,6 +15,8 @@ import java.io.Serializable;
  */
 @Data
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 @Entity
 @Table(name = "coordinates",schema = "s409397")
 public class Coordinates implements Serializable {

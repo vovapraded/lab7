@@ -249,7 +249,7 @@ public class FilterPanel extends Panel {
         nodeAndKeys.put(idMaxLabel, "IdMaxLabel");
 
         nodeAndKeys.put(priceMinLabel, "PriceMinLabel");
-        nodeAndKeys.put(priceMaxLabel, "PriceMinLabel");
+        nodeAndKeys.put(priceMaxLabel, "PriceMaxLabel");
         nodeAndKeys.put(discountMinLabel, "DiscountMinLabel");
         nodeAndKeys.put(discountMaxLabel, "DiscountMaxLabel");
         nodeAndKeys.put(refundableLabel, "RefundableLabel");
