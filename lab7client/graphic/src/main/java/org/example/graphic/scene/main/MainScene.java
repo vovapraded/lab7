@@ -39,6 +39,7 @@ public class MainScene extends MyScene {
 
 
     private final   TicketStorage ticketStorage;
+    private CreatorTable creatorTable;
 
 
     public MainScene(TicketStorage ticketStorage) {
@@ -82,7 +83,7 @@ public class MainScene extends MyScene {
         changeLocaleWrapper.setAlignment(Pos.BOTTOM_RIGHT);
         root.setBottom(changeLocaleWrapper);
 
-        CreatorTable creatorTable = new CreatorTable(ticketStorage,this);
+        creatorTable = new CreatorTable(ticketStorage,this);
         ZoomableCartesianPlot  zoomableCartesianPlot = new ZoomableCartesianPlot(ticketStorage.getWrappedData());
 
         creatorTable.setZoomableCartesianPlot(zoomableCartesianPlot);

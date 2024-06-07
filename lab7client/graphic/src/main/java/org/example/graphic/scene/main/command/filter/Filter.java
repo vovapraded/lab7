@@ -1,14 +1,21 @@
 package org.example.graphic.scene.main.command.filter;
 
 
+import javafx.collections.ObservableList;
 import org.common.dto.Ticket;
 
 import java.util.List;
 import java.util.stream.Collectors;
 public class Filter {
-    public List<Ticket> filter(TicketFilter ticketFilter, List<Ticket> tickets){
-        return tickets.stream().filter(ticket -> check(ticketFilter,ticket)).collect(Collectors.toList());
+    public void filter(TicketFilter ticketFilter, ObservableList<Ticket> tickets) {
+        if (ticketFilter!=null) {
+            List<Ticket> filteredTickets = tickets.stream()
+                    .filter(ticket -> check(ticketFilter, ticket))
+                    .collect(Collectors.toList());
+            tickets.setAll(filteredTickets);
+        }
     }
+
     public boolean check(TicketFilter ticketFilter, Ticket ticket){
         var res = true;
         if (ticketFilter.getIdMin()!= null){
@@ -20,7 +27,7 @@ public class Filter {
         if (ticketFilter.getDateMin()!= null){
             res = res && !ticket.getCreationDate().isBefore(ticketFilter.getDateMin());
         }
-        if (ticketFilter.getDateMin()!= null){
+        if (ticketFilter.getDateMax()!= null){
             res = res && !ticket.getCreationDate().isAfter(ticketFilter.getDateMax());
         }
 

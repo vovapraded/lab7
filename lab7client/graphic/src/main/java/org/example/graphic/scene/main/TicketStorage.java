@@ -7,20 +7,32 @@ import lombok.Getter;
 import lombok.Setter;
 import org.common.dto.Ticket;
 import org.controller.MyController;
+import org.example.graphic.scene.main.command.filter.Filter;
+import org.example.graphic.scene.main.command.filter.TicketFilter;
 
-import java.util.Comparator;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-@Getter @Setter
+ @Setter
 public class TicketStorage {
+    @Getter
     private ObservableList<Ticket> data;
+    private ObservableList<Ticket> filteredData;
+    private Filter filter = new Filter();
+    private TicketFilter ticketFilter;
+
+    public ObservableList<Ticket> getFilteredData() {
+        filter.filter(ticketFilter,filteredData);
+        return filteredData;
+    }
 
     public TicketStorage() {
         try {
             data = FXCollections.observableArrayList(MyController.getInstance().show());
+            filteredData = FXCollections.observableArrayList(data);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

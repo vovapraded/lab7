@@ -19,7 +19,7 @@ import org.common.dto.TicketType;
 import org.common.dto.VenueType;
 import org.controller.MyController;
 import org.example.graphic.node.TableColumnAdapter;
-import org.example.graphic.scene.MyScene;
+import org.example.graphic.scene.main.command.filter.TicketFilter;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -108,7 +108,7 @@ public class CreatorTable {
         y.setCellValueFactory(new PropertyValueFactory<>("coordinatesY"));
 
         TableColumn<Ticket, ?> ticketDetailsColumn = new TableColumn<>("Ticket Details");
-        ticketDetailsColumn.getColumns().addAll(id, name, price, discount, refundable, createdBy, creationDate);
+        ticketDetailsColumn.getColumns().addAll(id, name, price, discount, refundable, createdBy, creationDate,ticketType);
 
         TableColumn<Ticket, ?> venueDetailsColumn = new TableColumn<>("Venue Details");
         venueDetailsColumn.getColumns().addAll(venueName, venueCapacity, venueType);
@@ -186,7 +186,7 @@ public class CreatorTable {
     }
     @SneakyThrows
     private Pagination createPagination() {
-        sortedData = new SortedList<>(ticketStorage.getData());
+        sortedData = new SortedList<>(ticketStorage.getFilteredData());
 //        sortedData.comparatorProperty().addListener((obs, oldComparator, newComparator) -> {
 //            // Устанавливаем новый компаратор
 //            sortedData.setComparator(newComparator);
@@ -211,9 +211,17 @@ private  VBox box = new VBox();
         }
         ObservableList<Ticket> pageData = FXCollections.observableArrayList(sortedData.subList(fromIndex, toIndex));
         table.setItems(pageData);
-        box.getChildren().add(table);
+        box.getChildren().setAll(table);
+
+        System.out.println("создали страницу");
         System.out.println(box.getChildren());
         box.setPadding(new Insets(20));
         return box;
+    }
+    public void updatePagination() {
+        int totalPageCount = (int) Math.ceil((double) sortedData.size() / ROWS_PER_PAGE);
+        pagination.setPageCount(totalPageCount);
+        pagination.setCurrentPageIndex(0); // Сброс текущей страницы на первую
+        pagination.setPageFactory(this::createPage);
     }
 }

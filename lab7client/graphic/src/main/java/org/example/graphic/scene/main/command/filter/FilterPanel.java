@@ -13,8 +13,10 @@ import javafx.scene.text.Text;
 import org.common.dto.TicketType;
 import org.common.dto.VenueType;
 import org.example.graphic.scene.Application;
+import org.example.graphic.scene.main.CreatorTable;
 import org.example.graphic.scene.main.command.Panel;
 
+import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -83,20 +85,47 @@ public class FilterPanel extends Panel {
     @Override
     protected void onApply() {
         TicketFilter ticketFilter = TicketFilter.builder()
-                .idMin(Long.valueOf(idMinField.getText()))
-                .idMax(Long.valueOf(idMaxField.getText()))
-                .priceMin(Long.valueOf(priceMinField.getText()))
-                .priceMax(Long.valueOf(priceMaxField.getText()))
-                .discountMin(Long.valueOf(discountMinField.getText()))
-                .discountMax(Long.valueOf(discountMaxField.getText()))
+                .idMin(valueOf(Long.class, idMinField.getText()))
+                .idMax(valueOf(Long.class, idMaxField.getText()))
+                .priceMin(valueOf(Long.class, priceMinField.getText()))
+                .priceMax(valueOf(Long.class, priceMaxField.getText()))
+                .discountMin(valueOf(Long.class, discountMinField.getText()))
+                .discountMax(valueOf(Long.class, discountMaxField.getText()))
                 .refundable(getRefundableValues())
                 .ticketTypes(getTicketTypeValues())
-                .dateMin(new LocalDateTime(dateMinPicker.getValue(),new LocalTime(hourMinSpinner.getValue(),minuteMinSpinner.getValue(),0,0)
-                ) ) )
-
-
-
+                .dateMin(LocalDateTime.of(dateMinPicker.getValue(), LocalTime.of(hourMinSpinner.getValue(), minuteMinSpinner.getValue())))
+                .dateMax(LocalDateTime.of(dateMaxPicker.getValue(), LocalTime.of(hourMaxSpinner.getValue(), minuteMaxSpinner.getValue())))
+                .partOfName(partOfNameField.getText())
+                .venueFilter(VenueFilter.builder()
+                        .capacityMin(valueOf(Long.class, capacityMinField.getText()))
+                        .capacityMax(valueOf(Long.class, capacityMaxField.getText()))
+                        .partOfName(venuePartOfNameField.getText())
+                        .venueTypes(getVenueTypeValues())
+                        .build())
+                .coordinatesFilter(CoordinatesFilter.builder()
+                        .xMin(valueOf(Double.class, coordinatesXMinField.getText()))
+                        .xMax(valueOf(Double.class, coordinatesXMaxField.getText()))
+                        .yMin(valueOf(Long.class, coordinatesYMinField.getText()))
+                        .yMax(valueOf(Long.class, coordinatesYMaxField.getText()))
+                        .build())
                 .build();
+        Application.getMainSceneObj().getTicketStorage().setTicketFilter(ticketFilter);
+        var filteredData=Application.getMainSceneObj().getTicketStorage().getFilteredData();
+        Application.getMainSceneObj().getCreatorTable().updatePagination();
+                System.out.println(filteredData);
+        System.out.println(ticketFilter);
+    }
+
+    private static <T> T valueOf(Class<T> clazz, Object param) {
+        try {
+            // Получаем метод valueOf с одним параметром типа Object
+            Method valueOfMethod = clazz.getMethod("valueOf", param.getClass());
+
+            // Вызываем метод valueOf на классе с переданным параметром
+            return clazz.cast(valueOfMethod.invoke(null, param));
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 
@@ -219,6 +248,8 @@ public class FilterPanel extends Panel {
         nodeAndKeys.put(idMinLabel, "IdMinLabel");
         nodeAndKeys.put(idMaxLabel, "IdMaxLabel");
 
+        nodeAndKeys.put(priceMinLabel, "PriceMinLabel");
+        nodeAndKeys.put(priceMaxLabel, "PriceMinLabel");
         nodeAndKeys.put(discountMinLabel, "DiscountMinLabel");
         nodeAndKeys.put(discountMaxLabel, "DiscountMaxLabel");
         nodeAndKeys.put(refundableLabel, "RefundableLabel");
@@ -273,6 +304,18 @@ public class FilterPanel extends Panel {
         }
         return values;
     }
+    private List<VenueType> getVenueTypeValues() {
+        List<VenueType> values = new ArrayList<>();
+        for (var node : venueTypeContainer.getChildren()) {
+            if (node instanceof CheckBox) {
+                CheckBox checkBox = (CheckBox) node;
+                if (checkBox.isSelected()) {
+                    values.add(VenueType.valueOf(checkBox.getText()));
+                }
+            }
+        }
+        return values;
+    }
     private GridPane createSecondForm(HashMap<Node, String> nodeAndKeys) {
 
         Text venueDetailsLabel = new Text();
@@ -283,7 +326,7 @@ public class FilterPanel extends Panel {
         Label capacityMaxLabel = new Label();
         capacityMaxLabel.setPrefWidth(Region.USE_COMPUTED_SIZE);
 
-         partOfNameField = new TextField();
+        venuePartOfNameField = new TextField();
         Label partOfNameLabel = new Label();
 
 

@@ -7,6 +7,8 @@ import lombok.*;
 @ToString
 @Getter
 @Setter
+@Builder
+
 public class CoordinatesFilter {
     private Double xMin;
     private Double xMax;

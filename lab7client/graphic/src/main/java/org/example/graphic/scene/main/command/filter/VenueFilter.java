@@ -13,9 +13,10 @@ import java.util.List;
 @ToString
 @Getter
 @Setter
+@Builder
 public class VenueFilter {
     private String partOfName;
     private Long capacityMin;
     private Long capacityMax;
-    private ArrayList<VenueType> venueTypes = new ArrayList<>(Arrays.asList(VenueType.BAR, VenueType.THEATRE, VenueType.CINEMA, VenueType.STADIUM,null));
+    private List<VenueType> venueTypes = new ArrayList<>(Arrays.asList(VenueType.BAR, VenueType.THEATRE, VenueType.CINEMA, VenueType.STADIUM,null));
 }
