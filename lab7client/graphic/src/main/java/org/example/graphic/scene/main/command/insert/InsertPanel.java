@@ -92,8 +92,9 @@ public class InsertPanel extends Panel {
         }catch (Exception e){
             Popup.showError(e.getMessage());
         }
-        System.out.println(ticket);
+
         Application.getMainSceneObj().getTicketStorage().getData().add(ticket);
+        Application.getMainSceneObj().getTicketStorage().filter();
         Application.getMainSceneObj().getCreatorTable().updatePagination();
         Application.getMainSceneObj().getZoomableCartesianPlot().updateMap();
 
@@ -286,7 +287,7 @@ public class InsertPanel extends Panel {
 
         var venueTypeLabel = new Label();
         ToggleGroup venueTypeGroup = new ToggleGroup(); // Создаем группу для RadioButton
-
+        venueTypeContainer = new VBox();
         for (VenueType type : VenueType.values()) {
             RadioButton radioButton = new RadioButton(type.toString()); // Создаем RadioButton с названием типа
             radioButton.setToggleGroup(venueTypeGroup); // Добавляем RadioButton в группу

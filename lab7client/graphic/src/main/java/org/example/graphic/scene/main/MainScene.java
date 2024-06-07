@@ -23,6 +23,7 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 import javafx.util.Callback;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import org.common.dto.*;
 import org.example.graphic.node.TableColumnAdapter;
@@ -41,6 +42,11 @@ public class MainScene extends MyScene {
     private final   TicketStorage ticketStorage;
     private CreatorTable creatorTable;
     private ZoomableCartesianPlot zoomableCartesianPlot;
+    private HBox tableAndPlot;
+    @Setter
+    private Pagination pagination;
+    private StackPane map;
+    private BorderPane root;
 
 
     public MainScene(TicketStorage ticketStorage) {
@@ -54,7 +60,7 @@ public class MainScene extends MyScene {
 
     public void createMainScene() {
 
-        BorderPane root = new BorderPane();
+         root = new BorderPane();
         Button logOut = new Button("");
         Text loginLabel1 = new Text();
         Text loginLabel2 = new Text(": " + Application.getLogin());
@@ -90,10 +96,12 @@ public class MainScene extends MyScene {
         creatorTable.setZoomableCartesianPlot(zoomableCartesianPlot);
         zoomableCartesianPlot.setCreatorTable(creatorTable);
 
-        var pagination = creatorTable.init();
-        var map = zoomableCartesianPlot.createMap();
+         pagination = creatorTable.init();
+         map = zoomableCartesianPlot.createMap();
 
-        HBox tableAndPlot = new HBox(pagination,map);
+         tableAndPlot = new HBox(pagination,map);
+         tableAndPlot.setMaxWidth(Double.MAX_VALUE);
+        tableAndPlot.setPrefWidth(Double.MAX_VALUE);
         tableAndPlot.setAlignment(Pos.CENTER);
         tableAndPlot.setPadding(new Insets(10,30,10,10));
 
@@ -121,5 +129,8 @@ public class MainScene extends MyScene {
     public void updateTextUI() {
         updateText();
         updateDialogButtonsText();
+    }
+    public void updatePagination() {
+      tableAndPlot.getChildren().setAll(pagination,map);
     }
 }

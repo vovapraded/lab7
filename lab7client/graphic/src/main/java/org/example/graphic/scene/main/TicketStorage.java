@@ -25,10 +25,12 @@ public class TicketStorage {
     private TicketFilter ticketFilter;
 
     public ObservableList<Ticket> getFilteredData() {
-        filter.filter(ticketFilter,filteredData);
         return filteredData;
     }
-
+public void filter(){
+    filteredData.setAll(data);
+    filter.filter(ticketFilter,filteredData);
+}
     public TicketStorage() {
         try {
             data = FXCollections.observableArrayList(MyController.getInstance().show());
@@ -39,7 +41,7 @@ public class TicketStorage {
     }
     //TODO Переписать
     public ObservableList<WrappedTicket> getWrappedData() {
-        Map<String, List<Ticket>> groupedByAuthor = data.stream()
+        Map<String, List<Ticket>> groupedByAuthor = filteredData.stream()
                 .collect(Collectors.groupingBy(Ticket::getCreatedBy));
 
         ObservableList<WrappedTicket> wrappedTickets = groupedByAuthor.entrySet().stream()
