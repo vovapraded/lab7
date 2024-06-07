@@ -6,19 +6,17 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
-import javafx.stage.Modality;
 import org.common.dto.TicketType;
 import org.example.graphic.scene.Application;
 import org.example.graphic.scene.main.command.Panel;
+import org.example.graphic.scene.main.command.filter.TicketFilter;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.HashMap;
 
 public class InsertPanel extends Panel {
     public InsertPanel() {
-        super("Insert");
+        super("Insert",true);
     }
 
 
@@ -66,7 +64,7 @@ public class InsertPanel extends Panel {
 
             // Обработка нажатия кнопок
             dialog.setResultConverter(dialogButton -> {
-                if (dialogButton == applyButtonType) {
+                if (dialogButton == applyOrContinuebuttonType) {
                     System.out.println("Name: " + nameField.getText());
                     System.out.println("Age: " + idField.getText());
                     System.out.println("Gender: " + genderComboBox.getValue());
@@ -76,6 +74,11 @@ public class InsertPanel extends Panel {
 
             dialog.showAndWait();
         });
+    }
+
+    @Override
+    protected void onApply() {
+//        TicketFilter.builder().idMax()
     }
 //    private void showFilterForm(){
 //        Popup.showFilterForm(n);

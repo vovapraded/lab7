@@ -1,98 +1,404 @@
 package org.example.graphic.scene.main.command.filter;
 
-import com.dlsc.formsfx.model.structure.DateField;
 import javafx.application.Platform;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.stage.Modality;
 import org.common.dto.TicketType;
+import org.common.dto.VenueType;
 import org.example.graphic.scene.Application;
-import org.example.graphic.scene.Popup;
 import org.example.graphic.scene.main.command.Panel;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class FilterPanel extends Panel {
+
+
     public FilterPanel() {
-        super("Filter");
+        super("Filter",false);
     }
+    private TextField idMinField;
+    private TextField idMaxField;
+    private TextField priceMinField;
+    private TextField priceMaxField;
+    private TextField discountMinField;
+    private TextField discountMaxField;
+    private TextField refundableMinField;
+    private VBox refundable;
+    private TextField partOfNameField;
+    private DatePicker dateMinPicker;
+    private DatePicker dateMaxPicker;
+    private Spinner<Integer> hourMinSpinner;
+    private Spinner<Integer> minuteMinSpinner;
+    private Spinner<Integer> hourMaxSpinner;
+    private Spinner<Integer> minuteMaxSpinner;
+    private VBox ticketTypeContainer;
+    private TextField createdByField;
+
+    private TextField capacityMinField;
+    private TextField capacityMaxField;
+    private TextField venuePartOfNameField;
+    private DatePicker venueDateMinPicker;
+    private DatePicker venueDateMaxPicker;
+    private Spinner<Integer> venueHourMinSpinner;
+    private Spinner<Integer> venueMinuteMinSpinner;
+    private Spinner<Integer> venueHourMaxSpinner;
+    private Spinner<Integer> venueMinuteMaxSpinner;
+    private VBox venueTypeContainer;
+    private TextField coordinatesXMinField;
+     private   TextField    coordinatesXMaxField;
+    private   TextField    coordinatesYMinField;
+    private   TextField    coordinatesYMaxField;
 
 
     @Override
     public  void showForm(HashMap<Node,String> nodeAndKeys) {
         Platform.runLater(() -> {
-            initDialog();
+            var firstForm = createFirstForm(nodeAndKeys);
+            var secondForm = createSecondForm(nodeAndKeys);
+            var thirdForm = createThirdForm(nodeAndKeys);
+            pages.add(firstForm);
+            pages.add(secondForm);
+            pages.add(thirdForm);;
+            dialog.getDialogPane().setContent(firstForm);
 
-            Text ticketDetailsLabel = new Text();
-            // Создаем элементы управления формы
-            TextField idField = new TextField();
-            Label idLabel = new Label();
-            TextField partOfNameField = new TextField();
-            Label partOfNameLabel = new Label();
-
-
-            DatePicker datePicker = new DatePicker();
-            datePicker.setValue(LocalDate.now());
-
-            Spinner<Integer> hourSpinner = new Spinner<>(0, 23, LocalTime.now().getHour());
-            Spinner<Integer> minuteSpinner = new Spinner<>(0, 59, LocalTime.now().getMinute());
-
-
-            ComboBox<String> genderComboBox = new ComboBox<>();
-            genderComboBox.getItems().addAll(Arrays.stream(TicketType.values()).map(TicketType::toString).toList());
-            var ticketTypeLabel = new Label();
-
-
-            // Размещаем элементы управления на сетке
-            GridPane grid = new GridPane();
-            grid.setHgap(10);
-            grid.setVgap(10);
-            grid.setPadding(new Insets(20, 150, 10, 10));
-            grid.add(ticketDetailsLabel, 0, 0);
-            grid.add(idLabel, 0, 1);
-            grid.add(idField, 1, 1);
-            grid.add(partOfNameLabel, 0, 2);
-            grid.add(partOfNameField, 1, 2);
-            grid.add(ticketTypeLabel, 0, 3);
-            grid.add(genderComboBox, 1, 3);
-            grid.add(new Label("Date:"), 0, 4);
-            grid.add(datePicker, 1, 4);
-
-            grid.add(new Label("Hour:"), 0, 5);
-            grid.add(hourSpinner, 1, 5);
-
-            grid.add(new Label("Minute:"), 0, 6);
-            grid.add(minuteSpinner, 1, 6);
-
-            nodeAndKeys.put(ticketDetailsLabel, "TicketDetailsLabel");
-            nodeAndKeys.put(idLabel, "IdLabel");
-            nodeAndKeys.put(partOfNameLabel, "PartOfNameLabel");
-            nodeAndKeys.put(ticketTypeLabel, "TypeLabel");
-            nodeAndKeys.put(genderComboBox, "TypeLabel");
-
-
-            Application.getMainSceneObj().updateTextUI();
-            dialog.getDialogPane().setContent(grid);
-
-            // Обработка нажатия кнопок
-            dialog.setResultConverter(dialogButton -> {
-                if (dialogButton == applyButtonType) {
-                    System.out.println("Name: " + partOfNameField.getText());
-                    System.out.println("Age: " + idField.getText());
-                    System.out.println("Gender: " + genderComboBox.getValue());
-                }
-                return null;
-            });
-
+            //            Button continueButton = (Button) dialog.getDialogPane().lookupButton(applyButtonType);
+//            continueButton.setOnAction(e -> createSecondForm(nodeAndKeys));
             dialog.showAndWait();
         });
     }
+
+    @Override
+    protected void onApply() {
+        TicketFilter ticketFilter = TicketFilter.builder()
+                .idMin(Long.valueOf(idMinField.getText()))
+                .idMax(Long.valueOf(idMaxField.getText()))
+                .priceMin(Long.valueOf(priceMinField.getText()))
+                .priceMax(Long.valueOf(priceMaxField.getText()))
+                .discountMin(Long.valueOf(discountMinField.getText()))
+                .discountMax(Long.valueOf(discountMaxField.getText()))
+                .refundable(getRefundableValues())
+                .ticketTypes(getTicketTypeValues())
+                .dateMin(new LocalDateTime(dateMinPicker.getValue(),new LocalTime(hourMinSpinner.getValue(),minuteMinSpinner.getValue(),0,0)
+                ) ) )
+
+
+
+                .build();
+    }
+
+
+    private GridPane createFirstForm(HashMap<Node, String> nodeAndKeys) {
+        initDialog();
+
+        Text ticketDetailsLabel = new Text();
+        // Создаем элементы управления формы
+         idMinField = createNumericTextField();
+         idMaxField = createNumericTextField();
+        Label idMinLabel = new Label();
+        Label idMaxLabel = new Label();
+
+         partOfNameField = new TextField();
+        Label partOfNameLabel = new Label();
+
+        Label date = new Label();
+        Label min = new Label();
+         dateMinPicker = new DatePicker();
+        dateMinPicker.setValue(LocalDate.now());
+        Label hour = new Label();
+         hourMinSpinner = new Spinner<>(0, 23, 0);
+        Label minute = new Label();
+         minuteMinSpinner = new Spinner<>(0, 59, 0);
+
+        Label max = new Label();
+         dateMaxPicker = new DatePicker();
+        dateMaxPicker.setValue(LocalDate.now());
+         hourMaxSpinner = new Spinner<>(0, 23, 0);
+         minuteMaxSpinner = new Spinner<>(0, 59, 0);
+
+        var ticketTypeLabel = new Label();
+         ticketTypeContainer = new VBox(); // Создаем контейнер для чекбоксов
+// Добавляем чекбокс для каждого элемента перечисления TicketType
+        for (TicketType type : TicketType.values()) {
+            CheckBox checkBox = new CheckBox(type.toString()); // Создаем чекбокс с названием типа
+            ticketTypeContainer.getChildren().add(checkBox); // Добавляем чекбокс в контейнер
+        }
+        var createdByLabel = new Label();
+        createdByField = new TextField();
+
+        priceMinField = createNumericTextField();
+        priceMaxField = createNumericTextField();
+        Label priceMinLabel = new Label();
+        Label priceMaxLabel = new Label();
+
+        discountMinField = createNumericTextField();
+        discountMaxField = createNumericTextField();
+        Label  discountMinLabel = new Label();
+        Label  discountMaxLabel = new Label();
+        refundable = new VBox();
+        var refundableList =  new ArrayList<>(Arrays.asList(Boolean.TRUE,Boolean.FALSE,null));
+        for (Boolean type : refundableList) {
+            var typeString = type == null ? "null" : type.toString();
+            CheckBox checkBox = new CheckBox(typeString); // Создаем чекбокс с названием типа
+            refundable.getChildren().add(checkBox); // Добавляем чекбокс в контейнер
+        }
+        Label  refundableLabel = new Label();
+
+        // Размещаем элементы управления на сетке
+        GridPane grid = new GridPane();
+
+        ColumnConstraints col1 = new ColumnConstraints();
+        col1.setHalignment(HPos.CENTER); // Устанавливаем выравнивание для первой колонки
+        ColumnConstraints col2 = new ColumnConstraints();
+        col2.setHalignment(HPos.CENTER); // Устанавливаем выравнивание для первой колонки
+        ColumnConstraints col3 = new ColumnConstraints();
+        col3.setHalignment(HPos.CENTER); // Устанавливаем выравнивание для первой колонки
+        ColumnConstraints col4 = new ColumnConstraints();
+        col4.setHalignment(HPos.CENTER); //
+
+        grid.getColumnConstraints().addAll(col1, col2,col3,col4);
+        grid.setHgap(20);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+        grid.add(ticketDetailsLabel, 0, 0);
+        grid.add(idMinLabel, 0, 1);
+        grid.add(idMinField, 1, 1);
+        grid.add(idMaxLabel,2,1);
+        grid.add(idMaxField,3,1);
+
+        grid.add(partOfNameLabel, 0, 2);
+        grid.add(partOfNameField, 1, 2);
+        grid.add(ticketTypeLabel, 0, 3);
+        grid.add(ticketTypeContainer, 1, 3);
+        grid.add(min, 1, 4);
+        grid.add(max, 2, 4);
+
+        grid.add(date, 0, 5);
+        grid.add(dateMinPicker, 1, 5);
+        grid.add(dateMaxPicker, 2, 5);
+
+        grid.add(hour,0,6);
+        grid.add(hourMinSpinner, 1, 6);
+        grid.add(hourMaxSpinner, 2, 6);
+
+        grid.add(minute, 0, 7);
+        grid.add(minuteMinSpinner, 1, 7);
+        grid.add(minuteMaxSpinner, 2, 7);
+
+        grid.add(createdByLabel,0,8);
+        grid.add(createdByField,1,8);
+
+        grid.add(priceMinLabel,0,9);
+        grid.add(priceMinField,1,9);
+        grid.add(priceMaxLabel,2,9);
+        grid.add(priceMaxField,3,9);
+
+        grid.add(discountMinLabel,0,10);
+        grid.add(discountMinField,1,10);
+        grid.add(discountMaxLabel,2,10);
+        grid.add(discountMaxField,3,10);
+
+        grid.add(refundableLabel,0,11);
+        grid.add(refundable,1,11);
+
+
+
+        nodeAndKeys.put(ticketDetailsLabel, "TicketDetailsLabel");
+        nodeAndKeys.put(idMinLabel, "IdMinLabel");
+        nodeAndKeys.put(idMaxLabel, "IdMaxLabel");
+
+        nodeAndKeys.put(discountMinLabel, "DiscountMinLabel");
+        nodeAndKeys.put(discountMaxLabel, "DiscountMaxLabel");
+        nodeAndKeys.put(refundableLabel, "RefundableLabel");
+
+
+        nodeAndKeys.put(partOfNameLabel, "PartOfNameLabel");
+        nodeAndKeys.put(ticketTypeLabel, "TypeLabel");
+        nodeAndKeys.put(ticketTypeContainer, "TypeLabel");
+
+        nodeAndKeys.put(min, "minLabel");
+        nodeAndKeys.put(max, "maxLabel");
+        nodeAndKeys.put(date, "DateLabel");
+        nodeAndKeys.put(hour, "HourLabel");
+        nodeAndKeys.put(minute,"MinuteLabel");
+
+        nodeAndKeys.put(createdByLabel,"CreatedByLabel");
+
+
+
+        Application.getMainSceneObj().updateTextUI();
+        return grid;
+    }
+    private List<Boolean> getRefundableValues() {
+        List<Boolean> values = new ArrayList<>();
+        for (var node : refundable.getChildren()) {
+            if (node instanceof CheckBox) {
+                CheckBox checkBox = (CheckBox) node;
+                if (checkBox.isSelected()) {
+                    if (checkBox.getText().equals("true")){
+                        values.add(Boolean.TRUE);
+                    }
+                    else if (checkBox.getText().equals("false")){
+                        values.add(Boolean.FALSE);
+                    }
+                    else {
+                        values.add(null);
+                    }
+                }
+            }
+        }
+        return values;
+    }
+    private List<TicketType> getTicketTypeValues() {
+        List<TicketType> values = new ArrayList<>();
+        for (var node : ticketTypeContainer.getChildren()) {
+            if (node instanceof CheckBox) {
+                CheckBox checkBox = (CheckBox) node;
+                if (checkBox.isSelected()) {
+                    values.add(TicketType.valueOf(checkBox.getText()));
+                }
+            }
+        }
+        return values;
+    }
+    private GridPane createSecondForm(HashMap<Node, String> nodeAndKeys) {
+
+        Text venueDetailsLabel = new Text();
+        // Создаем элементы управления формы
+         capacityMinField = createNumericTextField();
+         capacityMaxField = createNumericTextField();
+        Label capacityMinLabel = new Label();
+        Label capacityMaxLabel = new Label();
+        capacityMaxLabel.setPrefWidth(Region.USE_COMPUTED_SIZE);
+
+         partOfNameField = new TextField();
+        Label partOfNameLabel = new Label();
+
+
+        var venueTypeLabel = new Label();
+         venueTypeContainer = new VBox(); // Создаем контейнер для чекбоксов
+// Добавляем чекбокс для каждого элемента перечисления TicketType
+        for (VenueType type : VenueType.values()) {
+            CheckBox checkBox = new CheckBox(type.toString()); // Создаем чекбокс с названием типа
+            venueTypeContainer.getChildren().add(checkBox); // Добавляем чекбокс в контейнер
+        }
+
+
+
+        // Размещаем элементы управления на сетке
+        GridPane grid = new GridPane();
+
+        ColumnConstraints col1 = new ColumnConstraints();
+        col1.setHalignment(HPos.CENTER); // Устанавливаем выравнивание для первой колонки
+        ColumnConstraints col2 = new ColumnConstraints();
+        col2.setHalignment(HPos.CENTER); // Устанавливаем выравнивание для первой колонки
+        ColumnConstraints col3 = new ColumnConstraints();
+        col3.setHalignment(HPos.CENTER); // Устанавливаем выравнивание для первой колонки
+        ColumnConstraints col4 = new ColumnConstraints();
+        col4.setHalignment(HPos.CENTER); //
+
+        grid.getColumnConstraints().addAll(col1, col2,col3,col4);
+        grid.setHgap(20);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+        grid.add(venueDetailsLabel, 0, 0);
+        grid.add(capacityMinLabel, 0, 1);
+        grid.add(capacityMinField, 1, 1);
+        grid.add(capacityMaxLabel,2,1);
+        grid.add(capacityMaxField,3,1);
+
+        grid.add(partOfNameLabel,0,2);
+        grid.add(partOfNameField,1,2);
+
+        grid.add(venueTypeLabel,0,3);
+        grid.add(venueTypeContainer,1,3);
+
+
+        nodeAndKeys.put(venueDetailsLabel, "VenueDetailsLabel");
+        nodeAndKeys.put(capacityMinLabel, "CapacityMinLabel");
+        nodeAndKeys.put(capacityMaxLabel, "CapacityMaxLabel");
+        nodeAndKeys.put(venueTypeLabel, "TypeLabel");
+        nodeAndKeys.put(partOfNameLabel, "PartOfNameLabel");
+
+
+        Application.getMainSceneObj().updateTextUI();
+
+        return grid;
+    }
+    private GridPane createThirdForm(HashMap<Node, String> nodeAndKeys) {
+
+        Text coordDetailsLabel = new Text();
+        // Создаем элементы управления формы
+        coordinatesXMinField = createDoubleTextField();
+        coordinatesXMaxField = createDoubleTextField();
+        Label coordinatesXMinLabel = new Label();
+        Label coordinatesXMaxLabel = new Label();
+
+        coordinatesYMinField = createNumericTextField();
+        coordinatesYMaxField = createNumericTextField();
+        Label coordinatesYMinLabel = new Label();
+        Label coordinatesYMaxLabel = new Label();
+
+
+
+
+
+
+
+        // Размещаем элементы управления на сетке
+        GridPane grid = new GridPane();
+
+        ColumnConstraints col1 = new ColumnConstraints();
+        col1.setHalignment(HPos.CENTER); // Устанавливаем выравнивание для первой колонки
+        ColumnConstraints col2 = new ColumnConstraints();
+        col2.setHalignment(HPos.CENTER); // Устанавливаем выравнивание для первой колонки
+        ColumnConstraints col3 = new ColumnConstraints();
+        col3.setHalignment(HPos.CENTER); // Устанавливаем выравнивание для первой колонки
+        ColumnConstraints col4 = new ColumnConstraints();
+        col4.setHalignment(HPos.CENTER); //
+
+        grid.getColumnConstraints().addAll(col1, col2,col3,col4);
+        grid.setHgap(20);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+        grid.add(coordDetailsLabel, 0, 0);
+        grid.add(coordinatesXMinLabel, 0, 1);
+        grid.add(coordinatesXMinField, 1, 1);
+        grid.add(coordinatesXMaxLabel,2,1);
+        grid.add(coordinatesXMaxField,3,1);
+
+        grid.add(coordinatesYMinLabel, 0, 2);
+        grid.add(coordinatesYMinField, 1, 2);
+        grid.add(coordinatesYMaxLabel,2,2);
+        grid.add(coordinatesYMaxField,3,2);
+
+
+
+        nodeAndKeys.put(coordDetailsLabel, "CoordinatesDetailsLabel");
+        nodeAndKeys.put(coordinatesXMinLabel, "CoordinatesXMinLabel");
+        nodeAndKeys.put(coordinatesXMaxLabel, "CoordinatesXMaxLabel");
+        nodeAndKeys.put(coordinatesYMinLabel, "CoordinatesYMinLabel");
+        nodeAndKeys.put(coordinatesYMaxLabel, "CoordinatesYMaxLabel");
+
+
+
+        Application.getMainSceneObj().updateTextUI();
+
+        return grid;
+    }
+
 //    private void showFilterForm(){
 //        Popup.showFilterForm(n);
 //

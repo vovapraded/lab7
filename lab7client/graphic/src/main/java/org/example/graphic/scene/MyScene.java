@@ -46,6 +46,13 @@ public abstract class MyScene {
             }
         });
     }
+//    protected void makeComputedSizeLabel(){
+//        nodeAndPropertyKeys.keySet().forEach(node -> {
+//        if (node instanceof Label){
+//            node.autosize();
+//        }
+//        });
+//    }
     
     protected void createChangeLocaleBox() {
         var changeLocale = new ComboBox<String>();
