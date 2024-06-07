@@ -47,22 +47,7 @@ public class InsertPanel extends Panel {
     private   TextField coordinatesYField;
 
 
-    @Override
-    public  void showForm(HashMap<Node,String> nodeAndKeys) {
-        Platform.runLater(() -> {
-            var firstForm = createFirstForm(nodeAndKeys);
-            var secondForm = createSecondForm(nodeAndKeys);
-            var thirdForm = createThirdForm(nodeAndKeys);
-            pages.add(firstForm);
-            pages.add(secondForm);
-            pages.add(thirdForm);;
-            dialog.getDialogPane().setContent(firstForm);
 
-            //            Button continueButton = (Button) dialog.getDialogPane().lookupButton(applyButtonType);
-//            continueButton.setOnAction(e -> createSecondForm(nodeAndKeys));
-            dialog.showAndWait();
-        });
-    }
 
     @Override
     protected void onApply() throws Exception {
@@ -95,8 +80,6 @@ public class InsertPanel extends Panel {
             ticketStorage.filter();
 
             Application.getMainSceneObj().getCreatorTable().updatePagination();
-            Application.getMainSceneObj().getZoomableCartesianPlot().setTickets(ticketStorage.getWrappedData());
-
             Application.getMainSceneObj().getZoomableCartesianPlot().updateMap();
         }catch (Exception e){
             Popup.showError(e.getMessage());
@@ -120,7 +103,7 @@ public class InsertPanel extends Panel {
     }
 
 
-    private GridPane createFirstForm(HashMap<Node, String> nodeAndKeys) {
+    protected GridPane createFirstForm(HashMap<Node, String> nodeAndKeys) {
         initDialog();
 
         Text ticketDetailsLabel = new Text();
@@ -279,7 +262,7 @@ public class InsertPanel extends Panel {
 
 
 
-    private GridPane createSecondForm(HashMap<Node, String> nodeAndKeys) {
+    protected GridPane createSecondForm(HashMap<Node, String> nodeAndKeys) {
 
         Text venueDetailsLabel = new Text();
         // Создаем элементы управления формы
@@ -341,7 +324,7 @@ public class InsertPanel extends Panel {
 
         return grid;
     }
-    private GridPane createThirdForm(HashMap<Node, String> nodeAndKeys) {
+    protected GridPane createThirdForm(HashMap<Node, String> nodeAndKeys) {
 
         Text coordDetailsLabel = new Text();
         // Создаем элементы управления формы

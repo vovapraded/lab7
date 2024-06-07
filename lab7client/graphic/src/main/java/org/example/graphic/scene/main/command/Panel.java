@@ -1,5 +1,6 @@
 package org.example.graphic.scene.main.command;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -43,8 +44,27 @@ public abstract class Panel {
         });
         return button;
     }
+    public  void showForm(HashMap<Node,String> nodeAndKeys) {
+        Platform.runLater(() -> {
+            var firstForm = createFirstForm(nodeAndKeys);
+            var secondForm = createSecondForm(nodeAndKeys);
+            var thirdForm = createThirdForm(nodeAndKeys);
+            pages.add(firstForm);
+            pages.add(secondForm);
+            pages.add(thirdForm);;
+            dialog.getDialogPane().setContent(firstForm);
 
-    protected abstract void showForm(HashMap<Node, String> nodeAndKeys);
+            //            Button continueButton = (Button) dialog.getDialogPane().lookupButton(applyButtonType);
+//            continueButton.setOnAction(e -> createSecondForm(nodeAndKeys));
+            dialog.showAndWait();
+        });
+    }
+    protected abstract GridPane createFirstForm(HashMap<Node, String> nodeAndKeys);
+    protected abstract GridPane createSecondForm(HashMap<Node, String> nodeAndKeys);
+
+    protected abstract GridPane createThirdForm(HashMap<Node, String> nodeAndKeys);
+
+
     private void generateApplyOrContinueButtonType(){
         String buttonName = applyOrContinue ? "Apply" : "Continue";
         var type = applyOrContinue ? ButtonBar.ButtonData.APPLY : ButtonBar.ButtonData.OTHER;

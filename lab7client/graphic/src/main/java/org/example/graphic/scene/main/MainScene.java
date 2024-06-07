@@ -31,6 +31,7 @@ import org.example.graphic.scene.Application;
 import org.example.graphic.scene.MyScene;
 import org.example.graphic.scene.main.command.filter.FilterPanel;
 import org.example.graphic.scene.main.command.insert.InsertPanel;
+import org.example.graphic.scene.main.command.remove.RemoveButton;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -71,10 +72,13 @@ public class MainScene extends MyScene {
         HBox commandPanel = new HBox();
         commandPanel.setSpacing(10);
         stripOnTop.setCenter(commandPanel);
-
+        var removeButtonObj = new RemoveButton();
 
         commandPanel.getChildren().addAll(filterPanel.createButton(nodeAndPropertyKeys),
-               insertPanel.createButton(nodeAndPropertyKeys));
+               insertPanel.createButton(nodeAndPropertyKeys),
+                removeButtonObj.createButton()
+
+        );
         commandPanel.setAlignment(Pos.CENTER);
         userBox.setPadding(new Insets(20));
         userBox.setSpacing(10);

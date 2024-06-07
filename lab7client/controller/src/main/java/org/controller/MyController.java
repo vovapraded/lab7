@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.common.commands.Command;
 import org.common.commands.Insert;
+import org.common.commands.RemoveKey;
 import org.common.commands.Show;
 import org.common.commands.authorization.Login;
 import org.common.commands.authorization.Register;
@@ -43,6 +44,12 @@ public class MyController {
         Show command = new Show();
         sendCommand(command);
         return  listener.getTickets();
+    }
+    public String remove(Long id) throws Exception {
+        RemoveKey command = new RemoveKey();
+        command.setStringArg(id.toString());
+        sendCommand(command);
+        return  listener.getMessage();
     }
     public String insert(Ticket ticket) throws Exception {
 

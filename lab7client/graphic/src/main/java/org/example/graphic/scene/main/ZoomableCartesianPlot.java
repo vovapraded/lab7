@@ -17,6 +17,7 @@ import javafx.scene.text.Text;
 import lombok.Getter;
 import lombok.Setter;
 import org.common.dto.Ticket;
+import org.example.graphic.scene.Application;
 import org.example.graphic.scene.Popup;
 
 import java.util.Objects;
@@ -39,6 +40,8 @@ public class ZoomableCartesianPlot {
     private  ObservableList<WrappedTicket> tickets;
     private  StackPane layout;
     private Long idOfSelected;
+    private final TicketStorage ticketStorage =         Application.getMainSceneObj().getTicketStorage();
+
 
     public ZoomableCartesianPlot(ObservableList<WrappedTicket> tickets) {
         this.tickets = tickets;
@@ -310,6 +313,7 @@ public class ZoomableCartesianPlot {
     public void updateMap() {
         // Очистить графический контекст канваса
         canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        tickets.setAll(ticketStorage.getWrappedData());
         // Повторно нарисовать билеты на канвасе с учетом текущего масштаба
         drawTickets(canvas.getGraphicsContext2D(), ((ZoomHandler) layout.getOnScroll()).zoomFactor);
     }

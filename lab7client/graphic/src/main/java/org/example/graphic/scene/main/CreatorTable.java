@@ -77,41 +77,56 @@ public class CreatorTable {
 
         TableColumn<Ticket, String> name = new TableColumn<>("Name");
         name.setCellValueFactory(new PropertyValueFactory<>("name"));
+        name.setEditable(true);
 
         TableColumn<Ticket, LocalDateTime> creationDate = new TableColumn<>("Creation date");
         creationDate.setCellValueFactory(new PropertyValueFactory<>("creationDate"));
 
+
         TableColumn<Ticket, Long> price = new TableColumn<>("Price");
         price.setCellValueFactory(new PropertyValueFactory<>("price"));
         price.setSortable(true);
+        price.setEditable(true);
         price.setSortType(TableColumn.SortType.ASCENDING);
 
         TableColumn<Ticket, Long> discount = new TableColumn<>("Discount");
         discount.setCellValueFactory(new PropertyValueFactory<>("discount"));
+        discount.setEditable(true);
+
 
         TableColumn<Ticket, Boolean> refundable = new TableColumn<>("Refundable");
         refundable.setCellValueFactory(new PropertyValueFactory<>("refundable"));
+        refundable.setEditable(true);
 
         TableColumn<Ticket, TicketType> ticketType = new TableColumn<>("Ticket type");
         ticketType.setCellValueFactory(new PropertyValueFactory<>("ticketType"));
+        ticketType.setEditable(true);
 
         TableColumn<Ticket, String> createdBy = new TableColumn<>("Created by");
         createdBy.setCellValueFactory(new PropertyValueFactory<>("createdBy"));
+        createdBy.setEditable(true);
 
         TableColumn<Ticket, Long> venueCapacity = new TableColumn<>("Capacity");
         venueCapacity.setCellValueFactory(new PropertyValueFactory<>("venueCapacity"));
+        venueCapacity.setEditable(true);
+
 
         TableColumn<Ticket, String> venueName = new TableColumn<>("Name");
         venueName.setCellValueFactory(new PropertyValueFactory<>("venueName"));
+        venueName.setEditable(true);
 
         TableColumn<Ticket, VenueType> venueType = new TableColumn<>("Type");
         venueType.setCellValueFactory(new PropertyValueFactory<>("venueType"));
+        venueType.setEditable(true);
 
         TableColumn<Ticket, Double> x = new TableColumn<>("x");
         x.setCellValueFactory(new PropertyValueFactory<>("coordinatesX"));
+        x.setEditable(true);
 
         TableColumn<Ticket, Long> y = new TableColumn<>("y");
         y.setCellValueFactory(new PropertyValueFactory<>("coordinatesY"));
+        y.setEditable(true);
+
 
         TableColumn<Ticket, ?> ticketDetailsColumn = new TableColumn<>("Ticket Details");
         ticketDetailsColumn.getColumns().addAll(id, name, price, discount, refundable, createdBy, creationDate, ticketType);
@@ -240,7 +255,6 @@ public class CreatorTable {
 
     public void updatePagination() {
         updateData();
-        pagination.setCurrentPageIndex(0);
         pagination.setPageFactory(this::createPage);
     }
 
