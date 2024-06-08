@@ -4,6 +4,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.StringConverter;
 import org.common.dto.Ticket;
+import org.controller.MyController;
+import org.example.graphic.scene.Popup;
 import org.example.graphic.scene.main.utils.factory.CustomCellFactory;
 
 import java.beans.IntrospectionException;
@@ -26,7 +28,7 @@ public class ColumnUtils {
         column.setCellValueFactory(new PropertyValueFactory<>(property));
         column.setCellFactory(new CustomCellFactory<>(converter, predicate));
         column.setEditable(true);
-
+        MyController controller = MyController.getInstance();
         column.setOnEditCommit(event -> {
             T newValue = event.getNewValue();
             Ticket ticket = event.getRowValue();
@@ -37,6 +39,13 @@ public class ColumnUtils {
                 Method setter = pd.getWriteMethod();
                 if (setter != null) {
                     setter.invoke(ticket, newValue);
+                    try {
+                        Popup.showDialog(controller.update(event.getRowValue()));
+                    } catch (Exception e) {
+                        Popup.showError(e.getMessage());
+
+                    }
+
                 }
                 System.out.println(ticket);
             }

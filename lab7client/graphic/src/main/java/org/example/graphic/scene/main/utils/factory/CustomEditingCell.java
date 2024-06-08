@@ -4,6 +4,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
 import org.common.dto.Ticket;
+import org.controller.MyController;
 
 import java.util.function.Predicate;
 
@@ -35,6 +36,7 @@ public class CustomEditingCell<T> extends TableCell<Ticket, T> {
         setText(converter.toString(getItem()));
         setGraphic(null);
     }
+    private final MyController controller = MyController.getInstance();
 
     @Override
     public void commitEdit(T newValue) {
@@ -42,6 +44,7 @@ public class CustomEditingCell<T> extends TableCell<Ticket, T> {
             super.commitEdit(newValue);
             setText(converter.toString(newValue));
             setGraphic(null);
+
 
     }
 
@@ -76,6 +79,7 @@ public class CustomEditingCell<T> extends TableCell<Ticket, T> {
                         cancelEdit();
                     }else {
                         commitEdit(converter.fromString(textField.getText()));
+
                     }
                 }catch (Exception e){
                     e.printStackTrace();

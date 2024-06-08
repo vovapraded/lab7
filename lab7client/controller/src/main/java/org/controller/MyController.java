@@ -3,10 +3,7 @@ package org.controller;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.common.commands.Command;
-import org.common.commands.Insert;
-import org.common.commands.RemoveKey;
-import org.common.commands.Show;
+import org.common.commands.*;
 import org.common.commands.authorization.Login;
 import org.common.commands.authorization.Register;
 import org.common.commands.inner.objects.Authorization;
@@ -54,6 +51,14 @@ public class MyController {
     public String insert(Ticket ticket) throws Exception {
 
         Insert command = new Insert();
+        command.setTicketArg(ticket);
+        command.setStringArg(ticket.getId().toString());
+        sendCommand(command);
+        return  listener.getMessage();
+
+    }
+    public String update(Ticket ticket) throws Exception {
+        Update command = new Update();
         command.setTicketArg(ticket);
         command.setStringArg(ticket.getId().toString());
         sendCommand(command);
