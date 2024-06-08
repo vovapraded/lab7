@@ -129,5 +129,24 @@ public class Ticket extends ElementsWithId implements Comparable<Ticket>, Serial
     public Long getCoordinatesY() {
         return coordinates != null ? coordinates.getY() : null;
     }
+    public void setVenueCapacity(Long capacity) {
+        venue.setCapacity(capacity);
+    }
+
+    public void setVenueName(String name) {
+        venue.setName(name);
+    }
+
+    public void setVenueType(VenueType venueType) {
+        venue.setVenueType(venueType);
+    }
+
+    public void setCoordinatesX(Double x) {
+        coordinates.setX(x);
+    }
+
+    public void setCoordinatesY(Long y) {
+        coordinates.setY(y);
+    }
 }
 

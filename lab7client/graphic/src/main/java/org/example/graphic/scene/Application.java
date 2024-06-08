@@ -53,14 +53,9 @@ public class Application extends javafx.application.Application {
         primaryStage.setMaximized(true);
 
 
-        System.out.println(primaryStage.getWidth());
-        System.out.println(primaryStage.getHeight());
-//
-//        else{
-//        mainSceneObj.updateValueChangeLocale();
-//        mainSceneObj.updateTextUI();
+
+
 }
-//        primaryStage.setFullScreen(true);
 
 
 

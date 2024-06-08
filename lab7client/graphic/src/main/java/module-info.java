@@ -17,6 +17,7 @@ module org.example.graphic {
     opens org.example.graphic.scene.main to javafx.fxml;
     requires controller;
     requires lab7common;
+    requires java.desktop;
 
 
 }
