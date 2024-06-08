@@ -1,30 +1,25 @@
 package org.example.graphic.scene.main;
 
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.Pagination;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.Region;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
+import javafx.util.converter.DefaultStringConverter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
-import org.common.A;
 import org.common.dto.Ticket;
 import org.common.dto.TicketType;
 import org.common.dto.VenueType;
 import org.controller.MyController;
 import org.example.graphic.node.TableColumnAdapter;
-import org.example.graphic.scene.main.command.filter.TicketFilter;
+import org.example.graphic.scene.main.utils.*;
+import org.example.graphic.scene.main.utils.conventer.*;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -69,64 +64,44 @@ public class CreatorTable {
         table.setPadding(new Insets(10));
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         table.setMinSize(760,360); // Разрешаем таблице занимать всю доступную высоту
-
+        table.setEditable(true);
 
 
         TableColumn<Ticket, Long> id = new TableColumn<>("");
         id.setCellValueFactory(new PropertyValueFactory<>("id"));
 
-        TableColumn<Ticket, String> name = new TableColumn<>("Name");
-        name.setCellValueFactory(new PropertyValueFactory<>("name"));
-        name.setEditable(true);
+        TableColumn<Ticket, String> name = ColumnUtils.createEditableColumn("Name", "name", new DefaultStringConverter(),false);
+
+
+
+
 
         TableColumn<Ticket, LocalDateTime> creationDate = new TableColumn<>("Creation date");
         creationDate.setCellValueFactory(new PropertyValueFactory<>("creationDate"));
 
 
-        TableColumn<Ticket, Long> price = new TableColumn<>("Price");
-        price.setCellValueFactory(new PropertyValueFactory<>("price"));
-        price.setSortable(true);
-        price.setEditable(true);
-        price.setSortType(TableColumn.SortType.ASCENDING);
+        TableColumn<Ticket, Long> price = ColumnUtils.createEditableColumn("Price", "price", new LongStringConverter(),false);
 
-        TableColumn<Ticket, Long> discount = new TableColumn<>("Discount");
-        discount.setCellValueFactory(new PropertyValueFactory<>("discount"));
-        discount.setEditable(true);
+        TableColumn<Ticket, Long> discount = ColumnUtils.createEditableColumn("Discount", "discount", new LongStringConverter(),true);
 
+        TableColumn<Ticket, Boolean> refundable = ColumnUtils.createEditableColumn("Refundable", "refundable", new BooleanStringConverter(),true);
 
-        TableColumn<Ticket, Boolean> refundable = new TableColumn<>("Refundable");
-        refundable.setCellValueFactory(new PropertyValueFactory<>("refundable"));
-        refundable.setEditable(true);
+        TableColumn<Ticket, TicketType> ticketType = ColumnUtils.createEditableColumn("Ticket type", "ticketType", new TicketTypeStringConverter(),false);
 
-        TableColumn<Ticket, TicketType> ticketType = new TableColumn<>("Ticket type");
-        ticketType.setCellValueFactory(new PropertyValueFactory<>("ticketType"));
-        ticketType.setEditable(true);
 
         TableColumn<Ticket, String> createdBy = new TableColumn<>("Created by");
         createdBy.setCellValueFactory(new PropertyValueFactory<>("createdBy"));
-        createdBy.setEditable(true);
 
-        TableColumn<Ticket, Long> venueCapacity = new TableColumn<>("Capacity");
-        venueCapacity.setCellValueFactory(new PropertyValueFactory<>("venueCapacity"));
-        venueCapacity.setEditable(true);
+        TableColumn<Ticket, Long> venueCapacity = ColumnUtils.createEditableColumn("Capacity", "venueCapacity", new LongStringConverter(),true);
+
+        TableColumn<Ticket, String> venueName = ColumnUtils.createEditableColumn("Name", "venueName", new DefaultStringConverter(),false);
+
+        TableColumn<Ticket, VenueType> venueType = ColumnUtils.createEditableColumn("Type", "venueType", new VenueTypeStringConverter(),true);
 
 
-        TableColumn<Ticket, String> venueName = new TableColumn<>("Name");
-        venueName.setCellValueFactory(new PropertyValueFactory<>("venueName"));
-        venueName.setEditable(true);
+        TableColumn<Ticket, Double> x = ColumnUtils.createEditableColumn("x", "coordinatesX", new DoubleStringConverter(),false);
 
-        TableColumn<Ticket, VenueType> venueType = new TableColumn<>("Type");
-        venueType.setCellValueFactory(new PropertyValueFactory<>("venueType"));
-        venueType.setEditable(true);
-
-        TableColumn<Ticket, Double> x = new TableColumn<>("x");
-        x.setCellValueFactory(new PropertyValueFactory<>("coordinatesX"));
-        x.setEditable(true);
-
-        TableColumn<Ticket, Long> y = new TableColumn<>("y");
-        y.setCellValueFactory(new PropertyValueFactory<>("coordinatesY"));
-        y.setEditable(true);
-
+        TableColumn<Ticket, Long> y = ColumnUtils.createEditableColumn("y", "coordinatesY", new LongStringConverter(),false);
 
         TableColumn<Ticket, ?> ticketDetailsColumn = new TableColumn<>("Ticket Details");
         ticketDetailsColumn.getColumns().addAll(id, name, price, discount, refundable, createdBy, creationDate, ticketType);
@@ -138,6 +113,7 @@ public class CreatorTable {
         coordinatesDetails.getColumns().addAll(x, y);
 
         table.getColumns().addAll(ticketDetailsColumn, venueDetailsColumn, coordinatesDetails);
+
         table.getSortOrder().add(price);
 
         table.setSortPolicy(var1 -> {
@@ -154,16 +130,31 @@ public class CreatorTable {
             return false;
         });
 
+//
         table.setRowFactory(tv -> {
             TableRow<Ticket> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
-                if (!row.isEmpty()) {
+                if (!row.isEmpty() && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                     Ticket rowData = row.getItem();
                     int index = sortedData.indexOf(rowData);
                     System.out.println("Clicked on index: " + index);
+                    table.getSelectionModel().select(index);
+
+                    // Определяем, какой столбец был нажат, и начинаем редактирование этой ячейки
+                    TablePosition<Ticket, ?> position = table.getFocusModel().getFocusedCell();
+                    if (position != null) {
+                        table.edit(index, position.getTableColumn());
+                    }
                 }
             });
             return row;
+        });
+
+        price.setOnEditCommit(event -> {
+            var newValue = event.getNewValue();
+            Ticket ticket = event.getRowValue();
+            ticket.setPrice(newValue);
+            System.out.println("New value committed: " + newValue);
         });
         this.box = new VBox(table);
 //        this.box.setFillWidth(true); // Разрешаем VBox занимать всю доступную ширину

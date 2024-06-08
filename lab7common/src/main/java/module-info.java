@@ -17,5 +17,6 @@ module lab7common {
     exports org.common.managers;
     exports org.common.dao.interfaces;
 
+    opens org.common.dto to org.example.graphic;
 
 }
