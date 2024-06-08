@@ -24,6 +24,7 @@ import org.example.graphic.scene.main.utils.conventer.*;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.function.Predicate;
 
 public class CreatorTable {
     @Getter
@@ -70,7 +71,7 @@ public class CreatorTable {
         TableColumn<Ticket, Long> id = new TableColumn<>("");
         id.setCellValueFactory(new PropertyValueFactory<>("id"));
 
-        TableColumn<Ticket, String> name = ColumnUtils.createEditableColumn("Name", "name", new DefaultStringConverter(),false);
+        TableColumn<Ticket, String> name = ColumnUtils.createEditableColumn("Name", "name", new DefaultStringConverter(),value -> value!=null && !value.isBlank());
 
 
 
@@ -80,28 +81,28 @@ public class CreatorTable {
         creationDate.setCellValueFactory(new PropertyValueFactory<>("creationDate"));
 
 
-        TableColumn<Ticket, Long> price = ColumnUtils.createEditableColumn("Price", "price", new LongStringConverter(),false);
+        TableColumn<Ticket, Long> price = ColumnUtils.createEditableColumn("Price", "price", new LongStringConverter(),value -> value>0L);
 
-        TableColumn<Ticket, Long> discount = ColumnUtils.createEditableColumn("Discount", "discount", new LongStringConverter(),true);
+        TableColumn<Ticket, Long> discount = ColumnUtils.createEditableColumn("Discount", "discount", new LongStringConverter(), value -> value==null || value>0L);
 
-        TableColumn<Ticket, Boolean> refundable = ColumnUtils.createEditableColumn("Refundable", "refundable", new BooleanStringConverter(),true);
+        TableColumn<Ticket, Boolean> refundable = ColumnUtils.createEditableColumn("Refundable", "refundable", new BooleanStringConverter(),value -> true);
 
-        TableColumn<Ticket, TicketType> ticketType = ColumnUtils.createEditableColumn("Ticket type", "ticketType", new TicketTypeStringConverter(),false);
+        TableColumn<Ticket, TicketType> ticketType = ColumnUtils.createEditableColumn("Ticket type", "ticketType", new TicketTypeStringConverter(),value -> value!=null);
 
 
         TableColumn<Ticket, String> createdBy = new TableColumn<>("Created by");
         createdBy.setCellValueFactory(new PropertyValueFactory<>("createdBy"));
 
-        TableColumn<Ticket, Long> venueCapacity = ColumnUtils.createEditableColumn("Capacity", "venueCapacity", new LongStringConverter(),true);
+        TableColumn<Ticket, Long> venueCapacity = ColumnUtils.createEditableColumn("Capacity", "venueCapacity", new LongStringConverter(),value -> value==null || value>0L);
 
-        TableColumn<Ticket, String> venueName = ColumnUtils.createEditableColumn("Name", "venueName", new DefaultStringConverter(),false);
+        TableColumn<Ticket, String> venueName = ColumnUtils.createEditableColumn("Name", "venueName", new DefaultStringConverter(),value -> value!=null);
 
-        TableColumn<Ticket, VenueType> venueType = ColumnUtils.createEditableColumn("Type", "venueType", new VenueTypeStringConverter(),true);
+        TableColumn<Ticket, VenueType> venueType = ColumnUtils.createEditableColumn("Type", "venueType", new VenueTypeStringConverter(),value -> true);
 
 
-        TableColumn<Ticket, Double> x = ColumnUtils.createEditableColumn("x", "coordinatesX", new DoubleStringConverter(),false);
+        TableColumn<Ticket, Double> x = ColumnUtils.createEditableColumn("x", "coordinatesX", new DoubleStringConverter(),value -> value!=null);
 
-        TableColumn<Ticket, Long> y = ColumnUtils.createEditableColumn("y", "coordinatesY", new LongStringConverter(),false);
+        TableColumn<Ticket, Long> y = ColumnUtils.createEditableColumn("y", "coordinatesY", new LongStringConverter(),value -> value>-618L);
 
         TableColumn<Ticket, ?> ticketDetailsColumn = new TableColumn<>("Ticket Details");
         ticketDetailsColumn.getColumns().addAll(id, name, price, discount, refundable, createdBy, creationDate, ticketType);

@@ -10,12 +10,12 @@ import java.util.function.Predicate;
 public class CustomEditingCell<T> extends TableCell<Ticket, T> {
     private TextField textField;
     private final StringConverter<T> converter;
-    private final boolean canBeNull;
+    private final Predicate<T> predicate;
 
 
-    public CustomEditingCell(StringConverter<T> converter, boolean canBeNull) {
+    public CustomEditingCell(StringConverter<T> converter, Predicate<T> predicate) {
         this.converter = converter;
-        this.canBeNull = canBeNull;
+        this.predicate = predicate;
     }
 
     @Override
@@ -72,12 +72,13 @@ public class CustomEditingCell<T> extends TableCell<Ticket, T> {
         textField = new TextField(converter.toString(getItem()));
         textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
         textField.setOnAction(evt -> {try {
-                    if (converter.fromString(textField.getText()) == null && !canBeNull){
+                    if (!predicate.test(converter.fromString(textField.getText())) ){
                         cancelEdit();
                     }else {
                         commitEdit(converter.fromString(textField.getText()));
                     }
                 }catch (Exception e){
+                    e.printStackTrace();
                     cancelEdit();
                 }
         }
