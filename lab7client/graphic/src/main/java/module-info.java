@@ -15,6 +15,8 @@ module org.example.graphic {
     exports org.example.graphic.scene;
     exports org.example.graphic.scene.main;
     opens org.example.graphic.scene.main to javafx.fxml;
+    exports org.example.graphic.scene.main.animation;
+    opens org.example.graphic.scene.main.animation to javafx.fxml;
     requires controller;
     requires lab7common;
     requires java.desktop;

@@ -5,6 +5,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.StringConverter;
 import org.common.dto.Ticket;
 import org.controller.MyController;
+import org.example.graphic.localizator.Localizator;
+import org.example.graphic.scene.Application;
 import org.example.graphic.scene.Popup;
 import org.example.graphic.scene.main.utils.factory.CustomCellFactory;
 
@@ -32,18 +34,24 @@ public class ColumnUtils {
         column.setOnEditCommit(event -> {
             T newValue = event.getNewValue();
             Ticket ticket = event.getRowValue();
+            if (!Application.getLogin().equals(ticket.getCreatedBy())){
+                Popup.showError(Localizator.getInstance().getKeyString("NoAccess"));
+                event.consume(); // Отменяем событие
+                event.getTableView().refresh(); // Обновляем таблицу для возврата к старому значению
+                return;
+            }
             PropertyDescriptor pd = null;
             try {
-
                 pd = new PropertyDescriptor(property, ticket.getClass());
                 Method setter = pd.getWriteMethod();
+
                 if (setter != null) {
                     setter.invoke(ticket, newValue);
                     try {
                         Popup.showDialog(controller.update(event.getRowValue()));
+                        Application.getMainSceneObj().getZoomableCartesianPlot().updateMap();
                     } catch (Exception e) {
                         Popup.showError(e.getMessage());
-
                     }
 
                 }

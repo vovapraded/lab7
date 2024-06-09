@@ -46,6 +46,7 @@ public class CustomEditingCell<T> extends TableCell<Ticket, T> {
             setGraphic(null);
 
 
+
     }
 
     @Override
@@ -79,7 +80,6 @@ public class CustomEditingCell<T> extends TableCell<Ticket, T> {
                         cancelEdit();
                     }else {
                         commitEdit(converter.fromString(textField.getText()));
-
                     }
                 }catch (Exception e){
                     e.printStackTrace();

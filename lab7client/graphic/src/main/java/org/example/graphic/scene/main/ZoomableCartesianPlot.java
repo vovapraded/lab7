@@ -19,27 +19,41 @@ import lombok.Setter;
 import org.common.dto.Ticket;
 import org.example.graphic.scene.Application;
 import org.example.graphic.scene.Popup;
+import org.example.graphic.scene.main.animation.AnimatedTicket;
+import org.example.graphic.scene.main.animation.AnimationManager;
+import org.example.graphic.scene.main.utils.CoordinateConverter;
 
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
-
 public class ZoomableCartesianPlot {
 @Setter
     private CreatorTable creatorTable;
     private Canvas canvas ;
-    private final Integer RECT_WIDTH_IN_LOCAL = 100;
-    private final Integer RECT_HEIGHT_IN_LOCAL = 100;
-    private final Integer WIDTH = 400;
-    private final Integer HEIGHT = 400;
-    private final Integer ZERO_Y = WIDTH/2;
-    private final Integer ZERO_X = HEIGHT/2;
-    private final Double INITIAL_MAX_X = 1000.0;
-    private final Double INITIAL_MAX_Y = 1000.0;
+    @Getter
+
+    private static final Integer RECT_WIDTH_IN_LOCAL = 100;
+    @Getter
+    private static final Integer RECT_HEIGHT_IN_LOCAL = 100;
+    @Getter
+    private static final Integer WIDTH = 400;
+    @Getter
+    private static final Integer HEIGHT = 400;
+    @Getter
+    private static final Integer ZERO_Y = WIDTH/2;
+    @Getter
+    private static final Integer ZERO_X = HEIGHT/2;
+    @Getter
+    private static final Double INITIAL_MAX_X = 1000.0;
+    @Getter
+    private static final Double INITIAL_MAX_Y = 1000.0;
+    private CoordinateConverter converter = CoordinateConverter.getInstance();
+
     @Setter
     private  ObservableList<WrappedTicket> tickets;
     private  StackPane layout;
     private Long idOfSelected;
+    private Long idOfAnimated;
     private final TicketStorage ticketStorage =         Application.getMainSceneObj().getTicketStorage();
 
 
@@ -75,22 +89,25 @@ public class ZoomableCartesianPlot {
     }
     private void drawTickets(GraphicsContext gc,double zoomFactor){
         gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
+
+
+//        var animatedTickets = tickets.stream().map(ticket -> new AnimatedTicket(ticket.getTicket(),ticket.getTicket().getCoordinatesX(),ticket.getTicket().getCoordinatesY(),rectWidth,rectHeight,getRandomColor(),1000)).toList();
+//        AnimationManager animationManager = new AnimationManager();
+//        animationManager.getTickets().addAll(animatedTickets);
+//        animationManager.start(canvas);
         double rectWidth = RECT_WIDTH_IN_LOCAL * WIDTH / INITIAL_MAX_X / 2 / zoomFactor;
         double rectHeight = RECT_HEIGHT_IN_LOCAL * HEIGHT / INITIAL_MAX_Y / 2 / zoomFactor;
         AtomicReference<WrappedTicket> selectedTicket = new AtomicReference<>();
         tickets.forEach( ticket -> {
             if (!Objects.equals(idOfSelected, ticket.getTicket().getId())){
-                drawTicket(gc,zoomFactor,ticket,rectWidth,rectHeight);
+                ticket.draw(gc,zoomFactor,ticket,0,null,rectWidth,rectHeight);
             } else {
                 selectedTicket.set(ticket);
             }
             });
         if (selectedTicket.get()!=null ){
             var ticket =selectedTicket.get();
-            var color = ticket.getColor();
-            ticket.setColor(Color.WHITE);
-            drawTicket(gc,zoomFactor,ticket,rectWidth,rectHeight);
-            ticket.setColor(color);
+          ticket.draw(gc,zoomFactor,ticket,0,Color.WHITE,rectWidth,rectHeight);
         }
         setCanvasOnClick(zoomFactor,rectWidth,rectHeight);
 
@@ -106,11 +123,9 @@ public class ZoomableCartesianPlot {
             // Проверяем, попадает ли точка клика в какой-либо прямоугольник
             for (WrappedTicket wrappedTicket : tickets) {
                 var ticket = wrappedTicket.getTicket();
-                var point = localToGlobal(ticket.getCoordinatesX(),ticket.getCoordinatesY(),zoomFactor);
+                var point = converter.localToGlobal(ticket.getCoordinatesX(),ticket.getCoordinatesY(),zoomFactor);
                 double rectX = point.getX();
                 double rectY = point.getY();
-
-
                 if (mouseX >= rectX-rectWidth/2 && mouseX <= rectX + rectWidth/2 &&
                         mouseY >= rectY - rectHeight/2 && mouseY <= rectY + rectHeight/2) {
                     // Найден прямоугольник, на который было нажатие
@@ -144,7 +159,7 @@ public class ZoomableCartesianPlot {
         var coordX = ticket.getCoordinatesX();
         var coordY = ticket.getCoordinatesY();
 
-        var leftUpPoint = localToGlobal(coordX,coordY,zoomFactor);
+        var leftUpPoint = converter.localToGlobal(coordX,coordY,zoomFactor);
 
         // Рассчитываем координаты для центрирования текста внутри прямоугольника
         double textX = leftUpPoint.getX() - (textBounds.getWidth() / 2); // Координата x текста
@@ -164,7 +179,7 @@ public class ZoomableCartesianPlot {
 //        var = centerToUpperLeft(100,100,RECT_WIDTH,RECT_HEIGHT);
         System.out.println(zoomFactor);
 //        var pointL=globalToLocal(200,200,zoomFactor);
-        var pointG = localToGlobal(coordX, coordY,zoomFactor);
+        var pointG = converter.localToGlobal(coordX, coordY,zoomFactor);
 //        System.out.println(pointL.getX()/zoomFactor);
 //        System.out.println(pointL.getY()/zoomFactor);
         System.out.println(pointG);
@@ -199,21 +214,6 @@ public class ZoomableCartesianPlot {
             creatorTable.getTable().getSelectionModel().clearAndSelect((finalIndex));
         });
 
-    }
-    private Point2D globalToLocal(double coordX, double coordY,double zoomFactor) {
-        double x = coordX-ZERO_X;
-        double y = ZERO_Y - coordY;
-        x/=(WIDTH/(INITIAL_MAX_X*zoomFactor)/2);
-        y/=(HEIGHT/(INITIAL_MAX_Y*zoomFactor)/2);
-        return new Point2D(x, y);
-    }
-    private Point2D localToGlobal(double coordX, double coordY,double zoomFactor) {
-        coordX*=(WIDTH/(INITIAL_MAX_X*zoomFactor)/2);
-        coordY*=(HEIGHT/(INITIAL_MAX_Y*zoomFactor)/2);
-        double x = coordX+ZERO_X;
-        double y = ZERO_Y - coordY;
-
-        return new Point2D(x, y);
     }
 
 
