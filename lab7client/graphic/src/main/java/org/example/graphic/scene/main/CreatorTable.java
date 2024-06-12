@@ -24,7 +24,6 @@ import org.example.graphic.scene.main.utils.conventer.*;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.function.Predicate;
 
 public class CreatorTable {
     @Getter
@@ -188,13 +187,16 @@ public class CreatorTable {
 
     private void setOnMouseClicked() {
         table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            ticketStorage.unmakeAllTicketsSelected();
             if (newSelection != null) {
-                Ticket selectedTicket = newSelection;
-                zoomableCartesianPlot.setIdOfSelected(newSelection.getId());
-            } else {
-                zoomableCartesianPlot.setIdOfSelected(-1L);
+                if (!newSelection.equals(oldSelection)) {
+                    ticketStorage.makeTicketSelected(newSelection.getId());
+                }
             }
+            System.out.println(ticketStorage);
+            zoomableCartesianPlot.updateMap();
         });
+
     }
 
     @SneakyThrows

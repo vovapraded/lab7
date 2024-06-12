@@ -1,29 +1,24 @@
 package org.example.graphic.scene.main.command.insert;
 
-import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.common.dto.*;
 import org.controller.MyController;
 import org.example.graphic.scene.Application;
 import org.example.graphic.scene.Popup;
-import org.example.graphic.scene.main.WrappedTicket;
 import org.example.graphic.scene.main.command.Panel;
 
 import java.lang.reflect.Method;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 public class InsertPanel extends Panel {
 

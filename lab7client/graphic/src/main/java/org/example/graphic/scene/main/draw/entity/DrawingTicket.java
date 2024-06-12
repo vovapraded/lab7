@@ -1,4 +1,4 @@
-package org.example.graphic.scene.main;
+package org.example.graphic.scene.main.draw.entity;
 
 import javafx.geometry.Bounds;
 import javafx.scene.canvas.GraphicsContext;
@@ -8,36 +8,34 @@ import javafx.scene.text.Text;
 import lombok.Getter;
 import lombok.Setter;
 import org.common.dto.Ticket;
-import org.example.graphic.scene.Application;
+import org.example.graphic.scene.main.ZoomableCartesianPlot;
 import org.example.graphic.scene.main.utils.CoordinateConverter;
-
 @Getter
-public class WrappedTicket {
-    private final Ticket ticket;
+public abstract class DrawingTicket implements Comparable<DrawingTicket>{
     @Setter
-    private  Color color;
+    protected  Color color;
+    protected Ticket ticket;
+    protected double angle;
 
-    private static final Integer RECT_WIDTH_IN_LOCAL = ZoomableCartesianPlot.getRECT_WIDTH_IN_LOCAL();
-    private static final Integer RECT_HEIGHT_IN_LOCAL = ZoomableCartesianPlot.getRECT_HEIGHT_IN_LOCAL();
-    private static final Integer WIDTH = ZoomableCartesianPlot.getWIDTH();
-    private static final Integer HEIGHT = ZoomableCartesianPlot.getHEIGHT();
-    private static final Integer ZERO_Y = ZoomableCartesianPlot.getZERO_Y();
-    private static final Integer ZERO_X = ZoomableCartesianPlot.getZERO_X();
-    private static final Double INITIAL_MAX_X = ZoomableCartesianPlot.getINITIAL_MAX_X();
-    private static final Double INITIAL_MAX_Y = ZoomableCartesianPlot.getINITIAL_MAX_Y();
-    private CoordinateConverter converter = CoordinateConverter.getInstance();
-
-
-    public WrappedTicket(Ticket ticket, Color color) {
-        this.ticket = ticket;
+    public DrawingTicket(Color color, Ticket ticket) {
         this.color = color;
+        this.ticket = ticket;
     }
-    public void draw(GraphicsContext gc, double zoomFactor, WrappedTicket wrappedTicket,double angle,Color color,double rectWidth,double rectHeight) {
+
+    protected double x, y, width, height;
+    protected static final Integer RECT_WIDTH_IN_LOCAL = ZoomableCartesianPlot.getRECT_WIDTH_IN_LOCAL();
+    protected static final Integer RECT_HEIGHT_IN_LOCAL = ZoomableCartesianPlot.getRECT_HEIGHT_IN_LOCAL();
+    protected static final Integer WIDTH = ZoomableCartesianPlot.getWIDTH();
+    protected static final Integer HEIGHT = ZoomableCartesianPlot.getHEIGHT();
+    protected static final Integer ZERO_Y = ZoomableCartesianPlot.getZERO_Y();
+    protected static final Integer ZERO_X = ZoomableCartesianPlot.getZERO_X();
+    protected static final Double INITIAL_MAX_X = ZoomableCartesianPlot.getINITIAL_MAX_X();
+    protected static final Double INITIAL_MAX_Y = ZoomableCartesianPlot.getINITIAL_MAX_Y();
+    protected CoordinateConverter converter = CoordinateConverter.getInstance();
+
+    public void draw(GraphicsContext gc, double zoomFactor, double rectWidth, double rectHeight) {
 
         gc.save();
-
-        var ticket = wrappedTicket.getTicket();
-
         // Текст
         Font font = new Font("Arial", 6/zoomFactor); // Установите желаемый шрифт и размер
         gc.setFont(font);
@@ -68,11 +66,11 @@ public class WrappedTicket {
 //        System.out.println(pointL.getX()/zoomFactor);
 //        System.out.println(pointL.getY()/zoomFactor);
         System.out.println(pointG);
-        if (color!=null){
+//        if (color!=null){
             gc.setFill(color);
-        }else {
-            gc.setFill(this.color);
-        }
+//        }else {
+//            gc.setFill(this.color);
+//        }
         var x = pointG.getX();
         var y = pointG.getY();
         gc.translate(x + rectWidth / 2, y + rectHeight / 2);
@@ -83,5 +81,31 @@ public class WrappedTicket {
         gc.setFill(Color.BLACK);
         gc.fillText(ticket.getName(), textX, textY);
         gc.restore();
+    }
+
+    @Override
+    public int compareTo(DrawingTicket o) {
+
+        var thisCount = 0;
+        var otherCount = 0;
+        if (this instanceof CommonTicket && !(this instanceof SelectedTicket)){
+            thisCount = 3;
+        } else if (this instanceof SelectedTicket) {
+            thisCount = 2;
+        }else {
+            thisCount = 1;
+        }
+        if (o instanceof CommonTicket && !(o instanceof SelectedTicket)){
+            otherCount = 3;
+        } else if (o instanceof SelectedTicket) {
+            otherCount = 2;
+        }else {
+            otherCount = 1;
+        }
+        var res = otherCount - thisCount;
+        if (res == 0){
+            return 1;
+        }
+        return res;
     }
 }

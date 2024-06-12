@@ -9,51 +9,73 @@ import org.common.dto.Ticket;
 import org.controller.MyController;
 import org.example.graphic.scene.main.command.filter.Filter;
 import org.example.graphic.scene.main.command.filter.TicketFilter;
+import org.example.graphic.scene.main.draw.entity.CommonTicket;
+import org.example.graphic.scene.main.draw.entity.DrawingTicket;
+import org.example.graphic.scene.main.draw.entity.SelectedTicket;
 
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
- @Setter
-public class TicketStorage {
-    @Getter
+ @Setter     @Getter
+ public class TicketStorage {
     private ObservableList<Ticket> data;
     private ObservableList<Ticket> filteredData;
-    private Filter filter = new Filter();
+    private  ObservableList<DrawingTicket> filteredWrappedData;
+     private Filter filter = new Filter();
     private TicketFilter ticketFilter;
 
-    public ObservableList<Ticket> getFilteredData() {
-        return filteredData;
-    }
-public void filter(){
+     public void filter(){
     filteredData.setAll(data);
     filter.filter(ticketFilter,filteredData);
-}
+    generateFilteredWrappedData();
+     }
     public TicketStorage() {
         try {
             data = FXCollections.observableArrayList(MyController.getInstance().show());
             filteredData = FXCollections.observableArrayList(data);
+            generateFilteredWrappedData();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
     //TODO Переписать
-    public ObservableList<WrappedTicket> getWrappedData() {
+    public void generateFilteredWrappedData() {
         Map<String, List<Ticket>> groupedByAuthor = filteredData.stream()
                 .collect(Collectors.groupingBy(Ticket::getCreatedBy));
 
-        ObservableList<WrappedTicket> wrappedTickets = groupedByAuthor.entrySet().stream()
+       filteredWrappedData = groupedByAuthor.entrySet().stream()
                 .flatMap(entry -> {
                     Color randomColor = getRandomColor();
                     return entry.getValue().stream()
-                            .map(ticket -> new WrappedTicket(ticket, randomColor));
+                            .map(ticket -> new CommonTicket(ticket, randomColor));
                 })
                 .collect(Collectors.toCollection(FXCollections::observableArrayList));
+        System.out.println(filteredWrappedData);
 
-        return wrappedTickets;
     }
+     public void makeTicketSelected(Long id){
+         filteredWrappedData.replaceAll(drawingTicket -> {
+             if (drawingTicket.getTicket().getId().equals(id)){
+                 return new SelectedTicket(drawingTicket.getTicket(),drawingTicket.getColor());
+             }else{
+                 return drawingTicket;
+             }
+         });
+
+     }
+     public void unmakeAllTicketsSelected(){
+         filteredWrappedData.replaceAll(drawingTicket -> {
+             if (drawingTicket instanceof SelectedTicket){
+                 return new CommonTicket(drawingTicket.getTicket(),((SelectedTicket) drawingTicket).getOldColor());
+             }else{
+                 return drawingTicket;
+             }
+         });
+         System.out.println(filteredWrappedData);
+
+     }
     private  Color getRandomColor(){
         Random random = new Random();
         double red = random.nextDouble();
@@ -62,6 +84,7 @@ public void filter(){
         Color randomColor = new Color(red, green, blue, 0.2);
         return randomColor;
     }
+
 
 
 

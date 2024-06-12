@@ -32,6 +32,8 @@ import org.example.graphic.scene.MyScene;
 import org.example.graphic.scene.main.command.filter.FilterPanel;
 import org.example.graphic.scene.main.command.insert.InsertPanel;
 import org.example.graphic.scene.main.command.remove.RemoveButton;
+import org.example.graphic.scene.main.draw.DrawingManager;
+import org.example.graphic.scene.main.draw.animation.AnimationManager;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -95,10 +97,11 @@ public class MainScene extends MyScene {
         root.setBottom(changeLocaleWrapper);
 
         creatorTable = new CreatorTable(ticketStorage,this);
-          zoomableCartesianPlot = new ZoomableCartesianPlot(ticketStorage.getWrappedData());
-
+        var drawingManager = new DrawingManager();
+        var animationManager = new AnimationManager(drawingManager);
+        drawingManager.setCreatorTable(creatorTable);
+          zoomableCartesianPlot = new ZoomableCartesianPlot(animationManager);
         creatorTable.setZoomableCartesianPlot(zoomableCartesianPlot);
-        zoomableCartesianPlot.setCreatorTable(creatorTable);
 
          pagination = creatorTable.init();
          map = zoomableCartesianPlot.createMap();

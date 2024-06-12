@@ -12,13 +12,12 @@ import org.example.graphic.scene.main.ZoomableCartesianPlot;
 public class CoordinateConverter {
     @Getter
     private static final CoordinateConverter instance = new CoordinateConverter();
-    private final ZoomableCartesianPlot zoomableCartesianPlot = Application.getMainSceneObj().getZoomableCartesianPlot();
-    private final Integer WIDTH = zoomableCartesianPlot.getWIDTH();
-    private final Integer HEIGHT = zoomableCartesianPlot.getHEIGHT();
-    private final Integer ZERO_Y = zoomableCartesianPlot.getZERO_Y();
-    private final Integer ZERO_X = zoomableCartesianPlot.getZERO_X();
-    private final Double INITIAL_MAX_X = zoomableCartesianPlot.getINITIAL_MAX_X();
-    private final Double INITIAL_MAX_Y = zoomableCartesianPlot.getINITIAL_MAX_Y();
+    private final Integer WIDTH = ZoomableCartesianPlot.getWIDTH();
+    private final Integer HEIGHT = ZoomableCartesianPlot.getHEIGHT();
+    private final Integer ZERO_Y = ZoomableCartesianPlot.getZERO_Y();
+    private final Integer ZERO_X = ZoomableCartesianPlot.getZERO_X();
+    private final Double INITIAL_MAX_X = ZoomableCartesianPlot.getINITIAL_MAX_X();
+    private final Double INITIAL_MAX_Y = ZoomableCartesianPlot.getINITIAL_MAX_Y();
 
 
 
