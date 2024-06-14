@@ -13,10 +13,10 @@ public class AnimatedTicket extends DrawingTicket {
 
 
 
-    private final double DURATION = 1; // продолжительность анимации в секундах
+    private final double DURATION = 10; // продолжительность анимации в секундах
     private double elapsedTime = 0; // прошедшее время
 
-    public AnimatedTicket(Color color, Ticket ticket) {
+    public AnimatedTicket( Ticket ticket,Color color) {
         super(color, ticket);
     }
 

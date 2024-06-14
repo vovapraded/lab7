@@ -72,7 +72,6 @@ public class InsertPanel extends Panel {
             Popup.showDialog(controller.insert(ticket));;
             var ticketStorage = Application.getMainSceneObj().getTicketStorage();
             ticketStorage.getData().add(ticket);
-            ticketStorage.filter();
 
             Application.getMainSceneObj().getCreatorTable().updatePagination();
             Application.getMainSceneObj().getZoomableCartesianPlot().updateMap();

@@ -23,7 +23,6 @@ public class RemoveButton extends MyButton {
                 Popup.showDialog(message);
 
                 ticketStorage.getData().removeIf(ticket1 -> ticket1.getId().equals(ticket.getId()));
-                ticketStorage.filter();
                 Application.getMainSceneObj().getCreatorTable().updatePagination();
                 Application.getMainSceneObj().getZoomableCartesianPlot().updateMap();
 

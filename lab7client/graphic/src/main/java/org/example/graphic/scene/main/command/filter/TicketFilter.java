@@ -27,9 +27,10 @@ public class TicketFilter {
     private Long discountMax;
     private LocalDateTime dateMin;
     private LocalDateTime dateMax;
+    private String createdBy;
 
 
-    private List<Boolean> refundable;
+    private List<Boolean> refundable=new ArrayList<>(Arrays.asList(Boolean.TRUE,Boolean.FALSE, null));
     private VenueFilter venueFilter = new VenueFilter();
     private CoordinatesFilter coordinatesFilter = new CoordinatesFilter();
     private List<TicketType> ticketTypes =   new ArrayList<>(Arrays.asList(TicketType.USUAL, TicketType.VIP, TicketType.BUDGETARY));

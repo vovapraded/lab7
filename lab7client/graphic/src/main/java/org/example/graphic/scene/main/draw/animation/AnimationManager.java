@@ -46,14 +46,10 @@ public class AnimationManager {
                 double elapsedSeconds = elapsedNanos / 1_000_000_000.0;
                 lastUpdate = now;
                 // Update and draw all tickets
-                Iterator<AnimatedTicket> iterator = animatedTickets.iterator();
-                while (iterator.hasNext()) {
-                    AnimatedTicket ticket =  iterator.next();
+                for (AnimatedTicket ticket : animatedTickets) {
                     ticket.update(elapsedSeconds);
-                    if (ticket.isAnimationFinished()) {
-                        iterator.remove();
-                    } else {
-                        ticket.draw(gc,zoomFactor,rectWidth,rectHeight);
+                    if (!ticket.isAnimationFinished()) {
+                        ticket.draw(gc, zoomFactor, rectWidth, rectHeight);
                     }
                 }
             }

@@ -14,6 +14,7 @@ import org.common.dto.TicketType;
 import org.common.dto.VenueType;
 import org.example.graphic.scene.Application;
 import org.example.graphic.scene.main.CreatorTable;
+import org.example.graphic.scene.main.TicketStorage;
 import org.example.graphic.scene.main.command.Panel;
 
 import java.lang.reflect.Method;
@@ -28,9 +29,13 @@ import java.util.List;
 public class FilterPanel extends Panel {
 
 
-    public FilterPanel() {
+    public FilterPanel(TicketStorage ticketStorage) {
         super("Filter",false);
+        this.ticketStorage = ticketStorage;
     }
+    private final TicketStorage ticketStorage;
+    private  TicketFilter ticketFilter;
+
     private TextField idMinField;
     private TextField idMaxField;
     private TextField priceMinField;
@@ -69,6 +74,14 @@ public class FilterPanel extends Panel {
 
     @Override
     protected void onApply() {
+        LocalDateTime dateTimeMin = null;
+        LocalDateTime dateTimeMax = null;
+        if (dateMinPicker.getValue()!=null) {
+            dateTimeMin = LocalDateTime.of(dateMinPicker.getValue(), LocalTime.of(hourMinSpinner.getValue(), minuteMinSpinner.getValue()));
+        }
+        if (dateMaxPicker.getValue()!=null) {
+            dateTimeMax = LocalDateTime.of(dateMaxPicker.getValue(), LocalTime.of(hourMaxSpinner.getValue(), minuteMaxSpinner.getValue()));
+        }
         TicketFilter ticketFilter = TicketFilter.builder()
                 .idMin(valueOf(Long.class, idMinField.getText()))
                 .idMax(valueOf(Long.class, idMaxField.getText()))
@@ -78,9 +91,10 @@ public class FilterPanel extends Panel {
                 .discountMax(valueOf(Long.class, discountMaxField.getText()))
                 .refundable(getRefundableValues())
                 .ticketTypes(getTicketTypeValues())
-                .dateMin(LocalDateTime.of(dateMinPicker.getValue(), LocalTime.of(hourMinSpinner.getValue(), minuteMinSpinner.getValue())))
-                .dateMax(LocalDateTime.of(dateMaxPicker.getValue(), LocalTime.of(hourMaxSpinner.getValue(), minuteMaxSpinner.getValue())))
+                .dateMin(dateTimeMin)
+                .dateMax(dateTimeMax)
                 .partOfName(partOfNameField.getText())
+                .createdBy(createdByField.getText())
                 .venueFilter(VenueFilter.builder()
                         .capacityMin(valueOf(Long.class, capacityMinField.getText()))
                         .capacityMax(valueOf(Long.class, capacityMaxField.getText()))
@@ -111,35 +125,65 @@ public class FilterPanel extends Panel {
             return null;
         }
     }
-
+    private  String valueOf(Object t) {
+        if (t != null){
+           return String.valueOf(t);
+        }else {
+            return "";
+        }
+    }
 
     protected GridPane createFirstForm(HashMap<Node, String> nodeAndKeys) {
         initDialog();
-
+        ticketFilter = ticketStorage.getTicketFilter();
         Text ticketDetailsLabel = new Text();
         // Создаем элементы управления формы
          idMinField = createNumericTextField();
+         idMinField.setText(valueOf(ticketFilter.getIdMin()));
          idMaxField = createNumericTextField();
+        idMaxField.setText(valueOf(ticketFilter.getIdMax()));
+
         Label idMinLabel = new Label();
         Label idMaxLabel = new Label();
 
-         partOfNameField = new TextField();
+        partOfNameField = new TextField();
+        partOfNameField.setText(ticketFilter.getPartOfName());
+
         Label partOfNameLabel = new Label();
+//        partOfNameLabel.setLabelFor(partOfNameField);
 
         Label date = new Label();
         Label min = new Label();
          dateMinPicker = new DatePicker();
-        dateMinPicker.setValue(LocalDate.now());
+        var dateMin = ticketFilter.getDateMin();
+        int hourMin = 0;
+        int minuteMin = 0;
+        if (dateMin != null) {
+            dateMinPicker.setValue(dateMin.toLocalDate());
+            minuteMin = dateMin.getMinute();
+            hourMin = dateMin.getHour();
+        }
+//        dateMinPicker.setValue(LocalDate.now());
         Label hour = new Label();
-         hourMinSpinner = new Spinner<>(0, 23, 0);
+         hourMinSpinner = new Spinner<>(0, 23, hourMin);
         Label minute = new Label();
-         minuteMinSpinner = new Spinner<>(0, 59, 0);
+         minuteMinSpinner = new Spinner<>(0, 59, minuteMin);
+
 
         Label max = new Label();
-         dateMaxPicker = new DatePicker();
-        dateMaxPicker.setValue(LocalDate.now());
-         hourMaxSpinner = new Spinner<>(0, 23, 0);
-         minuteMaxSpinner = new Spinner<>(0, 59, 0);
+        dateMaxPicker = new DatePicker();
+
+        var dateMax = ticketFilter.getDateMax();
+        int hourMax = 0;
+        int minuteMax = 0;
+        if (dateMax != null) {
+            dateMaxPicker.setValue(dateMax.toLocalDate());
+            minuteMax = dateMax.getMinute();
+            hourMax = dateMax.getHour();
+        }
+//        dateMaxPicker.setValue(LocalDate.now());
+         hourMaxSpinner = new Spinner<>(0, 23, hourMax);
+         minuteMaxSpinner = new Spinner<>(0, 59, minuteMax);
 
         var ticketTypeLabel = new Label();
          ticketTypeContainer = new VBox(); // Создаем контейнер для чекбоксов
@@ -147,17 +191,27 @@ public class FilterPanel extends Panel {
         for (TicketType type : TicketType.values()) {
             CheckBox checkBox = new CheckBox(type.toString()); // Создаем чекбокс с названием типа
             ticketTypeContainer.getChildren().add(checkBox); // Добавляем чекбокс в контейнер
+            if (ticketFilter.getTicketTypes().contains(type)){
+                checkBox.fire();
+            }
         }
         var createdByLabel = new Label();
         createdByField = new TextField();
+        createdByField.setText(ticketFilter.getCreatedBy());
 
         priceMinField = createNumericTextField();
+        priceMinField.setText(valueOf(ticketFilter.getPriceMin()));
         priceMaxField = createNumericTextField();
+        priceMaxField.setText(valueOf(ticketFilter.getPriceMax()));
+
         Label priceMinLabel = new Label();
         Label priceMaxLabel = new Label();
 
         discountMinField = createNumericTextField();
+        discountMinField.setText(valueOf(ticketFilter.getDiscountMin()));
+//        dateMin.set
         discountMaxField = createNumericTextField();
+        discountMaxField.setText(valueOf(ticketFilter.getDiscountMax()));
         Label  discountMinLabel = new Label();
         Label  discountMaxLabel = new Label();
         refundable = new VBox();
@@ -166,6 +220,9 @@ public class FilterPanel extends Panel {
             var typeString = type == null ? "null" : type.toString();
             CheckBox checkBox = new CheckBox(typeString); // Создаем чекбокс с названием типа
             refundable.getChildren().add(checkBox); // Добавляем чекбокс в контейнер
+            if (ticketFilter.getRefundable().contains(type)){
+                checkBox.fire();
+            }
         }
         Label  refundableLabel = new Label();
 
@@ -303,14 +360,18 @@ public class FilterPanel extends Panel {
     protected GridPane createSecondForm(HashMap<Node, String> nodeAndKeys) {
 
         Text venueDetailsLabel = new Text();
+        var venueFilter = ticketFilter.getVenueFilter();
         // Создаем элементы управления формы
          capacityMinField = createNumericTextField();
+        capacityMinField.setText(valueOf(venueFilter.getCapacityMin()));
          capacityMaxField = createNumericTextField();
+        capacityMaxField.setText(valueOf(venueFilter.getCapacityMax()));
         Label capacityMinLabel = new Label();
         Label capacityMaxLabel = new Label();
         capacityMaxLabel.setPrefWidth(Region.USE_COMPUTED_SIZE);
 
         venuePartOfNameField = new TextField();
+        venuePartOfNameField.setText(venueFilter.getPartOfName());
         Label partOfNameLabel = new Label();
 
 
@@ -320,6 +381,9 @@ public class FilterPanel extends Panel {
         for (VenueType type : VenueType.values()) {
             CheckBox checkBox = new CheckBox(type.toString()); // Создаем чекбокс с названием типа
             venueTypeContainer.getChildren().add(checkBox); // Добавляем чекбокс в контейнер
+            if (venueFilter.getVenueTypes().contains(type)){
+                checkBox.fire();
+            }
         }
 
 
@@ -347,7 +411,7 @@ public class FilterPanel extends Panel {
         grid.add(capacityMaxField,3,1);
 
         grid.add(partOfNameLabel,0,2);
-        grid.add(partOfNameField,1,2);
+        grid.add(venuePartOfNameField,1,2);
 
         grid.add(venueTypeLabel,0,3);
         grid.add(venueTypeContainer,1,3);
@@ -367,14 +431,21 @@ public class FilterPanel extends Panel {
     protected GridPane createThirdForm(HashMap<Node, String> nodeAndKeys) {
 
         Text coordDetailsLabel = new Text();
+        var coordinatesFilter = ticketFilter.getCoordinatesFilter();
         // Создаем элементы управления формы
         coordinatesXMinField = createDoubleTextField();
+        coordinatesXMinField.setText(valueOf(coordinatesFilter.getXMin()));
         coordinatesXMaxField = createDoubleTextField();
+        coordinatesXMaxField.setText(valueOf(coordinatesFilter.getXMax()));
+
         Label coordinatesXMinLabel = new Label();
         Label coordinatesXMaxLabel = new Label();
 
         coordinatesYMinField = createNumericTextField();
+        coordinatesYMinField.setText(valueOf(coordinatesFilter.getYMin()));
         coordinatesYMaxField = createNumericTextField();
+        coordinatesYMaxField.setText(valueOf(coordinatesFilter.getYMax()));
+
         Label coordinatesYMinLabel = new Label();
         Label coordinatesYMaxLabel = new Label();
 

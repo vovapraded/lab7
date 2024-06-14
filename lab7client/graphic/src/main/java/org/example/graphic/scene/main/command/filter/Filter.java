@@ -7,14 +7,7 @@ import org.common.dto.Ticket;
 import java.util.List;
 import java.util.stream.Collectors;
 public class Filter {
-    public void filter(TicketFilter ticketFilter, ObservableList<Ticket> tickets) {
-        if (ticketFilter!=null) {
-            List<Ticket> filteredTickets = tickets.stream()
-                    .filter(ticket -> check(ticketFilter, ticket))
-                    .collect(Collectors.toList());
-            tickets.setAll(filteredTickets);
-        }
-    }
+
 
     public boolean check(TicketFilter ticketFilter, Ticket ticket){
         var res = true;
@@ -72,6 +65,9 @@ public class Filter {
         }
         if (ticketFilter.getPartOfName()!= null  && ticket.getName()!=null){
             res = res && ticket.getName().contains(ticketFilter.getPartOfName()) ;
+        }
+        if (ticketFilter.getCreatedBy() != null && ticket.getCreatedBy()!=null){
+            res = res && ticket.getCreatedBy().equals(ticketFilter.getCreatedBy()) ;
         }
         res = res && ticketFilter.getTicketTypes().contains(ticket.getTicketType());
         res = res && ticketFilter.getVenueFilter().getVenueTypes().contains(ticket.getVenue().getVenueType());

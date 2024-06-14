@@ -54,9 +54,10 @@ public class MainScene extends MyScene {
 
     public MainScene(TicketStorage ticketStorage) {
         this.ticketStorage = ticketStorage;
+        filterPanel = new FilterPanel(ticketStorage);
     }
 
-    private FilterPanel filterPanel = new FilterPanel();
+    private FilterPanel filterPanel ;
     private InsertPanel insertPanel = new InsertPanel();
 
 
