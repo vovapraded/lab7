@@ -8,7 +8,6 @@ import org.example.graphic.scene.main.draw.DrawingManager;
 import org.example.graphic.scene.main.draw.entity.DrawingTicket;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class AnimationManager {
@@ -24,13 +23,14 @@ public class AnimationManager {
     protected static final Integer ZERO_X = ZoomableCartesianPlot.getZERO_X();
     protected static final Double INITIAL_MAX_X = ZoomableCartesianPlot.getINITIAL_MAX_X();
     protected static final Double INITIAL_MAX_Y = ZoomableCartesianPlot.getINITIAL_MAX_Y();
-    List<AnimatedTicket> animatedTickets = new ArrayList<>();
+    List<DrawingTicket> drawingTickets = new ArrayList<>();
 
     public AnimationManager(DrawingManager drawingManager) {
         this.drawingManager = drawingManager;
     }
-
-    public void start(Canvas canvas){
+    private volatile boolean isAnimating = false;
+    public  void start(Canvas canvas){
+        isAnimating=true;
         new AnimationTimer() {
             private long lastUpdate = 0;
             private GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -40,40 +40,53 @@ public class AnimationManager {
                     lastUpdate = now;
                 }
 
-                drawCommonTickets(canvas);
+                var animatedTickets = drawCommonTickets(canvas);
                 // Calculate time elapsed
                 long elapsedNanos = now - lastUpdate;
                 double elapsedSeconds = elapsedNanos / 1_000_000_000.0;
                 lastUpdate = now;
                 // Update and draw all tickets
+                boolean allAnimationsFinished = true;
                 for (AnimatedTicket ticket : animatedTickets) {
                     ticket.update(elapsedSeconds);
                     if (!ticket.isAnimationFinished()) {
                         ticket.draw(gc, zoomFactor, rectWidth, rectHeight);
+                        allAnimationsFinished = false;
                     }
+                    else {
+                        ticket.setAngle(0);
+                        ticket.draw(gc, zoomFactor, rectWidth, rectHeight);
+                        drawingTickets.add(ticket);
+                    }
+                }
+                if (allAnimationsFinished) {
+                    System.out.println("All animations finished.");
+                    isAnimating=false;
+                    this.stop();
                 }
             }
         }.start();
 
     }
 
-    private void drawCommonTickets(Canvas canvas) {
+    private List<AnimatedTicket> drawCommonTickets(Canvas canvas) {
         var gc = canvas.getGraphicsContext2D();
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        this.animatedTickets = drawingManager.drawCommonTickets(gc,zoomFactor, rectWidth, rectHeight,  animatedTickets.stream().map(ticket -> (DrawingTicket)ticket).toList());
-        if (!animatedTickets.isEmpty()){
-            start(canvas);
-        }
+       return drawingManager.drawCommonTickets(gc,zoomFactor, rectWidth, rectHeight);
+//        if (!animatedTickets.isEmpty()){
+//            start(canvas);
+//        }
     }
     public void drawCommonTickets(Canvas canvas,double zoomFactor, List<DrawingTicket> tickets) {
         this.zoomFactor = zoomFactor;
+        this.drawingTickets = tickets;
         rectWidth = RECT_WIDTH_IN_LOCAL * WIDTH / INITIAL_MAX_X / 2 / zoomFactor;
         rectHeight = RECT_HEIGHT_IN_LOCAL * HEIGHT / INITIAL_MAX_Y / 2 / zoomFactor;
 
         var gc = canvas.getGraphicsContext2D();
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        animatedTickets = drawingManager.drawCommonTickets(gc,zoomFactor, rectWidth, rectHeight,tickets);
-        if (!animatedTickets.isEmpty()){
+        var animatedTickets = drawingManager.drawCommonTickets(gc,zoomFactor, rectWidth, rectHeight);
+        if (!animatedTickets.isEmpty() && !isAnimating){
             start(canvas);
         }
     }

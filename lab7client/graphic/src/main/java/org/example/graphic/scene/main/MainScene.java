@@ -98,7 +98,7 @@ public class MainScene extends MyScene {
         root.setBottom(changeLocaleWrapper);
 
         creatorTable = new CreatorTable(ticketStorage,this);
-        var drawingManager = new DrawingManager();
+        var drawingManager = new DrawingManager(ticketStorage);
         var animationManager = new AnimationManager(drawingManager);
         drawingManager.setCreatorTable(creatorTable);
           zoomableCartesianPlot = new ZoomableCartesianPlot(animationManager);

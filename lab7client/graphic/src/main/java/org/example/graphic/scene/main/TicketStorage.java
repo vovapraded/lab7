@@ -19,9 +19,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
- @Setter     @Getter
+@Setter     @Getter
  public class TicketStorage {
     private ObservableList<Ticket> data;
     private ObservableList<Ticket> filteredData;
@@ -91,15 +93,20 @@ import java.util.stream.Collectors;
         Map<String, List<Ticket>> groupedByAuthor = filteredData.stream()
                 .collect(Collectors.groupingBy(Ticket::getCreatedBy));
 
-       filteredWrappedData = groupedByAuthor.entrySet().stream()
-                .flatMap(entry -> {
-                    Color randomColor = getRandomColor();
-                    createdByAndColor.put(entry.getKey(),randomColor);
-                    return entry.getValue().stream()
-                            .map(ticket -> new CommonTicket(ticket, randomColor));
-                })
-                .collect(Collectors.toCollection(FXCollections::observableArrayList));
-        System.out.println(filteredWrappedData);
+        // Предполагаем, что это ваш метод, где groupedByAuthor и createdByAndColor являются полями класса или доступны в контексте метода.
+
+// Создание потока обработки группированных билетов
+        filteredWrappedData = FXCollections.observableArrayList();
+
+        groupedByAuthor.forEach((key, value) -> {
+            Color randomColor = getRandomColor();
+            createdByAndColor.put(key, randomColor);
+            value.forEach(ticket -> {
+                filteredWrappedData.add(new CommonTicket(ticket, randomColor));
+            });
+        });
+// Сбор результата в коллекцию
+
 
     }
      public void makeTicketSelected(Long id){

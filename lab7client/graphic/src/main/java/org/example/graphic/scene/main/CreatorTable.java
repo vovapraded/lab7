@@ -235,10 +235,6 @@ public class CreatorTable {
         box.setPadding(new Insets(20));
         // Устанавливаем данные в таблицу
         table.setItems(pageData);
-        System.out.println("table"+table.getWidth());
-        System.out.println(table.getHeight());
-        System.out.println("box"+box.getWidth());
-        System.out.println(box.getHeight());
         box.requestFocus();
         box.getChildren().setAll(table);
 //        boxes.putIfAbsent(pageIndex,new VBox());

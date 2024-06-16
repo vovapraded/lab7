@@ -15,6 +15,7 @@ public abstract class DrawingTicket implements Comparable<DrawingTicket>{
     @Setter
     protected  Color color;
     protected Ticket ticket;
+    @Setter
     protected double angle;
 
     public DrawingTicket(Color color, Ticket ticket) {
@@ -60,12 +61,10 @@ public abstract class DrawingTicket implements Comparable<DrawingTicket>{
         gc.setStroke(Color.BLUE);
         gc.setLineWidth(2);
 //        var = centerToUpperLeft(100,100,RECT_WIDTH,RECT_HEIGHT);
-        System.out.println(zoomFactor);
 //        var pointL=globalToLocal(200,200,zoomFactor);
         var pointG = converter.localToGlobal(coordX, coordY,zoomFactor);
 //        System.out.println(pointL.getX()/zoomFactor);
 //        System.out.println(pointL.getY()/zoomFactor);
-        System.out.println(pointG);
 //        if (color!=null){
             gc.setFill(color);
 //        }else {

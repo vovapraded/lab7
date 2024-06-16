@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.common.dto.Ticket;
 import org.example.graphic.scene.main.CreatorTable;
+import org.example.graphic.scene.main.TicketStorage;
 import org.example.graphic.scene.main.ZoomableCartesianPlot;
 import org.example.graphic.scene.main.draw.animation.AnimatedTicket;
 import org.example.graphic.scene.main.draw.entity.CommonTicket;
@@ -32,11 +33,15 @@ public class DrawingManager {
     protected static final Double INITIAL_MAX_X = ZoomableCartesianPlot.getINITIAL_MAX_X();
     protected static final Double INITIAL_MAX_Y = ZoomableCartesianPlot.getINITIAL_MAX_Y();
 
+private final TicketStorage ticketStorage;
+
+    public DrawingManager(TicketStorage ticketStorage) {
+        this.ticketStorage = ticketStorage;
+    }
 
 
-
-    public List<AnimatedTicket> drawCommonTickets(GraphicsContext gc, double zoomFactor,double rectWidth,double rectHeight,List<DrawingTicket> tickets){
-         sortedTickets = tickets.stream().sorted().toList();
+    public List<AnimatedTicket> drawCommonTickets(GraphicsContext gc, double zoomFactor,double rectWidth,double rectHeight){
+         sortedTickets = ticketStorage.getFilteredWrappedData().stream().sorted().toList();
         gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
 //        var animatedTickets = tickets.stream().map(ticket -> new AnimatedTicket(ticket.getTicket(),ticket.getTicket().getCoordinatesX(),ticket.getTicket().getCoordinatesY(),rectWidth,rectHeight,getRandomColor(),1000)).toList();
 //        AnimationManager animationManager = new AnimationManager();
