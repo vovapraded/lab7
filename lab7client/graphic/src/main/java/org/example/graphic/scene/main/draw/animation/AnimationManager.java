@@ -5,6 +5,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import org.example.graphic.scene.main.ZoomableCartesianPlot;
 import org.example.graphic.scene.main.draw.DrawingManager;
+import org.example.graphic.scene.main.draw.entity.CommonTicket;
 import org.example.graphic.scene.main.draw.entity.DrawingTicket;
 
 import java.util.ArrayList;
@@ -56,7 +57,7 @@ public class AnimationManager {
                     else {
                         ticket.setAngle(0);
                         ticket.draw(gc, zoomFactor, rectWidth, rectHeight);
-                        drawingTickets.add(ticket);
+                        drawingTickets.add(new CommonTicket(ticket.getTicket(),ticket.getColor()));
                     }
                 }
                 if (allAnimationsFinished) {

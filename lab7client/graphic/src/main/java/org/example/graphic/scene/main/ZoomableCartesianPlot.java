@@ -1,7 +1,6 @@
 package org.example.graphic.scene.main;
 
 import javafx.beans.binding.Bindings;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.*;
 import javafx.scene.canvas.Canvas;
@@ -11,12 +10,9 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.Setter;
-import org.common.dto.Ticket;
 import org.example.graphic.scene.Application;
 import org.example.graphic.scene.main.draw.animation.AnimationManager;
-import org.example.graphic.scene.main.draw.entity.CommonTicket;
 import org.example.graphic.scene.main.draw.entity.DrawingTicket;
-import org.example.graphic.scene.main.draw.entity.SelectedTicket;
 import org.example.graphic.scene.main.utils.CoordinateConverter;
 
 import java.util.List;
@@ -247,7 +243,7 @@ public class ZoomableCartesianPlot {
     }
 
     private void drawTickets(Canvas canvas, double zoomFactor) {
-        tickets =  ticketStorage.getFilteredWrappedData();
+        tickets =  ticketStorage.getWrappedData();
         animationManager.drawCommonTickets(canvas,zoomFactor,tickets);
     }
 //TODO

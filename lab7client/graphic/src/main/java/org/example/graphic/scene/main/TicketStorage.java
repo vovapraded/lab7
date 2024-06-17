@@ -15,62 +15,34 @@ import org.example.graphic.scene.main.draw.entity.CommonTicket;
 import org.example.graphic.scene.main.draw.entity.DrawingTicket;
 import org.example.graphic.scene.main.draw.entity.SelectedTicket;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.function.Function;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Setter     @Getter
  public class TicketStorage {
     private ObservableList<Ticket> data;
-    private ObservableList<Ticket> filteredData;
-    private  ObservableList<DrawingTicket> filteredWrappedData;
+    private ObservableList<DrawingTicket> wrappedFilteredData = FXCollections.observableArrayList();
+    private ObservableList<Ticket> filteredData =   FXCollections.observableArrayList();
+    private  ObservableList<DrawingTicket> wrappedData =   FXCollections.observableArrayList();
      private Filter filter = new Filter();
     private TicketFilter ticketFilter = new TicketFilter();
      private final HashMap<String,Color> createdByAndColor = new HashMap<>();
-
-     public void filter(){
-         filteredData.setAll(data.stream().filter(ticket -> filter.check(ticketFilter,ticket)).toList());
-     }
+    private final HashSet<Long> animatedId = new HashSet<>();
+//     public void filter(){
+//
+//         filteredWrappedData.setAll(data.stream().filter(ticket -> filter.check(ticketFilter,ticket)).toList());
+//     }
     public TicketStorage() {
         try {
             data = FXCollections.observableArrayList(MyController.getInstance().show());
-            filteredData = FXCollections.observableArrayList(data);
-            generateFilteredWrappedData();
-            data.addListener((ListChangeListener.Change<? extends Ticket> change) -> {
-                while (change.next()) {
-                    if (change.wasAdded()) {
-                        var addedTickets = change.getAddedSubList();
-                        var addedWrappedTickets = addedTickets.stream()
-                                .filter(ticket -> filter.check(ticketFilter,ticket))
-                                .map(ticket -> {
-                                    Color color = createdByAndColor.get(ticket.getCreatedBy());
-                                    if (color == null) {
-                                        color = getRandomColor();
-                                        createdByAndColor.put(ticket.getCreatedBy(),color);
-                                    }
-                                    return new AnimatedTicket(ticket,color);
-                                })
-                                .toList();
-                        filteredData.addAll(addedTickets);
-                    }
-                    if (change.wasRemoved()){
-                        var removedTickets = change.getRemoved();
-                        filteredData.removeIf(ticket -> removedTickets.contains(ticket));
-                    }
-                }
 
-            });
-            filteredData.addListener((ListChangeListener.Change<? extends Ticket> change) -> {
+            data.addListener((ListChangeListener.Change<? extends Ticket> change) -> {
                         while (change.next()){
                             if (change.wasRemoved()){
-                                filteredWrappedData.removeIf(drawingTicket -> change.getRemoved().contains(drawingTicket.getTicket()));
+                                wrappedData.removeIf(drawingTicket -> change.getRemoved().contains(drawingTicket.getTicket()));
                             }
                             if (change.wasAdded()){
-                                filteredWrappedData.addAll(change.getAddedSubList().stream().map(ticket ->{
+                                wrappedData.addAll(change.getAddedSubList().stream().map(ticket ->{
                                     Color color = createdByAndColor.get(ticket.getCreatedBy());
                                     if (color == null){
                                         color = getRandomColor();
@@ -81,28 +53,54 @@ import java.util.stream.Stream;
                             }
                         }
             });
+            wrappedData.addListener((ListChangeListener.Change<? extends DrawingTicket> change) -> {
+                while (change.next()) {
+                    if (change.wasRemoved()){
+                        var removedWrappedTickets = change.getRemoved();
+                        var removedTickets = removedWrappedTickets.stream().map(DrawingTicket::getTicket).toList();
+                        wrappedFilteredData.removeIf(ticket -> removedWrappedTickets.contains(ticket));
+                        filteredData.removeIf(ticket -> removedTickets.contains(ticket));
+                    }
+                    if (change.wasAdded()) {
+                        wrappedFilteredData.removeIf(ticket -> !filter.check(ticketFilter,ticket));
+                        filteredData.removeIf(ticket -> !filter.check(ticketFilter,ticket));
 
-            generateFilteredWrappedData();
+                        var addedTickets = change.getAddedSubList();
+                        var wrappedFilteredAddedTickets = addedTickets.stream().filter(ticket -> filter.check(ticketFilter,ticket)).toList();
+
+                        wrappedFilteredData.addAll(wrappedFilteredAddedTickets);
+                        filteredData.addAll(wrappedFilteredAddedTickets.stream().map(DrawingTicket::getTicket).toList());
+                    }
+
+//                    if (change.wasReplaced()){
+//                        change.getR
+//                    }
+                }
+
+            });
+            generateWrappedData();
+
+
 
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
     //TODO Переписать
-    public void generateFilteredWrappedData() {
-        Map<String, List<Ticket>> groupedByAuthor = filteredData.stream()
+    public void generateWrappedData() {
+        Map<String, List<Ticket>> groupedByAuthor = data.stream()
                 .collect(Collectors.groupingBy(Ticket::getCreatedBy));
 
         // Предполагаем, что это ваш метод, где groupedByAuthor и createdByAndColor являются полями класса или доступны в контексте метода.
 
 // Создание потока обработки группированных билетов
-        filteredWrappedData = FXCollections.observableArrayList();
+
 
         groupedByAuthor.forEach((key, value) -> {
             Color randomColor = getRandomColor();
             createdByAndColor.put(key, randomColor);
             value.forEach(ticket -> {
-                filteredWrappedData.add(new CommonTicket(ticket, randomColor));
+                wrappedData.add(new CommonTicket(ticket, randomColor));
             });
         });
 // Сбор результата в коллекцию
@@ -110,24 +108,17 @@ import java.util.stream.Stream;
 
     }
      public void makeTicketSelected(Long id){
-         filteredWrappedData.replaceAll(drawingTicket -> {
-             if (drawingTicket.getTicket().getId().equals(id)){
-                 return new SelectedTicket(drawingTicket.getTicket(),drawingTicket.getColor());
-             }else{
-                 return drawingTicket;
-             }
-         });
+         DrawingTicket drawingTicket = wrappedData.stream().filter(drawingTick -> drawingTick.getTicket().getId().equals(id)).findAny().get();
+         wrappedData.remove(drawingTicket);
+         wrappedData.add( new SelectedTicket(drawingTicket.getTicket(),drawingTicket.getColor()));
+
 
      }
      public void unmakeAllTicketsSelected(){
-         filteredWrappedData.replaceAll(drawingTicket -> {
-             if (drawingTicket instanceof SelectedTicket){
-                 return new CommonTicket(drawingTicket.getTicket(),((SelectedTicket) drawingTicket).getOldColor());
-             }else{
-                 return drawingTicket;
-             }
-         });
-         System.out.println(filteredWrappedData);
+        var selectedTickets = wrappedData.stream().filter(ticket -> ticket instanceof SelectedTicket).toList();
+        wrappedData.removeAll(selectedTickets);
+        wrappedData.addAll(selectedTickets.stream().map(ticket -> new CommonTicket(ticket.getTicket(),((SelectedTicket) ticket).getOldColor())).toList());
+         System.out.println(wrappedData);
 
      }
     private  Color getRandomColor(){

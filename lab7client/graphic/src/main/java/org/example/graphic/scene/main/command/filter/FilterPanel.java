@@ -109,7 +109,6 @@ public class FilterPanel extends Panel {
                         .build())
                 .build();
         Application.getMainSceneObj().getTicketStorage().setTicketFilter(ticketFilter);
-        Application.getMainSceneObj().getTicketStorage().filter();
         Application.getMainSceneObj().getCreatorTable().updatePagination();
         System.out.println(ticketFilter);
     }

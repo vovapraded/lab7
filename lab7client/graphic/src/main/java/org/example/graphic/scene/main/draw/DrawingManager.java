@@ -41,7 +41,7 @@ private final TicketStorage ticketStorage;
 
 
     public List<AnimatedTicket> drawCommonTickets(GraphicsContext gc, double zoomFactor,double rectWidth,double rectHeight){
-         sortedTickets = ticketStorage.getFilteredWrappedData().stream().sorted().toList();
+         sortedTickets = ticketStorage.getWrappedData().stream().sorted().toList();
         gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
 //        var animatedTickets = tickets.stream().map(ticket -> new AnimatedTicket(ticket.getTicket(),ticket.getTicket().getCoordinatesX(),ticket.getTicket().getCoordinatesY(),rectWidth,rectHeight,getRandomColor(),1000)).toList();
 //        AnimationManager animationManager = new AnimationManager();
@@ -82,9 +82,11 @@ private final TicketStorage ticketStorage;
                     int index = creatorTable.getSortedData().indexOf(wrappedTicket.getTicket());
                     System.out.println(index);
                     if (index >= 0) {
+                        flag = true;
                         handleRectangleClick(wrappedTicket.getTicket(),pagination,index);
                     }
-                    break; // Мы нашли прямоугольник, больше проверять не нужно
+                    break;
+
                 }
 
             }
@@ -94,10 +96,10 @@ private final TicketStorage ticketStorage;
         });
     }
     private void handleRectangleClick(Ticket ticket, Pagination pagination, int index) {
-        index += 1;
+
         System.out.println("ABOBA");
         var itemsPerPage = CreatorTable.getROWS_PER_PAGE();
-        var indexOfPage = (int) Math.ceil((double) index / itemsPerPage )-1;
+        var indexOfPage = (int) Math.round((double) index / itemsPerPage );
 
         pagination.setCurrentPageIndex(indexOfPage);
 
@@ -105,7 +107,7 @@ private final TicketStorage ticketStorage;
         System.out.println(index);
         System.out.println(indexOfPage);
 
-        int finalIndex = (index-1 )% itemsPerPage;
+        int finalIndex = (index)% itemsPerPage;
         Platform.runLater(() -> {
             creatorTable.getTable().getSelectionModel().clearAndSelect((finalIndex));
         });

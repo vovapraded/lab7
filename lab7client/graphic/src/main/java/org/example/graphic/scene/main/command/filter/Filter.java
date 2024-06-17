@@ -3,11 +3,14 @@ package org.example.graphic.scene.main.command.filter;
 
 import javafx.collections.ObservableList;
 import org.common.dto.Ticket;
+import org.example.graphic.scene.main.draw.entity.DrawingTicket;
 
 import java.util.List;
 import java.util.stream.Collectors;
 public class Filter {
-
+    public boolean check(TicketFilter ticketFilter, DrawingTicket ticket) {
+        return check(ticketFilter,ticket.getTicket());
+    }
 
     public boolean check(TicketFilter ticketFilter, Ticket ticket){
         var res = true;

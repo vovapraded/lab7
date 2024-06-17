@@ -187,6 +187,7 @@ public class CreatorTable {
 
     private void setOnMouseClicked() {
         table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            System.out.println("CLICK");
             ticketStorage.unmakeAllTicketsSelected();
             if (newSelection != null) {
                 if (!newSelection.equals(oldSelection)) {
