@@ -8,7 +8,7 @@
 <!--    <property name="connection.driver_class">org.postgresql.Driver</property>-->
 <!--    <property name="connection.username">s409397</property>-->
 <!--     <property name="connection.password">7Ob4pjO6aePNWK2o</property>-->
-    <property name="connection.url">jdbc:postgresql://localhost:5431/postgres</property>
+    <property name="connection.url">jdbc:postgresql://localhost:5432/postgres</property>
     <property name="connection.driver_class">org.postgresql.Driver</property>
     <property name="connection.username">postgres</property>
     <property name="connection.password">postgres</property>

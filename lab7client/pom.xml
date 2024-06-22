@@ -137,118 +137,26 @@
 <!--        </dependency>-->
 
     </dependencies>
-
-<!--      <build>-->
-<!--          <plugins>-->
-<!--              <plugin>-->
-<!--                  <groupId>org.apache.maven.plugins</groupId>-->
-<!--                  <artifactId>maven-assembly-plugin</artifactId>-->
-<!--                  <version>3.7.1</version>-->
-<!--                  -->
-<!--                  <configuration>-->
-<!--                      &lt;!&ndash; Используем свойство skip для исключения конкретного дочернего проекта &ndash;&gt;-->
-<!--&lt;!&ndash;                      <skip>controller</skip>&ndash;&gt;-->
-<!--                  </configuration>-->
-<!--                  <executions>-->
-<!--                      <execution>-->
-<!--                          <id>assemble</id>-->
-<!--                          <phase>package</phase>-->
-<!--                          <goals>-->
-<!--                              <goal>single</goal>-->
-<!--                          </goals>-->
-<!--                          &lt;!&ndash; Пример порядка сборки &ndash;&gt;-->
-<!--                      </execution>-->
-<!--                  </executions>-->
-<!--              </plugin>-->
-<!--          </plugins>-->
-<!--      </build>-->
-<!--    <build>-->
-<!--        <plugins>-->
-
-<!--            &lt;!&ndash; Плагин Maven Compiler для использования аннотационного процессора &ndash;&gt;-->
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-compiler-plugin</artifactId>-->
-<!--                <version>3.9.0</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>querydsl</id>-->
-<!--                        <goals>-->
-<!--                            <goal>compile</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <proc>only</proc>-->
-<!--                            &lt;!&ndash; Добавление пути к аннотационному процессору Querydsl &ndash;&gt;-->
-<!--                            <annotationProcessorPaths>-->
-<!--                                <path>-->
-<!--                                    <groupId>com.querydsl</groupId>-->
-<!--                                    <artifactId>querydsl-apt</artifactId>-->
-<!--                                    <version>${querydsl.version}</version>-->
-<!--                                </path>-->
-<!--                                &lt;!&ndash; Добавление пути к артефакту Jakarta Persistence API &ndash;&gt;-->
-<!--                                <path>-->
-<!--                                    &lt;!&ndash; https://mvnrepository.com/artifact/jakarta.persistence/jakarta.persistence-api &ndash;&gt;-->
-<!--                                    <groupId>jakarta.persistence</groupId>-->
-<!--                                    <artifactId>jakarta.persistence-api</artifactId>-->
-<!--                                    <version>3.1.0</version>-->
-
-<!--                                </path>-->
-<!--                            </annotationProcessorPaths>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
-
-<!--        </plugins>-->
-
-<!--    </build>-->
-<!--    <profiles>-->
-<!--        <profile>-->
-<!--            <id>exclude-controller</id>-->
-<!--            <modules>-->
-<!--                <module>!controller</module>-->
-<!--            </modules>-->
-<!--        </profile>-->
-<!--    </profiles>-->
-<!--    <build>-->
-<!--        <pluginManagement>-->
-<!--            <plugins>-->
-<!--                &lt;!&ndash; Plugin configurations can go here &ndash;&gt;-->
-<!--                <plugin>-->
-<!--                    <groupId>org.apache.maven.plugins</groupId>-->
-<!--                    <artifactId>maven-compiler-plugin</artifactId>-->
-<!--                    <version>3.8.1</version>-->
-<!--                    <configuration>-->
-<!--                        <source>1.8</source>-->
-<!--                        <target>1.8</target>-->
-<!--                    </configuration>-->
-<!--                </plugin>-->
-<!--                <plugin>-->
-<!--                    <groupId>org.apache.maven.plugins</groupId>-->
-<!--                    <artifactId>maven-jar-plugin</artifactId>-->
-<!--                    <version>3.1.0</version>-->
-<!--                    <configuration>-->
-<!--                        <archive>-->
-<!--                            <manifest>-->
-<!--                                <addClasspath>true</addClasspath>-->
-<!--                                <mainClass>org.example.Main</mainClass> &lt;!&ndash; Замените на ваш основной класс &ndash;&gt;-->
-<!--                            </manifest>-->
-<!--                        </archive>-->
-<!--                    </configuration>-->
-<!--                </plugin>-->
-<!--            </plugins>-->
-<!--        </pluginManagement>-->
-<!--        <plugins>-->
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-compiler-plugin</artifactId>-->
-<!--                <configuration>-->
-<!--                    <source>17</source>-->
-<!--                    <target>17</target>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
-<!--        </plugins>-->
-<!--    </build>-->
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.8.1</version>
+            <configuration>
+                <source>17</source> <!-- Укажите версию Java, если необходимо -->
+                <target>17</target> <!-- Укажите версию Java, если необходимо -->
+                <annotationProcessorPaths>
+                    <path>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                        <version>1.18.22</version>
+                    </path>
+                </annotationProcessorPaths>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
     <profiles>
         <profile>
             <id>exclude-common</id>

@@ -6,6 +6,7 @@ module lab7common {
     requires com.querydsl.jpa;
 
     requires java.desktop;
+    requires java.compiler;
     exports org.common;
     exports org.common.utility;
     exports org.common.network;

@@ -23,6 +23,7 @@ module org.example.graphic {
     requires controller;
     requires lab7common;
     requires java.desktop;
+    requires javafx.graphics;
 
 
 }

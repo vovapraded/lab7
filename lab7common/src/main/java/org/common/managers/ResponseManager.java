@@ -16,5 +16,7 @@ public interface ResponseManager {
 
     void addToSend(List<Ticket> tickets, Command command);
 
+    void makeException(Command command);
+
     void send(Command command);
 }

@@ -35,8 +35,12 @@ public class UdpClient  {
 
     private UdpClient(){
     }
-    @Getter
-    private static UdpClient instance = new UdpClient();
+    private final static UdpClient instance = new UdpClient();
+
+    public static UdpClient getInstance() {
+        return instance;
+    }
+
     private final InetAddress serverAddress;
 
 

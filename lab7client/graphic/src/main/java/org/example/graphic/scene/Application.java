@@ -43,15 +43,20 @@ public class Application extends javafx.application.Application {
             mainSceneObj.createMainScene();
 //            backgroundClickableMaker.make(mainSceneObj.scene);
             primaryStage.setScene(mainSceneObj.scene);
+
         }
         mainSceneObj.updateValueChangeLocale();
         mainSceneObj.updateTextUI();
         primaryStage.setScene(mainSceneObj.scene);
 
+
 //        primaryStage.show();
 
         primaryStage.setMaximized(true);
-
+        //устанавливаем минимум для пагинации
+        var pagination = mainSceneObj.getPagination();
+        pagination.setMinHeight(pagination.getHeight());
+        pagination.setMinWidth(pagination.getWidth());
 
 
 

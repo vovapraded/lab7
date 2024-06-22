@@ -13,7 +13,15 @@
 <junit.version>5.10.0</junit.version>  </properties>
 
   <dependencies>
-      <dependency>
+    <!-- https://mvnrepository.com/artifact/org.openjfx/javafx -->
+<!--    <dependency>-->
+<!--      <groupId>org.openjfx</groupId>-->
+<!--      <artifactId>javafx</artifactId>-->
+<!--      <version>23-ea+22</version>-->
+<!--      <type>pom</type>-->
+<!--    </dependency>-->
+
+    <dependency>
         <groupId>org.projectlombok</groupId>
         <artifactId>lombok</artifactId>
         <version>1.18.32</version>
@@ -34,7 +42,8 @@
       <groupId>org.controlsfx</groupId>
       <artifactId>controlsfx</artifactId>
       <version>11.1.2</version>
-    </dependency><dependency>
+    </dependency>
+    <dependency>
       <groupId>com.dlsc.formsfx</groupId>
       <artifactId>formsfx-core</artifactId>
       <version>11.6.0</version>
@@ -44,6 +53,8 @@
           <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
+
+
     </dependency>
 <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -64,10 +75,12 @@
           <scope>compile</scope>
       </dependency>
 
+
   </dependencies>
 
   <build>
     <plugins>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -96,7 +109,7 @@
             <!-- Default configuration for running with: mvn clean javafx:run -->
             <id>default-cli</id>
             <configuration>
-              <mainClass>org.example.graphic/org.example.graphic.scene.LoginScene</mainClass>
+              <mainClass>org.example.graphic/org.example.graphic.scene.Application</mainClass>
               <launcher>app</launcher>
               <jlinkZipName>app</jlinkZipName>
               <jlinkImageName>app</jlinkImageName>

@@ -42,6 +42,7 @@ public class CreatorTable {
     @Setter
     private ZoomableCartesianPlot zoomableCartesianPlot;
     private HashMap<Integer,VBox> boxes = new HashMap<>();
+    @Getter
     private VBox box;
 
     public CreatorTable(TicketStorage ticketStorage, MainScene mainScene) {
@@ -54,6 +55,7 @@ public class CreatorTable {
         pagination = createPagination();
         createTable();
 
+
         return pagination;
     }
 
@@ -63,7 +65,7 @@ public class CreatorTable {
         table = new TableView<>();
         table.setPadding(new Insets(10));
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        table.setMinSize(760,360); // Разрешаем таблице занимать всю доступную высоту
+//        table.setMinSize(760,360); // Разрешаем таблице занимать всю доступную высоту
         table.setEditable(true);
 
 
@@ -213,7 +215,7 @@ public class CreatorTable {
 //                System.out.println("поменялась страница");
 //            }
 //        });
-        pagination.setMinSize(800,400);
+//        pagination.setMinSize(800,400);
 
         return pagination;
     }

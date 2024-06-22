@@ -15,6 +15,8 @@ public class Response implements Serializable {
     private static final long serialVersionUID = "Response".hashCode();
     @Builder.Default
     private ArrayList<String> message = new ArrayList<>();
+    @Setter @Builder.Default
+    private boolean isThereEx = false;
     private List<Ticket> tickets;
 
 
@@ -22,7 +24,11 @@ public class Response implements Serializable {
     private boolean loginCorrect;
     private boolean passwordCorrect;
     public String getMessageBySingleString(){
-       return  String.join("\n", message);
+        var messageBySingleString = String.join("\n", message);
+        if (isThereEx ){
+            throw new RuntimeException(messageBySingleString);
+        }
+       return messageBySingleString  ;
     }
 
 }

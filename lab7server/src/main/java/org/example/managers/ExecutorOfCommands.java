@@ -81,15 +81,19 @@ public void run(){
         }catch (AuthorizationException e){
             logger.debug("Пользователь "+command.getAuthorization().getLogin()+ " не авторизован");
             responseManager.addToSend(e.getMessage(),command);
+            responseManager.makeException(command);
             responseManager.send(command);
         }catch (NoAccessException e){
             logger.debug("Нет доступа до удаления "+command.getAuthorization().getLogin()+ " не авторизован");
             responseManager.addToSend(e.getMessage(),command);
+            responseManager.makeException(command);
             responseManager.send(command);
         }
         catch (FailedTransactionException e){
             logger.error("Транзакция команды "+ command.getClass().getName() +" от пользователя "+command.getAuthorization().getLogin()+" завершилась с ошибкой");
             responseManager.addToSend(e.getMessage(),command);
+            responseManager.makeException(command);
+
             responseManager.send(command);
         }
 

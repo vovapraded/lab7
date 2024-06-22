@@ -37,6 +37,11 @@ public class CurrentResponseManager implements ResponseManager {
         }
         responses.get(command).getTickets().addAll(tickets);
     }
+    @Override
+    public void makeException(Command command) {
+
+        responses.get(command).setThereEx(true);
+    }
 
     @Override
     public void send(Command command){
