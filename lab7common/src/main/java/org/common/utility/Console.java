@@ -19,15 +19,12 @@ public interface     Console {
 
     public abstract Scanner getScanner();
 
-    void printHello();
 
     public abstract String getInput();
 
-    public abstract void  goToMenu();
 
-    public abstract String getInputFromCommand(int minCountOfArgs, int maxCountOfArgs) ;
 
-    abstract void sendToController(String s) ;
+    abstract void sendToController(String s,boolean isThereEx) ;
 
 
     public abstract void selectConsoleScanner();

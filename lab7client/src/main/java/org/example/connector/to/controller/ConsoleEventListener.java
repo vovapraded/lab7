@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface ConsoleEventListener {
-    void onEvent(String message);
+    void onEvent(String message,boolean isThereEx);
     void onEvent(List<Ticket> tickets);
 
 }

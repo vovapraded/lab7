@@ -6,5 +6,6 @@ module lab7client {
     requires guava.primitives.r03;
     requires org.apache.commons.lang3;
     exports org.example.connector.to.controller;
+    exports org.example.utility;
 
 }

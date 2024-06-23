@@ -96,7 +96,7 @@ public class CreatorTable {
 
         TableColumn<Ticket, Long> venueCapacity = ColumnUtils.createEditableColumn("Capacity", "venueCapacity", new LongStringConverter(),value -> value==null || value>0L);
 
-        TableColumn<Ticket, String> venueName = ColumnUtils.createEditableColumn("Name", "venueName", new DefaultStringConverter(),value -> value!=null);
+        TableColumn<Ticket, String> venueName = ColumnUtils.createEditableColumn("Name", "venueName", new DefaultStringConverter(),value -> value!=null && !value.isBlank());
 
         TableColumn<Ticket, VenueType> venueType = ColumnUtils.createEditableColumn("Type", "venueType", new VenueTypeStringConverter(),value -> true);
 

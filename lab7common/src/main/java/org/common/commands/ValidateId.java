@@ -11,15 +11,15 @@ import org.common.utility.*;
 public class ValidateId {
     public static Long validateId(String idStr, boolean mustBeUnique, Collection collection){
         if (!Validator.validate(idStr, TypesOfArgs.Long,false)){
-            throw new InvalidFormatException("Id должен быть числом");
+            throw new InvalidFormatException("ErrorIdMustBePositive");
         }
         Long id = Long.parseLong(idStr);
         if (id<=0){
-            throw new InvalidFormatException("Id должен быть больше нуля");
+            throw new InvalidFormatException("ErrorIdMustBePositive");
         }
-        String ne = mustBeUnique ? "" :" не";
+        String not = mustBeUnique ? "" :"Not";
         if (mustBeUnique == collection.getHashMap().containsKey(id)) {
-            throw new InvalidFormatException("Неправильный формат ввода id"+ne +" должен быть уникальным");
+            throw new InvalidFormatException("ErrorIdMustBe"+not +"Unique");
         }
         return Long.parseLong(idStr);
     }

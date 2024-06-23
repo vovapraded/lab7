@@ -25,7 +25,7 @@ public abstract class Panel {
     protected ButtonType applyOrContinueButtonType;
     protected ButtonType cancelButtonType ;
     protected ButtonType backButtonType ;
-    private  Localizator localizator = Localizator.getInstance();
+    protected   Localizator localizator = Localizator.getInstance();
     protected CopyOnWriteArrayList<GridPane> pages = new CopyOnWriteArrayList<>();
     private volatile int currentPageInd = 0;
     public void initDialog(){
@@ -154,20 +154,29 @@ public abstract class Panel {
 
 
     }
-    protected TextField createNumericTextField() {
+    protected TextField createNumericTextField(boolean canBeNull, boolean mustBePositive) {
         TextField textField = new TextField();
+        var minus = mustBePositive ? "" : "-";
+        var minusWithQ = mustBePositive ? "" : "-?";
+        var plusOrStar = canBeNull ? "*" :"+";
+        var regexp1 = minusWithQ+"\\d"+plusOrStar;
+        var regexp2 = "[^\\d"+minus+"]";
+
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*")) {
-                textField.setText(newValue.replaceAll("[^\\d]", ""));
+            if (!newValue.matches(regexp1)) {
+                newValue = newValue.replaceAll(regexp2, "");
+                textField.setText(newValue);
+
             }
         });
         return textField;
     }
+
     protected TextField createDoubleTextField() {
         TextField textField = new TextField();
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*\\.?\\d*")) {
-                textField.setText(newValue.replaceAll("[^\\d.]", ""));
+            if (!newValue.matches("-?\\d+\\.\\d*")) {
+                textField.setText(newValue.replaceAll("[^\\d.-]", ""));
             }
         });
         return textField;

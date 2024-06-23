@@ -15,7 +15,7 @@ public class Exit extends Command implements Serializable,ClientCommand {
 
     @Override
     public void execute() {
-        console.sendToController("Завершение работы");
+        console.sendToController("Завершение работы",false);
         System.exit(0);
     }
 

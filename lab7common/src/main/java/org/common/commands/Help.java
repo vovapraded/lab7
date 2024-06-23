@@ -22,10 +22,10 @@ public class Help extends Command implements Serializable {
                     responseManager.addToSend(line,this);
                 }
             } catch (Exception e) {
-                responseManager.addToSend("Ошибка при чтении файла: " + e.getMessage(),this);
+                responseManager.addToSend("ErrorInternalServer",this);
             }
         } else {
-            responseManager.addToSend("Файл help.txt не найден",this);
+            responseManager.addToSend("ErrorInternalServer",this);
         }
         loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
         responseManager.send(this);

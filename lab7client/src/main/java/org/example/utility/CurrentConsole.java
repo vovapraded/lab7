@@ -21,19 +21,11 @@ import static lombok.AccessLevel.PRIVATE;
  */
 @NoArgsConstructor(access = PRIVATE)
 public class CurrentConsole implements Console {
+    private static final Console instance = new CurrentConsole();
+
     public static Console getInstance() {
 
-        return
-            (Console) Proxy.newProxyInstance(
-                    CurrentConsole.class.getClassLoader(),
-                    new Class<?>[]{Console.class},
-                    (proxy, method, args) -> {
-                        if ("print".equals(method.getName())) {
-                            Main.sendMessageToController((String) args[0]);
-                            return null;
-                        }
-                        return method.invoke(INSTANCE, args);
-                    });
+        return instance;
 
     }
 
@@ -45,11 +37,7 @@ public class CurrentConsole implements Console {
     public Scanner getScanner() {
         return scanner;
     }
-    @Override
-    public void printHello(){
-        sendToController("Добро пожаловать!\n" +
-                "Введите login или register для авторизации");
-    }
+
 
 @Override
     public String getInput() {
@@ -68,7 +56,7 @@ public class CurrentConsole implements Console {
             System.exit(0);
         }
 
-        sendToController("Чтение файла "+stack.get(stack.size()-1)+" окончено");
+        sendToController("Чтение файла "+stack.get(stack.size()-1)+" окончено",false);
         stack.remove(stack.size()-1);
         ExecuteScript.setStack(stack);
         stackScanners.remove(stackScanners.size()-1);
@@ -82,29 +70,13 @@ public class CurrentConsole implements Console {
 
         return  getInput();
     }
-    @Override
-    public void  goToMenu(){
-        throw new InvalidFormatException("Операция отменена");
-    }
-    @Override
 
-    public String getInputFromCommand(int minCountOfArgs,int maxCountOfArgs){
-        this.sendToController("Для отмены операции введите /");
-        String input = this.getInput();
-        if (input.equals("/")){
-            goToMenu();
-        }
-        int countOfArgs = input.split(" ",-1).length ;
-        if (countOfArgs < minCountOfArgs || countOfArgs>maxCountOfArgs ){
-            sendToController("Неверное число аргументов");
-            return getInputFromCommand(minCountOfArgs,maxCountOfArgs);
-        }
-        return input;
-    }
+
+
 
     @Override
-    public void sendToController(String s) {
-        Main.sendMessageToController(s);
+    public void sendToController(String s,boolean isThereEx) {
+        Main.sendMessageToController(s,isThereEx);
     }
     @Override
     public void sendToController(List<Ticket> tickets) {

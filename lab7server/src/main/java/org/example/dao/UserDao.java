@@ -38,7 +38,7 @@ public class UserDao {
             return new ImmutablePair<BigInteger,String>(hash,salt);
         }catch (Exception e){
             session.getTransaction().rollback();
-            throw new FailedTransactionException("Транзакция не удалась");
+            throw new FailedTransactionException("ErrorTransactionFailed");
         }
 
     }
@@ -55,7 +55,7 @@ public class UserDao {
             session.getTransaction().commit();
         }catch (Exception e){
             session.getTransaction().rollback();
-            throw new  FailedTransactionException("Транзакция не удалась");
+            throw new  FailedTransactionException("ErrorTransactionFailed");
         }
 
 

@@ -137,9 +137,9 @@ public class FilterPanel extends Panel {
         ticketFilter = ticketStorage.getTicketFilter();
         Text ticketDetailsLabel = new Text();
         // Создаем элементы управления формы
-         idMinField = createNumericTextField();
+         idMinField = createNumericTextField(true,true);
          idMinField.setText(valueOf(ticketFilter.getIdMin()));
-         idMaxField = createNumericTextField();
+         idMaxField = createNumericTextField(true,true);
         idMaxField.setText(valueOf(ticketFilter.getIdMax()));
 
         Label idMinLabel = new Label();
@@ -198,18 +198,18 @@ public class FilterPanel extends Panel {
         createdByField = new TextField();
         createdByField.setText(ticketFilter.getCreatedBy());
 
-        priceMinField = createNumericTextField();
+        priceMinField = createNumericTextField(true,true);
         priceMinField.setText(valueOf(ticketFilter.getPriceMin()));
-        priceMaxField = createNumericTextField();
+        priceMaxField = createNumericTextField(true,true);
         priceMaxField.setText(valueOf(ticketFilter.getPriceMax()));
 
         Label priceMinLabel = new Label();
         Label priceMaxLabel = new Label();
 
-        discountMinField = createNumericTextField();
+        discountMinField = createNumericTextField(true,true);
         discountMinField.setText(valueOf(ticketFilter.getDiscountMin()));
 //        dateMin.set
-        discountMaxField = createNumericTextField();
+        discountMaxField = createNumericTextField(true,true);
         discountMaxField.setText(valueOf(ticketFilter.getDiscountMax()));
         Label  discountMinLabel = new Label();
         Label  discountMaxLabel = new Label();
@@ -361,9 +361,9 @@ public class FilterPanel extends Panel {
         Text venueDetailsLabel = new Text();
         var venueFilter = ticketFilter.getVenueFilter();
         // Создаем элементы управления формы
-         capacityMinField = createNumericTextField();
+         capacityMinField = createNumericTextField(true,true);
         capacityMinField.setText(valueOf(venueFilter.getCapacityMin()));
-         capacityMaxField = createNumericTextField();
+         capacityMaxField = createNumericTextField(true,true);
         capacityMaxField.setText(valueOf(venueFilter.getCapacityMax()));
         Label capacityMinLabel = new Label();
         Label capacityMaxLabel = new Label();
@@ -440,9 +440,9 @@ public class FilterPanel extends Panel {
         Label coordinatesXMinLabel = new Label();
         Label coordinatesXMaxLabel = new Label();
 
-        coordinatesYMinField = createNumericTextField();
+        coordinatesYMinField = createNumericTextField(true,false);
         coordinatesYMinField.setText(valueOf(coordinatesFilter.getYMin()));
-        coordinatesYMaxField = createNumericTextField();
+        coordinatesYMaxField = createNumericTextField(true,false);
         coordinatesYMaxField.setText(valueOf(coordinatesFilter.getYMax()));
 
         Label coordinatesYMinLabel = new Label();

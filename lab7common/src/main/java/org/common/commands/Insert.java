@@ -42,7 +42,7 @@ public class Insert extends Command implements Serializable {
     public void validate(String arg1) {
         this.stringArg = arg1;
         if (!Validator.validate(stringArg, TypesOfArgs.Long,false) || Long.parseLong(stringArg)<=0){
-            throw new InvalidFormatException("Id должен быть числом > 0",this);
+            throw new InvalidFormatException("ErrorIdMustBePositive",this);
         }
     }
 }

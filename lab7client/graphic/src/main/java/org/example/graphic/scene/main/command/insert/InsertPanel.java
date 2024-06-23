@@ -1,5 +1,6 @@
 package org.example.graphic.scene.main.command.insert;
 
+import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -46,6 +47,8 @@ public class InsertPanel extends Panel {
 
     @Override
     protected void onApply() throws Exception {
+        Long y = valueOf(Long.class, coordinatesYField.getText()) ;
+        if (y==null) y = 0L;
         Ticket ticket = Ticket.builder()
                 .id(valueOf(Long.class, idField.getText()))
                 .price(valueOf(Long.class, priceField.getText()))
@@ -62,13 +65,14 @@ public class InsertPanel extends Panel {
                         .build())
                 .coordinates(Coordinates.builder()
                         .x(valueOf(Double.class, coordinatesXField.getText()))
-                        .y(valueOf(Long.class, coordinatesYField.getText()))
+                        .y(y)
                         .build())
                 .build();
-        System.out.println(ticket.getId().getClass());
+
         MyController controller = MyController.getInstance();
 
         try {
+
             Popup.showDialog(controller.insert(ticket));;
             var ticketStorage = Application.getMainSceneObj().getTicketStorage();
             ticketStorage.getData().add(ticket);
@@ -76,7 +80,7 @@ public class InsertPanel extends Panel {
             Application.getMainSceneObj().getCreatorTable().updatePagination();
             Application.getMainSceneObj().getZoomableCartesianPlot().updateMap();
         }catch (Exception e){
-            Popup.showError(e.getMessage());
+            Popup.showError(localizator.getKeyString(e.getMessage()));
         }
 
 
@@ -102,7 +106,7 @@ public class InsertPanel extends Panel {
 
         Text ticketDetailsLabel = new Text();
         // Создаем элементы управления формы
-        idField = createNumericTextField();
+        idField = createNumericTextField(false,true);
         Label idLabel = new Label();
 
 
@@ -124,22 +128,41 @@ public class InsertPanel extends Panel {
         }
 
 
-        priceField = createNumericTextField();
+
+        priceField = createNumericTextField(false,true);
         Label priceLabel = new Label();
 
-        discountField = createNumericTextField();
+        discountField = createNumericTextField(true,true);
         Label  discountLabel = new Label();
 
         Label  refundableLabel = new Label();
         refundable = new VBox();
         ToggleGroup refundableGroup = new ToggleGroup(); // Создаем группу для RadioButton
-        var refundableList = new ArrayList<>(Arrays.asList(Boolean.TRUE, Boolean.FALSE, null));
+        var refundableList = new ArrayList<>(Arrays.asList(Boolean.TRUE, Boolean.FALSE));
         for (Boolean type : refundableList) {
-            String typeString = type == null ? "null" : type.toString();
-            RadioButton radioButton = new RadioButton(typeString); // Создаем RadioButton с названием типа
+            RadioButton radioButton = new RadioButton(type.toString()); // Создаем RadioButton с названием типа
             radioButton.setToggleGroup(refundableGroup); // Добавляем RadioButton в группу
+            radioButton.setOnAction(event -> {
+                refundableGroup.selectToggle(null);
+            });
+            radioButton.setOnMouseClicked(event -> {
+                var select =  refundableGroup.getSelectedToggle();
+                if(select == null){
+                    refundableGroup.selectToggle(radioButton);
+                }else {
+                    refundableGroup.selectToggle(null);
+                }
+            });
             refundable.getChildren().add(radioButton); // Добавляем RadioButton в контейнер
         }
+//        refundableGroup.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
+//            if (newToggle == nullButton) {
+//                oldToggle.setSelected(true);
+//
+//            }
+//        });
+//        addToggleHandler( refundableGroup);
+
 
         // Размещаем элементы управления на сетке
         GridPane grid = new GridPane();
@@ -202,6 +225,16 @@ public class InsertPanel extends Panel {
 
         return grid;
     }
+    private volatile boolean flag;
+//    private void addToggleHandler( ToggleGroup toggleGroup) {
+//        toggleGroup.().addListener((observable, oldValue, newValue) -> {
+//                RadioButton selectedRadioButton = (RadioButton) newValue;
+//                System.out.println("Выбрана радиокнопка: " + selectedRadioButton.getToggleGroup());
+//
+//        });
+//
+//    }
+
     private Boolean getRefundableValue() {
         for (var node : refundable.getChildren()) {
             if (node instanceof RadioButton) { // Проверяем, что элемент является RadioButton
@@ -212,8 +245,6 @@ public class InsertPanel extends Panel {
                         return Boolean.TRUE;
                     } else if (text.equals("false")) {
                         return Boolean.FALSE;
-                    } else if (text.equals("null")) {
-                        return null;
                     }
                 }
             }
@@ -259,7 +290,7 @@ public class InsertPanel extends Panel {
 
         Text venueDetailsLabel = new Text();
         // Создаем элементы управления формы
-        capacityField = createNumericTextField();
+        capacityField = createNumericTextField(true,true);
         Label capacityLabel = new Label();
 
         venueNameField = new TextField();
@@ -323,7 +354,7 @@ public class InsertPanel extends Panel {
         coordinatesXField = createDoubleTextField();
         Label coordinatesXLabel = new Label();
 
-        coordinatesYField = createNumericTextField();
+        coordinatesYField = createNumericTextField(false,false);
         Label coordinatesYLabel = new Label();
 
         // Размещаем элементы управления на сетке

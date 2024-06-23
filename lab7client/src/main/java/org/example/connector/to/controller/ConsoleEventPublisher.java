@@ -16,9 +16,9 @@ public class ConsoleEventPublisher {
     public void removeListener(ConsoleEventListener listener) {
         listeners.remove(listener);
     }
-    public void sendMessageToController(String message) {
+    public void sendMessageToController(String message, boolean isThereEx) {
         for (ConsoleEventListener listener : listeners) {
-            listener.onEvent(message);
+            listener.onEvent(message,isThereEx);
         }
     }
     public void sendTicketsToController(List<Ticket> tickets) {

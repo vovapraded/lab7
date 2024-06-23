@@ -41,7 +41,7 @@ public class TicketDao implements CollectionInDatabaseManager {
             return deletedTickets;
         } catch (Exception e){
             session.getTransaction().rollback();
-            throw new FailedTransactionException("Транзакция не удалась");
+            throw new FailedTransactionException("ErrorTransactionFailed");
         }
     }
     @Override
@@ -63,7 +63,7 @@ public class TicketDao implements CollectionInDatabaseManager {
         }
         catch (Exception e){
             session.getTransaction().rollback();
-            throw new FailedTransactionException("Транзакция загрузки не удалась");
+            throw new FailedTransactionException("ErrorTransactionFailed");
         }
 
     }
@@ -85,7 +85,7 @@ public class TicketDao implements CollectionInDatabaseManager {
             return deletedId;
         } catch (Exception e){
             session.getTransaction().rollback();
-            throw new FailedTransactionException("Транзакция не удалась");
+            throw new FailedTransactionException("ErrorTransactionFailed");
         }
 
     }
@@ -101,7 +101,7 @@ public class TicketDao implements CollectionInDatabaseManager {
             return Optional.ofNullable(ticket);
         } catch (Exception e){
             session.getTransaction().rollback();
-            throw new FailedTransactionException("Транзакция не удалась");
+            throw new FailedTransactionException("ErrorTransactionFailed");
         }
 
     }
@@ -125,13 +125,13 @@ public class TicketDao implements CollectionInDatabaseManager {
                 return Optional.ofNullable(newTicketUpd);
             } else {
                 session.getTransaction().rollback();
-                throw new NoAccessException("Нет доступа");
+                throw new NoAccessException("NoAccess");
 
             }
         }catch (Exception e){
             if (e instanceof NoAccessException) throw e;
             session.getTransaction().rollback();
-            throw new FailedTransactionException("Транзакция не удалась");
+            throw new FailedTransactionException("ErrorTransactionFailed");
         }
 
 
@@ -147,7 +147,7 @@ public class TicketDao implements CollectionInDatabaseManager {
                     .from(ticket)
                     .where(ticket.id.eq(id).and(ticket.createdBy.eq(login)))
                     .fetchOne();
-            if (tick == null) throw new NoAccessException("Нет доступа");
+            if (tick == null) throw new NoAccessException("NoAccess");
 
             new JPADeleteClause(session,ticket)
                     .where(ticket.id.eq(tick.getId()))
@@ -157,7 +157,7 @@ public class TicketDao implements CollectionInDatabaseManager {
         } catch (Exception e){
             if (e instanceof NoAccessException) throw e;
             session.getTransaction().rollback();
-            throw new FailedTransactionException("Транзакция не удалась");
+            throw new FailedTransactionException("ErrorTransactionFailed");
         }
 
     }
@@ -179,7 +179,7 @@ public class TicketDao implements CollectionInDatabaseManager {
                 return deletedTickets;
             } catch (Exception e){
                 session.getTransaction().rollback();
-                throw new FailedTransactionException("Транзакция не удалась");
+                throw new FailedTransactionException("ErrorTransactionFailed");
             }
     }
 
@@ -194,7 +194,7 @@ public class TicketDao implements CollectionInDatabaseManager {
                     .where(ticket.id.eq(tick.getId()) )
                     .fetchOne();
             if (oldTicket == null) throw new InvalidFormatException("Нет такого билета");
-            if (!oldTicket.getCreatedBy().equals(tick.getCreatedBy())) throw new NoAccessException("Нет доступа");
+            if (!oldTicket.getCreatedBy().equals(tick.getCreatedBy())) throw new NoAccessException("NoAccess");
             if (tick.getPrice()>oldTicket.getPrice()){
                 session.merge(tick);
                 var newTicketUpd = session.get(Ticket.class,oldTicket.getId());
@@ -207,7 +207,7 @@ public class TicketDao implements CollectionInDatabaseManager {
 
         } catch (Exception e){
             session.getTransaction().rollback();
-            throw new FailedTransactionException("Транзакция не удалась");
+            throw new FailedTransactionException("ErrorTransactionFailed");
         }
     }
 

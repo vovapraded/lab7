@@ -46,7 +46,7 @@ public class ExecuteScript extends Command implements Serializable,ClientCommand
                     stackScanners.add(scanner);
                     console.selectFileScanner(scanner);
                 }else {
-                    console.sendToController("Ошибка бесконечная рекурсия");
+                    console.sendToController("Ошибка бесконечная рекурсия",true);
                 }
             } catch (FileNotFoundException e) {
                 throw new InvalidFormatException("Нет такого файла");

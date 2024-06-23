@@ -31,15 +31,7 @@ public abstract class Command implements Serializable {
 
     public abstract void execute();
     public abstract void validate(String arg1);
-    public void prepareToSend(boolean ticketArgIsNeeded){
-        if (ticketArgIsNeeded ) {
-            Validator.validate(stringArg,TypesOfArgs.Long,false);
-            CreateTicket creator = new CreateTicket(console);
-            var ticket= creator.createTicket(null);
-            this.setTicketArg(ticket);
-        }
 
-    }
     protected String stringArg=null;
     protected Ticket ticketArg=null;
     private Authorization authorization = null;

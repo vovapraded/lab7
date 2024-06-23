@@ -29,8 +29,8 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
     }
-    public static void sendMessageToController(String message){
-        consoleEventPublisher.sendMessageToController(message);
+    public static void sendMessageToController(String message,boolean isThereEx){
+        consoleEventPublisher.sendMessageToController(message,isThereEx);
     }
     public static void sendTicketsToController(List<Ticket> tickets){
         consoleEventPublisher.sendTicketsToController(tickets);
@@ -45,8 +45,9 @@ public class Main {
                                 AuthorizationManager.resetAuth();
                             }
                             var message = resp.getMessageBySingleString();
+                            var isThereEx = resp.isThereEx();
                             if (!message.isBlank()){
-                                currentConsole.sendToController(message);
+                                currentConsole.sendToController(message,isThereEx);
                             }
                             if (resp.getTickets()!=null){
                                 currentConsole.sendToController(resp.getTickets());

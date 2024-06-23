@@ -59,7 +59,7 @@ public void run(){
             responseManager.initResponse(command,Response.builder().loginCorrect(loginCorrect).passwordCorrect(passwordCorrect).address(address).build());
             return loginCorrect & passwordCorrect;
         }catch (FailedTransactionException e){
-            throw new AuthorizationException("Произошла ошибка авторизации, попробуйте ещё");
+            throw new AuthorizationException("NotLoginIn");
         }
 
 

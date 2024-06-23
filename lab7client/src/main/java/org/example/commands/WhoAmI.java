@@ -8,9 +8,9 @@ public class WhoAmI extends Command implements ClientCommand{
     public void execute() {
         var login = PropertyUtil.getLogin();
         if (login == null)
-            console.sendToController("NotLoginIn");
+            console.sendToController("NotLoginIn",true);
         else
-            console.sendToController(login);
+            console.sendToController(login,false);
     }
 
     @Override

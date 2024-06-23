@@ -25,9 +25,9 @@ public class Response implements Serializable {
     private boolean passwordCorrect;
     public String getMessageBySingleString(){
         var messageBySingleString = String.join("\n", message);
-        if (isThereEx ){
-            throw new RuntimeException(messageBySingleString);
-        }
+//        if (isThereEx ){
+//            throw new RuntimeException(messageBySingleString);
+//        }
        return messageBySingleString  ;
     }
 
