@@ -24,7 +24,7 @@ public class InsertPanel extends Panel {
 
 
     public InsertPanel() {
-        super("Insert",false);
+        super("Insert");
     }
     private TextField idField;
     private TextField priceField;
@@ -200,7 +200,6 @@ public class InsertPanel extends Panel {
 
 
 
-        Application.getMainSceneObj().updateTextUI();
         return grid;
     }
     private Boolean getRefundableValue() {
@@ -314,7 +313,6 @@ public class InsertPanel extends Panel {
         nodeAndKeys.put(NameLabel, "NameLabel");
 
 
-        Application.getMainSceneObj().updateTextUI();
 
         return grid;
     }
@@ -361,7 +359,7 @@ public class InsertPanel extends Panel {
 
 
 
-        Application.getMainSceneObj().updateTextUI();
+
 
         return grid;
     }

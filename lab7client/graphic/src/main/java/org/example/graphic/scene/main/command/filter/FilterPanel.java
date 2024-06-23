@@ -30,7 +30,7 @@ public class FilterPanel extends Panel {
 
 
     public FilterPanel(TicketStorage ticketStorage) {
-        super("Filter",false);
+        super("Filter");
         this.ticketStorage = ticketStorage;
     }
     private final TicketStorage ticketStorage;
@@ -309,7 +309,7 @@ public class FilterPanel extends Panel {
 
 
 
-        Application.getMainSceneObj().updateTextUI();
+
         return grid;
     }
     private List<Boolean> getRefundableValues() {
@@ -423,7 +423,7 @@ public class FilterPanel extends Panel {
         nodeAndKeys.put(partOfNameLabel, "PartOfNameLabel");
 
 
-        Application.getMainSceneObj().updateTextUI();
+
 
         return grid;
     }
@@ -491,7 +491,7 @@ public class FilterPanel extends Panel {
 
 
 
-        Application.getMainSceneObj().updateTextUI();
+
 
         return grid;
     }

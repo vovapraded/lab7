@@ -1,5 +1,7 @@
 package org.example.graphic.scene;
 
+import javafx.scene.control.Button;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
@@ -58,9 +60,9 @@ public class Application extends javafx.application.Application {
         pagination.setMinHeight(pagination.getHeight());
         pagination.setMinWidth(pagination.getWidth());
 
+       
 
-
-}
+    }
 
 
 

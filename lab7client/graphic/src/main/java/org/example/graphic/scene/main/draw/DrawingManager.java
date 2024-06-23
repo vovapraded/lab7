@@ -80,7 +80,6 @@ private final TicketStorage ticketStorage;
                     // Найден прямоугольник, на который было нажатие
                     // Вы можете выполнить необходимые действия здесь
                     int index = creatorTable.getSortedData().indexOf(wrappedTicket.getTicket());
-                    System.out.println(index);
                     if (index >= 0) {
                         flag = true;
                         handleRectangleClick(wrappedTicket.getTicket(),pagination,index);
@@ -99,17 +98,18 @@ private final TicketStorage ticketStorage;
 
         System.out.println("ABOBA");
         var itemsPerPage = CreatorTable.getROWS_PER_PAGE();
-        var indexOfPage = (int) Math.round((double) index / itemsPerPage );
-
+        var indexOfPage = index / itemsPerPage;
         pagination.setCurrentPageIndex(indexOfPage);
 
-        // Найдите индекс билета в списке таблиц
-        System.out.println(index);
-        System.out.println(indexOfPage);
+
 
         int finalIndex = (index)% itemsPerPage;
         Platform.runLater(() -> {
-            creatorTable.getTable().getSelectionModel().clearAndSelect((finalIndex));
+           if (creatorTable.getTable().getSelectionModel().getSelectedItem() == ticket){
+               creatorTable.getTable().getSelectionModel().clearSelection();
+           }else {
+               creatorTable.getTable().getSelectionModel().clearAndSelect((finalIndex));
+           }
         });
 
     }
