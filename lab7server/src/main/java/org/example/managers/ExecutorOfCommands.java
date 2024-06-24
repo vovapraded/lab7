@@ -39,6 +39,7 @@ public void run(){
          executeCommand(command,address);
      } catch (InvalidFormatException e) {
          responseManager.addToSend(e.getMessage(), e.getCommand());
+         responseManager.makeException(e.getCommand());
          responseManager.send(e.getCommand());
      }finally {
          logger.debug("Команда "+ command.getClass().getName()+" с адресса "+address+" выполнена");

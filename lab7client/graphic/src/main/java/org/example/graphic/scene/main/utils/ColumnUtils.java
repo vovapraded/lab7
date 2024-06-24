@@ -24,18 +24,20 @@ public class ColumnUtils {
     public static <T> TableColumn<Ticket, T> createEditableColumn(String title, String property, StringConverter<T> converter,Predicate<T> predicate) {
         return gnerateTicketTableColumn(title, property, converter, predicate);
     }
-
     private static <T> TableColumn<Ticket, T> gnerateTicketTableColumn(String title, String property, StringConverter<T> converter, Predicate<T> predicate) {
+
         TableColumn<Ticket, T> column = new TableColumn<>(title);
         column.setCellValueFactory(new PropertyValueFactory<>(property));
         column.setCellFactory(new CustomCellFactory<>(converter, predicate));
         column.setEditable(true);
         MyController controller = MyController.getInstance();
+        Localizator localizator = Localizator.getInstance();
+
         column.setOnEditCommit(event -> {
             T newValue = event.getNewValue();
             Ticket ticket = event.getRowValue();
             if (!Application.getLogin().equals(ticket.getCreatedBy())){
-                Popup.showError(Localizator.getInstance().getKeyString("NoAccess"));
+                Popup.showError(localizator.getKeyString("NoAccess"));
                 event.consume(); // Отменяем событие
                 event.getTableView().refresh(); // Обновляем таблицу для возврата к старому значению
                 return;
@@ -44,14 +46,18 @@ public class ColumnUtils {
             try {
                 pd = new PropertyDescriptor(property, ticket.getClass());
                 Method setter = pd.getWriteMethod();
-
+                Method getter = pd.getReadMethod();
+                var oldValue = getter.invoke(ticket);
                 if (setter != null) {
                     setter.invoke(ticket, newValue);
                     try {
-                        Popup.showDialog(controller.update(event.getRowValue()));
+                        Popup.showDialog(localizator.getKeyString(controller.update(ticket)));
                         Application.getMainSceneObj().getZoomableCartesianPlot().updateMap();
                     } catch (Exception e) {
-                        Popup.showError(e.getMessage());
+                        setter.invoke(ticket, oldValue);
+                        Popup.showError(localizator.getKeyString(e.getMessage()));
+                        event.consume(); // Отменяем событие
+                        event.getTableView().refresh(); // Обновляем таблицу для возврата к старому значению
                     }
 
                 }

@@ -73,7 +73,7 @@ public class InsertPanel extends Panel {
 
         try {
 
-            Popup.showDialog(controller.insert(ticket));;
+            Popup.showDialog(localizator.getKeyString(controller.insert(ticket)));;
             var ticketStorage = Application.getMainSceneObj().getTicketStorage();
             ticketStorage.getData().add(ticket);
 

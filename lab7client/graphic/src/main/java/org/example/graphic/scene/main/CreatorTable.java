@@ -152,12 +152,7 @@ public class CreatorTable {
             return row;
         });
 
-        price.setOnEditCommit(event -> {
-            var newValue = event.getNewValue();
-            Ticket ticket = event.getRowValue();
-            ticket.setPrice(newValue);
-            System.out.println("New value committed: " + newValue);
-        });
+
         this.box = new VBox(table);
 //        this.box.setFillWidth(true); // Разрешаем VBox занимать всю доступную ширину
 
