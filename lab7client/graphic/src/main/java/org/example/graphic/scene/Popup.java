@@ -24,6 +24,7 @@ public class Popup {
 //            alert.initOwner(Application.getPrimaryStage());
             alert.setHeaderText(null);
             alert.setContentText(message);
+            System.out.println(message);
             alert.show();
         });
     }

@@ -95,6 +95,7 @@ public class InsertPanel extends Panel {
             // Вызываем метод valueOf на классе с переданным параметром
             return clazz.cast(valueOfMethod.invoke(null, param));
         } catch (Exception e) {
+
             return null;
         }
     }

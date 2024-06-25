@@ -159,10 +159,9 @@ public abstract class Panel {
         var regexp2 = "[^\\d"+minus+"]";
 
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches(regexp1)) {
+            if (!newValue.matches(regexp1) || newValue.length() > 18) {
                 newValue = newValue.replaceAll(regexp2, "");
-                textField.setText(newValue);
-
+                textField.setText(newValue.substring(0,Math.min(newValue.length(),18)));
             }
         });
         return textField;
@@ -171,11 +170,54 @@ public abstract class Panel {
     protected TextField createDoubleTextField() {
         TextField textField = new TextField();
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("-?\\d+\\.\\d*")) {
-                textField.setText(newValue.replaceAll("[^\\d.-]", ""));
+            var str = newValue.replaceAll("[^\\d.-]","");
+            while (!checkDouble(str) ) {
+                while (str.codePoints().filter(ch -> ch == '.').count()>1){
+                    str = str.replaceFirst("\\.","");
+                }while (str.codePoints().filter(ch -> ch == '-').count()>1){
+                    str=removeLastChar(str, '-');
+                }
+                if (str.indexOf('-')>0){
+                    str = str.substring(str.indexOf('-'));
+                }
+                if (!checkDouble(str) && str.length()>1){
+                    str = str.substring(0,str.length()-1);
+                }
             }
+            textField.setText(str);
+
         });
         return textField;
     }
+    private boolean checkDouble(String str){
+        try {
+            if (str.isEmpty()){
+                return true;
+            }
+            double number = Double.parseDouble(str);
+            System.out.println(number);
+            return !Double.isInfinite(number) && !Double.isNaN(number);
 
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+    private static String removeLastChar(String str, char targetChar) {
+        // Ищем индекс последнего вхождения символа
+        int lastIndex = str.lastIndexOf(targetChar);
+
+        if (lastIndex != -1) {
+            // Создаем StringBuilder из исходной строки
+            StringBuilder sb = new StringBuilder(str);
+
+            // Удаляем символ по найденному индексу
+            sb.deleteCharAt(lastIndex);
+
+            // Возвращаем результат в виде строки
+            return sb.toString();
+        } else {
+            // Если символ не найден, возвращаем null или исходную строку, в зависимости от требований
+            return null;
+        }
+    }
 }
