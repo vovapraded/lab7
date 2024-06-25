@@ -230,7 +230,9 @@ public class CreatorTable {
             sortedData.addListener((ListChangeListener.Change<? extends Ticket> change) ->{
                 while (change.next()){
                     if (change.wasAdded() || change.wasRemoved()|| change.wasPermutated()){
-                        pageData.setAll(sortedData.subList(fromIndex, toIndex));
+                        if (fromIndex < sortedData.size()) {
+                            pageData.setAll(sortedData.subList(fromIndex, Math.min(fromIndex + ROWS_PER_PAGE, sortedData.size())));
+                        }
                     }
                 }
         });
