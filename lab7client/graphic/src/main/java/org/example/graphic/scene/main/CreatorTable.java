@@ -1,6 +1,8 @@
 package org.example.graphic.scene.main;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.geometry.Insets;
@@ -18,12 +20,15 @@ import org.common.dto.TicketType;
 import org.common.dto.VenueType;
 import org.controller.MyController;
 import org.example.graphic.node.TableColumnAdapter;
+import org.example.graphic.scene.main.draw.entity.DrawingTicket;
+import org.example.graphic.scene.main.draw.select.SelectedManager;
 import org.example.graphic.scene.main.utils.*;
 import org.example.graphic.scene.main.utils.conventer.*;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Optional;
 
 public class CreatorTable {
     @Getter
@@ -41,12 +46,14 @@ public class CreatorTable {
     @Getter
     @Setter
     private ZoomableCartesianPlot zoomableCartesianPlot;
-    private HashMap<Integer,VBox> boxes = new HashMap<>();
+    private final      SelectedManager selectedManager;
     @Getter
     private VBox box;
 
     public CreatorTable(TicketStorage ticketStorage, MainScene mainScene) {
         this.ticketStorage = ticketStorage;
+        selectedManager = new SelectedManager(ticketStorage,this);
+
         this.nodeAndPropertyKeys = mainScene.getNodeAndPropertyKeys();
         this.mainScene = mainScene;
     }
@@ -124,6 +131,7 @@ public class CreatorTable {
                 price.setSortType(TableColumn.SortType.ASCENDING);
                 return true;
             }
+            comparator = comparator.thenComparing(Ticket::getId);
             if (comparator.equals(sortedData.getComparator())) {
                 comparator = comparator.reversed();
             }
@@ -147,7 +155,9 @@ public class CreatorTable {
                     if (position != null) {
                         table.edit(index, position.getTableColumn());
                     }
-                }
+                }else if (!row.isEmpty() && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1){
+                    selectedManager.tryToSelectTicket(row.getItem().getId());
+                    }
             });
             return row;
         });
@@ -178,28 +188,15 @@ public class CreatorTable {
         nodeAndPropertyKeys.put(new TableColumnAdapter(coordinatesDetails), "CoordinatesDetailsLabel");
         nodeAndPropertyKeys.put(new TableColumnAdapter(venueDetailsColumn), "VenueDetailsLabel");
         mainScene.updateTextUI();
-        setOnMouseClicked();
         return table;
     }
 
-    private void setOnMouseClicked() {
-        table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            System.out.println("CLICK");
-            ticketStorage.unmakeAllTicketsSelected();
-            if (newSelection != null) {
-                if (!newSelection.equals(oldSelection)) {
-                    ticketStorage.makeTicketSelected(newSelection.getId());
-                }
-            }
-            System.out.println(ticketStorage);
-            zoomableCartesianPlot.updateMap();
-        });
 
-    }
 
     @SneakyThrows
     public Pagination createPagination() {
-        sortedData = new SortedList<>(ticketStorage.getFilteredData());
+
+        sortedData = new SortedList<Ticket>(ticketStorage.getFilteredData());
         int totalPageCount = (int) Math.ceil((double) sortedData.size() / ROWS_PER_PAGE);
         pagination = new Pagination(totalPageCount, 0);
         pagination.setPageFactory(this::createPage);
@@ -225,11 +222,18 @@ public class CreatorTable {
         int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, sortedData.size());
 
         if (sortedData.getComparator() == null) {
-            sortedData.setComparator(Comparator.naturalOrder());
+            sortedData.setComparator(Comparator.comparing(Ticket::getPrice).thenComparing(Ticket::getId));
         }
 
         // Создаем данные для текущей страницы
         ObservableList<Ticket> pageData = FXCollections.observableArrayList(sortedData.subList(fromIndex, toIndex));
+            sortedData.addListener((ListChangeListener.Change<? extends Ticket> change) ->{
+                while (change.next()){
+                    if (change.wasAdded() || change.wasRemoved()|| change.wasPermutated()){
+                        pageData.setAll(sortedData.subList(fromIndex, toIndex));
+                    }
+                }
+        });
         box.setPadding(new Insets(20));
         // Устанавливаем данные в таблицу
         table.setItems(pageData);
@@ -241,15 +245,39 @@ public class CreatorTable {
 
     }
 
+    public void selectTicket(Ticket ticket) {
+        Platform.runLater(() -> {
+
+        var index =     sortedData.indexOf(ticket);
+        var itemsPerPage = ROWS_PER_PAGE;
+        var indexOfPage = index / itemsPerPage;
+        pagination.setCurrentPageIndex(indexOfPage);
+
+
+
+        int finalIndex = (index)% itemsPerPage;
+
+                table.getSelectionModel().clearAndSelect((finalIndex));
+        });
+
+    }
     public void updatePagination() {
-        updateData();
-        pagination.setPageFactory(this::createPage);
-    }
 
-    public void updateData() {
-        ObservableList<Ticket> updatedData = FXCollections.observableArrayList(ticketStorage.getFilteredData());
-        sortedData = new SortedList<>(updatedData);
-        sortedData.setComparator(Comparator.naturalOrder());
+        int totalPageCount = (int) Math.ceil((double) sortedData.size() / ROWS_PER_PAGE);
+        pagination.setPageCount(totalPageCount);
+        selectTicket(ticketStorage.findSelectedTicket());
 
     }
+
+
+
+
+    public void selectTicket(Optional<DrawingTicket> selectedTicketOptional) {
+
+     selectedTicketOptional.ifPresent((selectedTicket)->{
+        var ticket = selectedTicket.getTicket();
+        selectTicket(ticket);
+    });
+    }
+
 }

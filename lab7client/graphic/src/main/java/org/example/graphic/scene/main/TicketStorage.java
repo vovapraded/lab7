@@ -23,15 +23,17 @@ import java.util.stream.Collectors;
     private ObservableList<Ticket> data;
     private ObservableList<DrawingTicket> wrappedFilteredData = FXCollections.observableArrayList();
     private ObservableList<Ticket> filteredData =   FXCollections.observableArrayList();
+    public void updateFilteredData(){
+        wrappedFilteredData.setAll(wrappedData.stream().filter(ticket -> filter.check(ticketFilter,ticket)).toList());
+        filteredData.setAll(wrappedFilteredData.stream().map(DrawingTicket::getTicket).toList());
+    }
+
+
     private  ObservableList<DrawingTicket> wrappedData =   FXCollections.observableArrayList();
      private Filter filter = new Filter();
     private TicketFilter ticketFilter = new TicketFilter();
      private final HashMap<String,Color> createdByAndColor = new HashMap<>();
-    private final HashSet<Long> animatedId = new HashSet<>();
-//     public void filter(){
-//
-//         filteredWrappedData.setAll(data.stream().filter(ticket -> filter.check(ticketFilter,ticket)).toList());
-//     }
+
     public TicketStorage() {
         try {
             data = FXCollections.observableArrayList(MyController.getInstance().show());
@@ -53,34 +55,22 @@ import java.util.stream.Collectors;
                             }
                         }
             });
+
+            generateWrappedData();
+            updateFilteredData();
             wrappedData.addListener((ListChangeListener.Change<? extends DrawingTicket> change) -> {
                 while (change.next()) {
-                    if (change.wasRemoved()){
-                        var removedWrappedTickets = change.getRemoved();
-                        var removedTickets = removedWrappedTickets.stream().map(DrawingTicket::getTicket).toList();
-                        wrappedFilteredData.removeIf(ticket -> removedWrappedTickets.contains(ticket));
-                        filteredData.removeIf(ticket -> removedTickets.contains(ticket));
+                    if (change.wasRemoved()) {
+                        wrappedFilteredData.removeIf(drawingTicket -> change.getRemoved().contains(drawingTicket));
+                        filteredData.removeIf(ticket -> change.getRemoved().stream().map(DrawingTicket::getTicket).toList().contains(ticket));
                     }
                     if (change.wasAdded()) {
-                        wrappedFilteredData.removeIf(ticket -> !filter.check(ticketFilter,ticket));
-                        filteredData.removeIf(ticket -> !filter.check(ticketFilter,ticket));
-
-                        var addedTickets = change.getAddedSubList();
-                        var wrappedFilteredAddedTickets = addedTickets.stream().filter(ticket -> filter.check(ticketFilter,ticket)).toList();
-
-                        wrappedFilteredData.addAll(wrappedFilteredAddedTickets);
-                        filteredData.addAll(wrappedFilteredAddedTickets.stream().map(DrawingTicket::getTicket).toList());
+                        var addedList = (List<DrawingTicket>) change.getAddedSubList().stream().filter(ticket -> filter.check(ticketFilter, ticket)).toList();
+                        wrappedFilteredData.addAll(addedList);
+                        filteredData.addAll(addedList.stream().map(DrawingTicket::getTicket).toList());
                     }
-
-//                    if (change.wasReplaced()){
-//                        change.getR
-//                    }
                 }
-
             });
-            generateWrappedData();
-
-
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -118,7 +108,8 @@ import java.util.stream.Collectors;
         var selectedTickets = wrappedData.stream().filter(ticket -> ticket instanceof SelectedTicket).toList();
         wrappedData.removeAll(selectedTickets);
         wrappedData.addAll(selectedTickets.stream().map(ticket -> new CommonTicket(ticket.getTicket(),((SelectedTicket) ticket).getOldColor())).toList());
-         System.out.println(wrappedData);
+
+
 
      }
     private  Color getRandomColor(){
@@ -130,7 +121,8 @@ import java.util.stream.Collectors;
         return randomColor;
     }
 
+    public Optional<DrawingTicket> findSelectedTicket() {
+        return wrappedFilteredData.stream().filter(drawingTicket -> drawingTicket instanceof SelectedTicket).findFirst();
 
-
-
+    }
 }

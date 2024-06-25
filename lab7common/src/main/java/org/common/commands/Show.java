@@ -20,7 +20,6 @@ public class Show extends Command implements Serializable {
                     .sorted()
                     .toList();
             responseManager.addToSend(tickets,this);
-        System.out.println("ОТПРАВИЛИ");
 
 
         loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");

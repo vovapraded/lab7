@@ -1,12 +1,9 @@
 package org.example.graphic.scene.main.draw;
 
-import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Pagination;
 import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.Setter;
-import org.common.dto.Ticket;
 import org.example.graphic.scene.main.CreatorTable;
 import org.example.graphic.scene.main.TicketStorage;
 import org.example.graphic.scene.main.ZoomableCartesianPlot;
@@ -14,13 +11,13 @@ import org.example.graphic.scene.main.draw.animation.AnimatedTicket;
 import org.example.graphic.scene.main.draw.entity.CommonTicket;
 import org.example.graphic.scene.main.draw.entity.DrawingTicket;
 import org.example.graphic.scene.main.draw.entity.SelectedTicket;
+import org.example.graphic.scene.main.draw.select.SelectedManager;
 import org.example.graphic.scene.main.utils.CoordinateConverter;
 
 import java.util.*;
 
 public class DrawingManager {
-    @Setter
-    private CreatorTable creatorTable;
+    private final CreatorTable creatorTable;
     private final CoordinateConverter converter = CoordinateConverter.getInstance();
     @Getter
     private  List<DrawingTicket> sortedTickets;
@@ -32,16 +29,20 @@ public class DrawingManager {
     protected static final Integer ZERO_X = ZoomableCartesianPlot.getZERO_X();
     protected static final Double INITIAL_MAX_X = ZoomableCartesianPlot.getINITIAL_MAX_X();
     protected static final Double INITIAL_MAX_Y = ZoomableCartesianPlot.getINITIAL_MAX_Y();
+    private final SelectedManager selectedManager ;
 
-private final TicketStorage ticketStorage;
 
-    public DrawingManager(TicketStorage ticketStorage) {
+    private final TicketStorage ticketStorage;
+
+    public DrawingManager(TicketStorage ticketStorage, CreatorTable creatorTable) {
         this.ticketStorage = ticketStorage;
+        this.creatorTable = creatorTable;
+        selectedManager = new SelectedManager(ticketStorage, creatorTable);
     }
 
 
     public List<AnimatedTicket> drawCommonTickets(GraphicsContext gc, double zoomFactor,double rectWidth,double rectHeight){
-         sortedTickets = ticketStorage.getWrappedData().stream().sorted().toList();
+        sortedTickets = ticketStorage.getWrappedFilteredData();
         gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
 //        var animatedTickets = tickets.stream().map(ticket -> new AnimatedTicket(ticket.getTicket(),ticket.getTicket().getCoordinatesX(),ticket.getTicket().getCoordinatesY(),rectWidth,rectHeight,getRandomColor(),1000)).toList();
 //        AnimationManager animationManager = new AnimationManager();
@@ -65,7 +66,6 @@ private final TicketStorage ticketStorage;
         var pagination = creatorTable.getPagination();
         var ticketTable = creatorTable.getTable();
         canvas.setOnMouseClicked(event -> {
-            System.out.println("A");
             double mouseX = event.getX();
             double mouseY = event.getY();
             var flag = false;
@@ -81,8 +81,7 @@ private final TicketStorage ticketStorage;
                     // Вы можете выполнить необходимые действия здесь
                     int index = creatorTable.getSortedData().indexOf(wrappedTicket.getTicket());
                     if (index >= 0) {
-                        flag = true;
-                        handleRectangleClick(wrappedTicket.getTicket(),pagination,index);
+                        selectedManager.tryToSelectTicket(ticket.getId());
                     }
                     break;
 
@@ -94,25 +93,7 @@ private final TicketStorage ticketStorage;
             }
         });
     }
-    private void handleRectangleClick(Ticket ticket, Pagination pagination, int index) {
 
-        System.out.println("ABOBA");
-        var itemsPerPage = CreatorTable.getROWS_PER_PAGE();
-        var indexOfPage = index / itemsPerPage;
-        pagination.setCurrentPageIndex(indexOfPage);
-
-
-
-        int finalIndex = (index)% itemsPerPage;
-        Platform.runLater(() -> {
-           if (creatorTable.getTable().getSelectionModel().getSelectedItem() == ticket){
-               creatorTable.getTable().getSelectionModel().clearSelection();
-           }else {
-               creatorTable.getTable().getSelectionModel().clearAndSelect((finalIndex));
-           }
-        });
-
-    }
     private  Color getRandomColor(){
         Random random = new Random();
         double red = random.nextDouble();

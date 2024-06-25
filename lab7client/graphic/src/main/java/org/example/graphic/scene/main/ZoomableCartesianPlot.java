@@ -60,7 +60,6 @@ public class ZoomableCartesianPlot {
 
         layout = new StackPane(axes,canvas);
 
-        System.out.println(tickets);
         drawTickets(canvas,1);
 
         layout.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
@@ -243,8 +242,8 @@ public class ZoomableCartesianPlot {
     }
 
     private void drawTickets(Canvas canvas, double zoomFactor) {
-        tickets =  ticketStorage.getWrappedData();
-        animationManager.drawCommonTickets(canvas,zoomFactor,tickets);
+
+        animationManager.drawCommonTickets(canvas,zoomFactor);
     }
 //TODO
 

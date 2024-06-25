@@ -3,6 +3,8 @@ package org.example.graphic.scene.main.draw.animation;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import org.example.graphic.scene.Application;
+import org.example.graphic.scene.main.TicketStorage;
 import org.example.graphic.scene.main.ZoomableCartesianPlot;
 import org.example.graphic.scene.main.draw.DrawingManager;
 import org.example.graphic.scene.main.draw.entity.CommonTicket;
@@ -24,7 +26,7 @@ public class AnimationManager {
     protected static final Integer ZERO_X = ZoomableCartesianPlot.getZERO_X();
     protected static final Double INITIAL_MAX_X = ZoomableCartesianPlot.getINITIAL_MAX_X();
     protected static final Double INITIAL_MAX_Y = ZoomableCartesianPlot.getINITIAL_MAX_Y();
-    List<DrawingTicket> drawingTickets = new ArrayList<>();
+    private final TicketStorage ticketStorage = Application.getMainSceneObj().getTicketStorage();
 
     public AnimationManager(DrawingManager drawingManager) {
         this.drawingManager = drawingManager;
@@ -57,7 +59,8 @@ public class AnimationManager {
                     else {
                         ticket.setAngle(0);
                         ticket.draw(gc, zoomFactor, rectWidth, rectHeight);
-                        drawingTickets.add(new CommonTicket(ticket.getTicket(),ticket.getColor()));
+                        ticketStorage.getWrappedData().removeIf(tick -> tick.equals(ticket) );
+                        ticketStorage.getWrappedData().add(new CommonTicket(ticket.getTicket(),ticket.getColor()));
                     }
                 }
                 if (allAnimationsFinished) {
@@ -78,9 +81,8 @@ public class AnimationManager {
 //            start(canvas);
 //        }
     }
-    public void drawCommonTickets(Canvas canvas,double zoomFactor, List<DrawingTicket> tickets) {
+    public void drawCommonTickets(Canvas canvas,double zoomFactor) {
         this.zoomFactor = zoomFactor;
-        this.drawingTickets = tickets;
         rectWidth = RECT_WIDTH_IN_LOCAL * WIDTH / INITIAL_MAX_X / 2 / zoomFactor;
         rectHeight = RECT_HEIGHT_IN_LOCAL * HEIGHT / INITIAL_MAX_Y / 2 / zoomFactor;
 

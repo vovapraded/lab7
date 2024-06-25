@@ -1,6 +1,5 @@
 package org.example.graphic.scene.main.command.filter;
 
-import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -13,12 +12,10 @@ import javafx.scene.text.Text;
 import org.common.dto.TicketType;
 import org.common.dto.VenueType;
 import org.example.graphic.scene.Application;
-import org.example.graphic.scene.main.CreatorTable;
 import org.example.graphic.scene.main.TicketStorage;
 import org.example.graphic.scene.main.command.Panel;
 
 import java.lang.reflect.Method;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -109,8 +106,10 @@ public class FilterPanel extends Panel {
                         .build())
                 .build();
         Application.getMainSceneObj().getTicketStorage().setTicketFilter(ticketFilter);
+        Application.getMainSceneObj().getTicketStorage().updateFilteredData();
         Application.getMainSceneObj().getCreatorTable().updatePagination();
-        System.out.println(ticketFilter);
+        Application.getMainSceneObj().getZoomableCartesianPlot().updateMap();
+
     }
 
     private static <T> T valueOf(Class<T> clazz, Object param) {

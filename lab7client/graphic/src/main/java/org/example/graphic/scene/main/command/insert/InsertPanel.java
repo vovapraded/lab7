@@ -1,6 +1,5 @@
 package org.example.graphic.scene.main.command.insert;
 
-import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;

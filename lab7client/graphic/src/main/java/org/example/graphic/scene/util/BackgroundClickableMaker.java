@@ -21,7 +21,6 @@ public class BackgroundClickableMaker {
 
             for (Node children  : childrens) {
                 if (children.getBoundsInParent().contains(event.getX(), event.getY())) {
-                    System.out.println(event.getX()+" "+event.getY());
                     clickInsideNode = true;
                     break;
                 }
@@ -30,7 +29,6 @@ public class BackgroundClickableMaker {
             // Если ни один узел не содержит нажатие, значит, оно произошло вне любого узла интерфейса
             if (!clickInsideNode) {
                 scene.getRoot().requestFocus();
-                System.out.println("Clicked outside!");
             }
         });
     }

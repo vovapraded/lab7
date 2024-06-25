@@ -82,7 +82,6 @@ public abstract class Panel {
                 var gridPane = pages.get(currentPageInd+1);
 
                 currentPageInd+=1;
-                System.out.println("Нажато continue");
                 changeOnAnotherForm(gridPane);
             }else {
                 try {
@@ -128,11 +127,9 @@ public abstract class Panel {
 
         generateCancelButtonType();
 
-        System.out.println(currentPageInd);
         if (currentPageInd!=0){
             generateBackButtonType();
             dialog.getDialogPane().getButtonTypes().setAll(applyOrContinueButtonType, cancelButtonType,backButtonType);
-            System.out.println(dialog.getDialogPane().getButtonTypes());
             initBackButton();
         }else {
             dialog.getDialogPane().getButtonTypes().setAll(applyOrContinueButtonType, cancelButtonType);
@@ -148,8 +145,7 @@ public abstract class Panel {
 
     protected void changeOnAnotherForm(GridPane gridPane){
         dialog.getDialogPane().setContent(gridPane);
-        System.out.println("ПОМЕНЯЛИ");
-        System.out.println("aboba");
+
         updateButtons();
 
 

@@ -14,7 +14,6 @@ public class Empty extends Command implements ClientCommand {
 
             console.sendToController(response.getMessageBySingleString(),response.isThereEx());
         }catch (NoResponseException | DeserializeException e){
-            System.out.println(e.getMessage());
             console.sendToController(e.getMessage(),true);
         }
     }

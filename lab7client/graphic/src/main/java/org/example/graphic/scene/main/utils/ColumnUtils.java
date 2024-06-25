@@ -61,7 +61,6 @@ public class ColumnUtils {
                     }
 
                 }
-                System.out.println(ticket);
             }
             catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
                     e.printStackTrace();
