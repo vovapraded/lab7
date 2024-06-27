@@ -13,7 +13,7 @@ import java.io.Serializable;
 /**
  * a class for storing venue data
  */
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @Data
 @Builder
 @AllArgsConstructor

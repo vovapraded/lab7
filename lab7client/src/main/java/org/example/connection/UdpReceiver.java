@@ -77,8 +77,7 @@ public class UdpReceiver {
 
 
 
-    @SneakyThrows
-    public Response getResponse(boolean isOnce) throws  NoResponseException, DeserializeException {
+    public Response getResponse(boolean isOnce) throws  Exception {
         init();
         var timeout = isOnce ? 1 : TIMEOUT;
 
@@ -98,9 +97,9 @@ public class UdpReceiver {
         });
         try {
             futureHandleData.get();
-        }catch (Throwable e){
+        }catch (Exception e){
             while (e instanceof ExecutionException ){
-                e = e.getCause();
+                e = (Exception) e.getCause();
             }
             throw e;
         }

@@ -2,9 +2,9 @@ package org.example.authorization;
 
 import lombok.Setter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.common.commands.authorization.AuthorizationException;
 import org.example.dao.FailedTransactionException;
 import org.example.dao.UserDao;
-import org.example.managers.HibernateManager;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;

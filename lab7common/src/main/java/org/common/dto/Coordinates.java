@@ -1,10 +1,7 @@
 package org.common.dto;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Type;
 
 import java.io.Serial;
@@ -13,6 +10,7 @@ import java.io.Serializable;
 /**
  * a class for storing coordinates data
  */
+@EqualsAndHashCode
 @Data
 @NoArgsConstructor
 @Builder

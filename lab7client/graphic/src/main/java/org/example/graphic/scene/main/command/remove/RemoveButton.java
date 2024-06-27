@@ -1,6 +1,7 @@
 package org.example.graphic.scene.main.command.remove;
 
 import org.controller.MyController;
+import org.example.graphic.localizator.Localizator;
 import org.example.graphic.scene.Application;
 import org.example.graphic.scene.Popup;
 import org.example.graphic.scene.main.command.MyButton;
@@ -10,7 +11,7 @@ public class RemoveButton extends MyButton {
     public RemoveButton() {
         super("Remove");
     }
-
+    private final Localizator localizator = Localizator.getInstance();
     @Override
     public void onClick() {
         var creatorTable = Application.getMainSceneObj().getCreatorTable();
@@ -27,7 +28,7 @@ public class RemoveButton extends MyButton {
                 Application.getMainSceneObj().getZoomableCartesianPlot().updateMap();
 
             } catch (Exception e) {
-                Popup.showError(e.getMessage());
+                Popup.showError(localizator.getKeyString(e.getMessage()));
             }
         }
     }

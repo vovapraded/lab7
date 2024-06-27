@@ -9,6 +9,7 @@ import org.example.commands.ClientCommand;
 import org.example.connection.UdpClient;
 import org.example.connector.to.controller.ConsoleEventPublisher;
 import org.example.utility.CurrentConsole;
+import org.example.utility.NoResponseException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,28 +30,31 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
     }
-    public static void sendMessageToController(String message,boolean isThereEx){
-        consoleEventPublisher.sendMessageToController(message,isThereEx);
-    }
-    public static void sendTicketsToController(List<Ticket> tickets){
-        consoleEventPublisher.sendTicketsToController(tickets);
-    }
+
     public static void handleCommand(Command command) throws Exception{
                     //получаем команду
                     //если команда не клиентская
                     if (!(command instanceof ClientCommand)) {
                             udpClient.getUdpSender().sendCommand(command);
-                            var resp = udpClient.getUdpReceiver().getResponse(false);
-                            if (!resp.isPasswordCorrect() || !resp.isLoginCorrect()) {
-                                AuthorizationManager.resetAuth();
-                            }
-                            var message = resp.getMessageBySingleString();
-                            var isThereEx = resp.isThereEx();
-                            if (!message.isBlank()){
-                                currentConsole.sendToController(message,isThereEx);
-                            }
-                            if (resp.getTickets()!=null){
-                                currentConsole.sendToController(resp.getTickets());
+                            try {
+                                var resp = udpClient.getUdpReceiver().getResponse(false);
+                                if (!resp.isPasswordCorrect() || !resp.isLoginCorrect()) {
+                                    AuthorizationManager.resetAuth();
+                                }
+                                var message = resp.getMessageBySingleString();
+                                if (resp.getException()!=null){
+                                    currentConsole.sendToController(resp.getException());
+
+                                }
+                                if (!message.isBlank()){
+                                    currentConsole.sendToController(message);
+                                }
+                                if (resp.getTickets()!=null){
+                                    currentConsole.sendToController(resp.getTickets());
+                                }
+
+                            }catch (NoResponseException e){
+                                currentConsole.sendToController(e);
                             }
 
 

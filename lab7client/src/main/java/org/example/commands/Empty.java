@@ -12,9 +12,11 @@ public class Empty extends Command implements ClientCommand {
         try {
             var response = udpClient.getUdpReceiver().getResponse(true);
 
-            console.sendToController(response.getMessageBySingleString(),response.isThereEx());
+            console.sendToController(response.getMessageBySingleString());
         }catch (NoResponseException | DeserializeException e){
-            console.sendToController(e.getMessage(),true);
+            console.sendToController(e);
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 

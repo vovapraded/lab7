@@ -22,6 +22,7 @@ import org.controller.MyController;
 import org.example.graphic.node.TableColumnAdapter;
 import org.example.graphic.scene.main.draw.entity.DrawingTicket;
 import org.example.graphic.scene.main.draw.select.SelectedManager;
+import org.example.graphic.scene.main.storage.TicketStorage;
 import org.example.graphic.scene.main.utils.*;
 import org.example.graphic.scene.main.utils.conventer.*;
 

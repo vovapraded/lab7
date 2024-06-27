@@ -1,6 +1,7 @@
 package org.example.commands;
 import org.common.commands.Command;
 import org.common.utility.InvalidFormatException;
+import org.example.utility.InfinityRecursionException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -46,7 +47,7 @@ public class ExecuteScript extends Command implements Serializable,ClientCommand
                     stackScanners.add(scanner);
                     console.selectFileScanner(scanner);
                 }else {
-                    console.sendToController("Ошибка бесконечная рекурсия",true);
+                    console.sendToController(new InfinityRecursionException("InfinityRecursion"));
                 }
             } catch (FileNotFoundException e) {
                 throw new InvalidFormatException("Нет такого файла");

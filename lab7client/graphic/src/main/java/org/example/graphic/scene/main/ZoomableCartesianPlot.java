@@ -13,6 +13,7 @@ import lombok.Setter;
 import org.example.graphic.scene.Application;
 import org.example.graphic.scene.main.draw.animation.AnimationManager;
 import org.example.graphic.scene.main.draw.entity.DrawingTicket;
+import org.example.graphic.scene.main.storage.TicketStorage;
 import org.example.graphic.scene.main.utils.CoordinateConverter;
 
 import java.util.List;

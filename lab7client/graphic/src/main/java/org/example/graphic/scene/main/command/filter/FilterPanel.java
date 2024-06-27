@@ -12,7 +12,7 @@ import javafx.scene.text.Text;
 import org.common.dto.TicketType;
 import org.common.dto.VenueType;
 import org.example.graphic.scene.Application;
-import org.example.graphic.scene.main.TicketStorage;
+import org.example.graphic.scene.main.storage.TicketStorage;
 import org.example.graphic.scene.main.command.Panel;
 
 import java.lang.reflect.Method;

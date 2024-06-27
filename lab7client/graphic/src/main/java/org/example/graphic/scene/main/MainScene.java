@@ -1,32 +1,13 @@
 package org.example.graphic.scene.main;
 
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.SortedList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.StrokeLineCap;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.transform.Scale;
-import javafx.util.Callback;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.SneakyThrows;
-import org.common.dto.*;
-import org.example.graphic.node.TableColumnAdapter;
 import org.example.graphic.scene.Application;
 import org.example.graphic.scene.MyScene;
 import org.example.graphic.scene.main.command.filter.FilterPanel;
@@ -34,15 +15,13 @@ import org.example.graphic.scene.main.command.insert.InsertPanel;
 import org.example.graphic.scene.main.command.remove.RemoveButton;
 import org.example.graphic.scene.main.draw.DrawingManager;
 import org.example.graphic.scene.main.draw.animation.AnimationManager;
+import org.example.graphic.scene.main.storage.TicketStorage;
 
-import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
 @Getter
 public class MainScene extends MyScene {
 
 
-    private final   TicketStorage ticketStorage;
+    private final TicketStorage ticketStorage;
     private CreatorTable creatorTable;
     private ZoomableCartesianPlot zoomableCartesianPlot;
     private HBox tableAndPlot;

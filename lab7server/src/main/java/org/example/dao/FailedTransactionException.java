@@ -1,6 +1,8 @@
 package org.example.dao;
 
-public class FailedTransactionException extends RuntimeException{
+import java.io.Serializable;
+
+public class FailedTransactionException extends RuntimeException implements Serializable {
     public FailedTransactionException(String message) {
         super(message);
     }

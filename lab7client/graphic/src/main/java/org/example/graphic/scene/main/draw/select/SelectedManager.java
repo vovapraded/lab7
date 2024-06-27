@@ -2,7 +2,7 @@ package org.example.graphic.scene.main.draw.select;
 
 import org.example.graphic.scene.Application;
 import org.example.graphic.scene.main.CreatorTable;
-import org.example.graphic.scene.main.TicketStorage;
+import org.example.graphic.scene.main.storage.TicketStorage;
 
 public class SelectedManager {
     private final TicketStorage ticketStorage;

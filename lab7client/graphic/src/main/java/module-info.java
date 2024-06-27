@@ -20,6 +20,8 @@ module org.example.graphic {
     exports org.example.graphic.scene.main.draw ;
     exports org.example.graphic.scene.main.draw.entity;
     opens org.example.graphic.scene.main.draw.entity to javafx.fxml;
+    exports org.example.graphic.scene.main.storage;
+    opens org.example.graphic.scene.main.storage to javafx.fxml;
     requires controller;
     requires lab7common;
     requires java.desktop;

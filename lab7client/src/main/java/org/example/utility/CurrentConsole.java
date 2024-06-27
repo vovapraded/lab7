@@ -56,7 +56,7 @@ public class CurrentConsole implements Console {
             System.exit(0);
         }
 
-        sendToController("Чтение файла "+stack.get(stack.size()-1)+" окончено",false);
+        sendToController("Чтение файла "+stack.get(stack.size()-1)+" окончено");
         stack.remove(stack.size()-1);
         ExecuteScript.setStack(stack);
         stackScanners.remove(stackScanners.size()-1);
@@ -75,12 +75,20 @@ public class CurrentConsole implements Console {
 
 
     @Override
-    public void sendToController(String s,boolean isThereEx) {
-        Main.sendMessageToController(s,isThereEx);
+    public void sendToController(String s) {
+        Main.getConsoleEventPublisher().sendMessageToController(s);
     }
+
+    @Override
+    public void sendToController(Exception e) {
+        Main.getConsoleEventPublisher().sendExceptionToController(e);
+
+    }
+
     @Override
     public void sendToController(List<Ticket> tickets) {
-        Main.sendTicketsToController(tickets);
+
+        Main.getConsoleEventPublisher().sendTicketsToController(tickets);
     }
 
 

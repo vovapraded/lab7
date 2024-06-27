@@ -38,9 +38,9 @@ public class CurrentResponseManager implements ResponseManager {
         responses.get(command).getTickets().addAll(tickets);
     }
     @Override
-    public void makeException(Command command) {
+    public void setException(Exception e,Command command) {
 
-        responses.get(command).setThereEx(true);
+        responses.get(command).setException(e);
     }
 
     @Override

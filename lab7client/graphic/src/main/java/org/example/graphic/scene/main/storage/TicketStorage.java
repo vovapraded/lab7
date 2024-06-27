@@ -1,4 +1,4 @@
-package org.example.graphic.scene.main;
+package org.example.graphic.scene.main.storage;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -24,8 +24,10 @@ import java.util.stream.Collectors;
     private ObservableList<DrawingTicket> wrappedFilteredData = FXCollections.observableArrayList();
     private ObservableList<Ticket> filteredData =   FXCollections.observableArrayList();
     public void updateFilteredData(){
-        wrappedFilteredData.setAll(wrappedData.stream().filter(ticket -> filter.check(ticketFilter,ticket)).toList());
-        filteredData.setAll(wrappedFilteredData.stream().map(DrawingTicket::getTicket).toList());
+        //лучше не сеталл
+        wrappedFilteredData.addAll(wrappedData.stream().filter(ticket -> filter.check(ticketFilter,ticket) &&!wrappedFilteredData.contains(ticket)).toList());
+        var removedTickets = wrappedFilteredData.stream().filter(ticket ->!wrappedData.contains(ticket)).toList();
+        wrappedFilteredData.removeAll(removedTickets);
     }
 
 
@@ -36,7 +38,7 @@ import java.util.stream.Collectors;
 
     public TicketStorage() {
         try {
-            data = FXCollections.observableArrayList(MyController.getInstance().show());
+            data = FXCollections.synchronizedObservableList(FXCollections.observableArrayList(MyController.getInstance().show()));
 
             data.addListener((ListChangeListener.Change<? extends Ticket> change) -> {
                         while (change.next()){
@@ -57,20 +59,32 @@ import java.util.stream.Collectors;
             });
 
             generateWrappedData();
+            wrappedFilteredData.addListener((ListChangeListener.Change<? extends DrawingTicket> change) -> {
+                while (change.next()) {
+                    if (change.wasRemoved()) {
+                        var removedTickets = change.getRemoved().stream().map(DrawingTicket::getTicket).toList();
+                        filteredData.removeAll(removedTickets);
+                    }
+                    if (change.wasAdded()) {
+                        var addedList = (List<Ticket>) change.getAddedSubList().stream().map(DrawingTicket::getTicket).toList();
+                        filteredData.addAll(addedList);
+                    }
+                }
+            });
             updateFilteredData();
+
             wrappedData.addListener((ListChangeListener.Change<? extends DrawingTicket> change) -> {
                 while (change.next()) {
                     if (change.wasRemoved()) {
-                        wrappedFilteredData.removeIf(drawingTicket -> change.getRemoved().contains(drawingTicket));
-                        filteredData.removeIf(ticket -> change.getRemoved().stream().map(DrawingTicket::getTicket).toList().contains(ticket));
+                        wrappedFilteredData.removeAll( change.getRemoved());
                     }
                     if (change.wasAdded()) {
                         var addedList = (List<DrawingTicket>) change.getAddedSubList().stream().filter(ticket -> filter.check(ticketFilter, ticket)).toList();
                         wrappedFilteredData.addAll(addedList);
-                        filteredData.addAll(addedList.stream().map(DrawingTicket::getTicket).toList());
                     }
                 }
             });
+
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -123,6 +137,6 @@ import java.util.stream.Collectors;
 
     public Optional<DrawingTicket> findSelectedTicket() {
         return wrappedFilteredData.stream().filter(drawingTicket -> drawingTicket instanceof SelectedTicket).findFirst();
-
     }
+
 }

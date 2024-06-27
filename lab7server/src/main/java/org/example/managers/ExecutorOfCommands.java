@@ -5,7 +5,7 @@ import org.common.commands.authorization.Register;
 import org.common.managers.Collection;
 import org.common.network.Response;
 import org.common.utility.InvalidFormatException;
-import org.example.authorization.AuthorizationException;
+import org.common.commands.authorization.AuthorizationException;
 import org.example.authorization.AuthorizationManager;
 import org.common.commands.authorization.NoAccessException;
 import org.example.dao.FailedTransactionException;
@@ -38,8 +38,7 @@ public void run(){
      try {
          executeCommand(command,address);
      } catch (InvalidFormatException e) {
-         responseManager.addToSend(e.getMessage(), e.getCommand());
-         responseManager.makeException(e.getCommand());
+         responseManager.setException(e,e.getCommand());
          responseManager.send(e.getCommand());
      }finally {
          logger.debug("Команда "+ command.getClass().getName()+" с адресса "+address+" выполнена");
@@ -81,19 +80,16 @@ public void run(){
             command.execute();
         }catch (AuthorizationException e){
             logger.debug("Пользователь "+command.getAuthorization().getLogin()+ " не авторизован");
-            responseManager.addToSend(e.getMessage(),command);
-            responseManager.makeException(command);
+            responseManager.setException(e,command);
             responseManager.send(command);
         }catch (NoAccessException e){
             logger.debug("Нет доступа до удаления "+command.getAuthorization().getLogin()+ " не авторизован");
-            responseManager.addToSend(e.getMessage(),command);
-            responseManager.makeException(command);
+            responseManager.setException(e,command);
             responseManager.send(command);
         }
         catch (FailedTransactionException e){
             logger.error("Транзакция команды "+ command.getClass().getName() +" от пользователя "+command.getAuthorization().getLogin()+" завершилась с ошибкой");
-            responseManager.addToSend(e.getMessage(),command);
-            responseManager.makeException(command);
+            responseManager.setException(e,command);
 
             responseManager.send(command);
         }

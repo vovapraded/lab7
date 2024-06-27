@@ -4,13 +4,11 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import org.example.graphic.scene.Application;
-import org.example.graphic.scene.main.TicketStorage;
+import org.example.graphic.scene.main.storage.TicketStorage;
 import org.example.graphic.scene.main.ZoomableCartesianPlot;
 import org.example.graphic.scene.main.draw.DrawingManager;
 import org.example.graphic.scene.main.draw.entity.CommonTicket;
-import org.example.graphic.scene.main.draw.entity.DrawingTicket;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class AnimationManager {

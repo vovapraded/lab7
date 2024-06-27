@@ -195,7 +195,6 @@ public abstract class Panel {
                 return true;
             }
             double number = Double.parseDouble(str);
-            System.out.println(number);
             return !Double.isInfinite(number) && !Double.isNaN(number);
 
         } catch (NumberFormatException e) {
