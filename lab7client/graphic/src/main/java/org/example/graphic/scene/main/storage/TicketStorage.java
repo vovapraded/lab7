@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.common.dto.Ticket;
 import org.controller.MyController;
+import org.example.graphic.scene.Application;
 import org.example.graphic.scene.main.command.filter.Filter;
 import org.example.graphic.scene.main.command.filter.TicketFilter;
 import org.example.graphic.scene.main.draw.animation.AnimatedTicket;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
     private TicketFilter ticketFilter = new TicketFilter();
      private final HashMap<String,Color> createdByAndColor = new HashMap<>();
 
+
     public TicketStorage() {
         try {
             data = FXCollections.synchronizedObservableList(FXCollections.observableArrayList(MyController.getInstance().show()));
@@ -47,12 +49,16 @@ import java.util.stream.Collectors;
                             }
                             if (change.wasAdded()){
                                 wrappedData.addAll(change.getAddedSubList().stream().map(ticket ->{
-                                    Color color = createdByAndColor.get(ticket.getCreatedBy());
-                                    if (color == null){
-                                        color = getRandomColor();
-                                        createdByAndColor.put(ticket.getCreatedBy(),color);
+                                        Color color = createdByAndColor.get(ticket.getCreatedBy());
+                                        if (color == null) {
+                                            color = getRandomColor();
+                                            createdByAndColor.put(ticket.getCreatedBy(), color);
+                                        }
+                                    if (checkAddedTicket(ticket)) {
+                                        return new AnimatedTicket(ticket, color);
+                                    }else {
+                                        return new CommonTicket(ticket,color);
                                     }
-                                    return  new AnimatedTicket(ticket,color);
                                 }).toList());
                             }
                         }
@@ -90,6 +96,18 @@ import java.util.stream.Collectors;
             throw new RuntimeException(e);
         }
     }
+
+    private boolean checkAddedTicket(Ticket ticket) {
+        var mainSceneObj = Application.getMainSceneObj();
+        if (mainSceneObj==null) return false;
+        var drawingManager = mainSceneObj.getDrawingManager();
+        if (drawingManager==null) return false;
+        var ticketIdList = drawingManager.getTicketIdList();
+        if (ticketIdList==null) return false;
+        return !ticketIdList.contains(ticket.getId());
+
+    }
+
     //TODO Переписать
     public void generateWrappedData() {
         Map<String, List<Ticket>> groupedByAuthor = data.stream()

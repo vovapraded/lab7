@@ -29,6 +29,8 @@ public class MainScene extends MyScene {
     private Pagination pagination;
     private StackPane map;
     private BorderPane root;
+    private DrawingManager drawingManager;
+    private AnimationManager animationManager;
 
 
     public MainScene(TicketStorage ticketStorage) {
@@ -77,8 +79,8 @@ public class MainScene extends MyScene {
         root.setBottom(changeLocaleWrapper);
 
         creatorTable = new CreatorTable(ticketStorage,this);
-        var drawingManager = new DrawingManager(ticketStorage,creatorTable);
-        var animationManager = new AnimationManager(drawingManager);
+        drawingManager = new DrawingManager(ticketStorage,creatorTable);
+        animationManager = new AnimationManager(drawingManager);
 
           zoomableCartesianPlot = new ZoomableCartesianPlot(animationManager);
         creatorTable.setZoomableCartesianPlot(zoomableCartesianPlot);

@@ -32,8 +32,7 @@ public class Update extends Command implements Serializable {
         ticketArg.setCreationDate(LocalDateTime.now());
         collection.updateTicket(ticketArg, getAuthorization().getLogin());
         responseManager.addToSend("SuccessInsert",this);
-        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
-        responseManager.send(this);
+        addTicketsAndSend();
 
     }
 

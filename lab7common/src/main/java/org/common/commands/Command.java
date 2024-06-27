@@ -42,5 +42,12 @@ public abstract class Command implements Serializable {
         this.console = console;
     }
 
-
+    protected void addTicketsAndSend() {
+        var tickets  = collection.getHashMap().values().stream()
+                .sorted()
+                .toList();
+        responseManager.addToSend(tickets,this);
+        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
+        responseManager.send(this);
+    }
 }

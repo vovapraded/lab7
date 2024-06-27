@@ -13,7 +13,8 @@ import org.controller.MyController;
 import org.example.graphic.scene.Application;
 import org.example.graphic.scene.Popup;
 import org.example.graphic.scene.main.command.Panel;
-
+import org.example.graphic.scene.main.storage.TicketUpdater;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -71,16 +72,14 @@ public class InsertPanel extends Panel {
         MyController controller = MyController.getInstance();
 
         try {
-
-            Popup.showDialog(localizator.getKeyString(controller.insert(ticket)));;
-            var ticketStorage = Application.getMainSceneObj().getTicketStorage();
-            ticketStorage.getData().add(ticket);
-
-            Application.getMainSceneObj().getCreatorTable().updatePagination();
-            Application.getMainSceneObj().getZoomableCartesianPlot().updateMap();
-        }catch (Exception e){
+            var messageAndTickets = controller.insert(ticket);
+            var message = messageAndTickets.getLeft();
+            var tickets = messageAndTickets.getRight();
+            TicketUpdater.update(tickets);
+            Popup.showDialog(localizator.getKeyString(message));
+                 }catch (Exception e){
             Popup.showError(localizator.getKeyString(e.getMessage()));
-        }
+            }
 
 
 

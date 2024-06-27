@@ -51,13 +51,14 @@ public class Application extends javafx.application.Application {
         }else{
             ticketStorage.unmakeAllTicketsSelected();
         }
-        scheduler = Executors.newScheduledThreadPool(1);
-        System.out.println("Scheduler включен");
-        scheduler.scheduleAtFixedRate(new TicketUpdater(ticketStorage),  TicketUpdater.getTIMEOUT(), TicketUpdater.getTIMEOUT(), TimeUnit.MILLISECONDS);
 
         //подумать над мувом
         mainSceneObj = new MainScene(ticketStorage);
         mainSceneObj.createMainScene();
+        scheduler = Executors.newScheduledThreadPool(1);
+        System.out.println("Scheduler включен");
+        scheduler.scheduleAtFixedRate(new TicketUpdater(ticketStorage),  TicketUpdater.getTIMEOUT(), TicketUpdater.getTIMEOUT(), TimeUnit.MILLISECONDS);
+
 //            backgroundClickableMaker.make(mainSceneObj.scene);
         primaryStage.setScene(mainSceneObj.scene);
         mainSceneObj.updateValueChangeLocale();

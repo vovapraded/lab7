@@ -5,6 +5,7 @@ import org.example.graphic.localizator.Localizator;
 import org.example.graphic.scene.Application;
 import org.example.graphic.scene.Popup;
 import org.example.graphic.scene.main.command.MyButton;
+import org.example.graphic.scene.main.storage.TicketUpdater;
 
 public class RemoveButton extends MyButton {
     private MyController controller = MyController.getInstance();
@@ -20,12 +21,12 @@ public class RemoveButton extends MyButton {
         var ticket=table.getSelectionModel().getSelectedItem();
         if (ticket!=null){
             try {
-                var message = controller.remove(ticket.getId());
-                Popup.showDialog(message);
+                var messageAndTickets = controller.remove(ticket.getId());
+                var message = messageAndTickets.getLeft();
+                var tickets = messageAndTickets.getRight();
+                TicketUpdater.update(tickets);
 
-                ticketStorage.getData().removeIf(ticket1 -> ticket1.getId().equals(ticket.getId()));
-                Application.getMainSceneObj().getCreatorTable().updatePagination();
-                Application.getMainSceneObj().getZoomableCartesianPlot().updateMap();
+
 
             } catch (Exception e) {
                 Popup.showError(localizator.getKeyString(e.getMessage()));

@@ -16,14 +16,7 @@ public class Show extends Command implements Serializable {
     @Override
     public void execute() {
 
-            var tickets  = collection.getHashMap().values().stream()
-                    .sorted()
-                    .toList();
-            responseManager.addToSend(tickets,this);
-
-
-        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
-        responseManager.send(this);
+        addTicketsAndSend();
     }
 
     @Override

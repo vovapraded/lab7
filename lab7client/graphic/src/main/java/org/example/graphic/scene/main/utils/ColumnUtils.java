@@ -8,6 +8,7 @@ import org.controller.MyController;
 import org.example.graphic.localizator.Localizator;
 import org.example.graphic.scene.Application;
 import org.example.graphic.scene.Popup;
+import org.example.graphic.scene.main.storage.TicketUpdater;
 import org.example.graphic.scene.main.utils.factory.CustomCellFactory;
 
 import java.beans.IntrospectionException;
@@ -51,8 +52,11 @@ public class ColumnUtils {
                 if (setter != null) {
                     setter.invoke(ticket, newValue);
                     try {
-                        Popup.showDialog(localizator.getKeyString(controller.update(ticket)));
-                        Application.getMainSceneObj().getZoomableCartesianPlot().updateMap();
+                        var messageAndTickets = controller.update(ticket);
+                        var message = messageAndTickets.getLeft();
+                        var tickets = messageAndTickets.getRight();
+                        TicketUpdater.update(tickets);
+                        Popup.showDialog(localizator.getKeyString(message));
                     } catch (Exception e) {
                         setter.invoke(ticket, oldValue);
                         Popup.showError(localizator.getKeyString(e.getMessage()));

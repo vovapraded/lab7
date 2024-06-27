@@ -2,13 +2,13 @@ package org.example.graphic.scene.main.storage;
 
 import javafx.application.Platform;
 import lombok.Getter;
-import lombok.SneakyThrows;
+import lombok.Setter;
 import org.common.dto.Ticket;
-import org.common.network.ConnectionException;
-import org.common.network.SendException;
 import org.controller.MyController;
+import org.example.graphic.scene.Application;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class TicketUpdater  extends Thread {
@@ -17,43 +17,47 @@ public class TicketUpdater  extends Thread {
         private static final int TIMEOUT = 5 * 1000;
 
     public TicketUpdater(TicketStorage ticketStorage) {
-        this.ticketStorage = ticketStorage;
+        TicketUpdater.ticketStorage = ticketStorage;
     }
-    private  List<Ticket> newData = null;
 
     public void run(){
-            update();
+            update(getNewData());
         }
-        private  final TicketStorage ticketStorage;
+        private static  TicketStorage ticketStorage = null;
         private final MyController controller = MyController.getInstance();
-        private void update(){
-
-          var data = ticketStorage.getData();
-               while (!updateNewData()){
-                   System.out.println("Ошибка обновления данных");
-               }
-
-            Platform.runLater(() -> {
-                data.removeIf(ticket -> {
-                    var res = !newData.contains(ticket);
-                    System.out.println(res);
-                    return res;
+        public static void update(List<Ticket> newData){
+            if (ticketStorage!=null) {
+                var data = ticketStorage.getData();
+                Platform.runLater(() -> {
+                    AtomicBoolean flag = new AtomicBoolean(false);
+                    data.removeIf(ticket -> {
+                        var res = !newData.contains(ticket);
+                        System.out.println(res);
+                        flag.set(true);
+                        return res;
+                    });
+                    var addedData = newData.stream().filter(ticket -> !data.contains(ticket)).toList();
+                    data.addAll(addedData);
+                    if (!addedData.isEmpty()) {
+                        flag.set(true);
+                    }
+                    if (flag.get()) {
+                        Application.getMainSceneObj().getZoomableCartesianPlot().updateMap();
+                    }
                 });
-                var addedData = newData.stream().filter(ticket -> !data.contains(ticket)).toList();
-                data.addAll(addedData);
-            });
-        }
-        private boolean updateNewData()  {
-            try {
-                newData = controller.show();
-                return true;
-            }catch (ConnectionException e){
-                System.out.println("ошибка отправки");
-                return false;
-            }catch (Exception e){
-                return false;
             }
-
         }
+        private List<Ticket> getNewData() {
+
+            while (true) {
+                try {
+                    return controller.show();
+                }
+                catch (Exception e) {
+                }
+
+            }
+        }
+
 
 }

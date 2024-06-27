@@ -26,6 +26,10 @@ public class RemoveKey extends Command implements Serializable {
         }
         collection.removeElement(id,getAuthorization().getLogin());
         responseManager.addToSend("Элемент удалён",this);
+        var tickets  = collection.getHashMap().values().stream()
+                .sorted()
+                .toList();
+        responseManager.addToSend(tickets,this);
         loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
         responseManager.send(this);
 

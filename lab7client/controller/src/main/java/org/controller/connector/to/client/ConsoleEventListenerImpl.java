@@ -1,5 +1,7 @@
 package org.controller.connector.to.client;
 
+import com.querydsl.core.annotations.Immutable;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.common.dto.Ticket;
 import org.controller.exception.ExceptionFromServer;
 import org.example.connector.to.controller.ConsoleEventListener;
@@ -54,4 +56,9 @@ public class ConsoleEventListenerImpl implements ConsoleEventListener {
         }
         return tickets;
     }
+    public ImmutablePair<String,List<Ticket>> getMessageAndTickets() throws Exception{
+        return new ImmutablePair(getMessage(),getTickets());
+
+    }
+
 }

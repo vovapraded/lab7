@@ -170,6 +170,7 @@ public abstract class Panel {
     protected TextField createDoubleTextField() {
         TextField textField = new TextField();
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
+
             var str = newValue.replaceAll("[^\\d.-]","");
             while (!checkDouble(str) ) {
                 while (str.codePoints().filter(ch -> ch == '.').count()>1){
@@ -192,6 +193,9 @@ public abstract class Panel {
     private boolean checkDouble(String str){
         try {
             if (str.isEmpty()){
+                return true;
+            }
+            if (str.equals("-")){
                 return true;
             }
             double number = Double.parseDouble(str);

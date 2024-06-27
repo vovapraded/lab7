@@ -32,7 +32,8 @@ public class DrawingManager {
 
 
     private final TicketStorage ticketStorage;
-
+    @Getter
+    private ArrayList<Long> ticketIdList ;
     public DrawingManager(TicketStorage ticketStorage, CreatorTable creatorTable) {
         this.ticketStorage = ticketStorage;
         this.creatorTable = creatorTable;
@@ -49,7 +50,9 @@ public class DrawingManager {
 //        animationManager.start(canvas);
 
         final double zoomFactorFinal =zoomFactor;
+        var newTicketIdList = new ArrayList<Long>();
         List<AnimatedTicket> animatedTickets = sortedTickets.stream().filter( ticket -> {
+            newTicketIdList.add(ticket.getTicket().getId());
             if (ticket instanceof CommonTicket && !(ticket instanceof SelectedTicket)){
                 ((CommonTicket)ticket).draw(gc,zoomFactorFinal,rectWidth,rectHeight);
             }else if (ticket instanceof SelectedTicket){
@@ -58,6 +61,7 @@ public class DrawingManager {
             setCanvasOnClick(zoomFactor,rectWidth,rectHeight,gc);
             return ticket instanceof AnimatedTicket;
         }).map(ticket -> (AnimatedTicket)ticket).toList();
+        ticketIdList = newTicketIdList;
         return animatedTickets;
     }
     private void setCanvasOnClick(double zoomFactor,double rectWidth,double rectHeight,GraphicsContext gc) {
