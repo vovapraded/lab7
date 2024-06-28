@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
     public void updateFilteredData(){
         //лучше не сеталл
         wrappedFilteredData.addAll(wrappedData.stream().filter(ticket -> filter.check(ticketFilter,ticket) &&!wrappedFilteredData.contains(ticket)).toList());
-        var removedTickets = wrappedFilteredData.stream().filter(ticket ->!wrappedData.contains(ticket)).toList();
+        var removedTickets = wrappedFilteredData.stream().filter(ticket ->!wrappedData.contains(ticket) || !filter.check(ticketFilter,ticket) ).toList();
         wrappedFilteredData.removeAll(removedTickets);
     }
 

@@ -91,7 +91,7 @@ public class MainScene extends MyScene {
          tableAndPlot = new HBox(pagination,map);
          tableAndPlot.setMaxWidth(Double.MAX_VALUE);
         tableAndPlot.setPrefWidth(Double.MAX_VALUE);
-        tableAndPlot.setAlignment(Pos.CENTER);
+        tableAndPlot.setAlignment(Pos.TOP_CENTER);
         tableAndPlot.setPadding(new Insets(10,30,10,10));
 
         root.setCenter(tableAndPlot);

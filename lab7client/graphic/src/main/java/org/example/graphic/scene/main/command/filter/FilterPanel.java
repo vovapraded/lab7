@@ -39,7 +39,6 @@ public class FilterPanel extends Panel {
     private TextField priceMaxField;
     private TextField discountMinField;
     private TextField discountMaxField;
-    private TextField refundableMinField;
     private VBox refundable;
     private TextField partOfNameField;
     private DatePicker dateMinPicker;
@@ -54,12 +53,6 @@ public class FilterPanel extends Panel {
     private TextField capacityMinField;
     private TextField capacityMaxField;
     private TextField venuePartOfNameField;
-    private DatePicker venueDateMinPicker;
-    private DatePicker venueDateMaxPicker;
-    private Spinner<Integer> venueHourMinSpinner;
-    private Spinner<Integer> venueMinuteMinSpinner;
-    private Spinner<Integer> venueHourMaxSpinner;
-    private Spinner<Integer> venueMinuteMaxSpinner;
     private VBox venueTypeContainer;
     private TextField coordinatesXMinField;
      private   TextField    coordinatesXMaxField;

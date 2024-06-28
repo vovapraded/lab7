@@ -71,7 +71,7 @@ public class CreatorTable {
     private TableView<Ticket> createTable() {
 
         table = new TableView<>();
-        table.setPadding(new Insets(10));
+        table.setPadding(new Insets(12));
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 //        table.setMinSize(760,360); // Разрешаем таблице занимать всю доступную высоту
         table.setEditable(true);
