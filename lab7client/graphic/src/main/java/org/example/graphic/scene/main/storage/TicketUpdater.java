@@ -43,6 +43,7 @@ public class TicketUpdater  extends Thread {
                     }
                     if (flag.get()) {
                         Application.getMainSceneObj().getZoomableCartesianPlot().updateMap();
+
                     }
                 });
             }

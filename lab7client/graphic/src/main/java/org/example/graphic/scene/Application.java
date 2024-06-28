@@ -50,6 +50,7 @@ public class Application extends javafx.application.Application {
             ticketStorage = new TicketStorage();
         }else{
             ticketStorage.unmakeAllTicketsSelected();
+            SelectedManager.setSelectedId(null);
         }
 
         //подумать над мувом

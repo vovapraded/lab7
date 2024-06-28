@@ -62,6 +62,7 @@ public class ColumnUtils {
                         Popup.showError(localizator.getKeyString(e.getMessage()));
                         event.consume(); // Отменяем событие
                         event.getTableView().refresh(); // Обновляем таблицу для возврата к старому значению
+
                     }
 
                 }

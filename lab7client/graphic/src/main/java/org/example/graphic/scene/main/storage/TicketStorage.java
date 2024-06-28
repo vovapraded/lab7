@@ -26,9 +26,13 @@ import java.util.stream.Collectors;
     private ObservableList<Ticket> filteredData =   FXCollections.observableArrayList();
     public void updateFilteredData(){
         //лучше не сеталл
-        wrappedFilteredData.addAll(wrappedData.stream().filter(ticket -> filter.check(ticketFilter,ticket) &&!wrappedFilteredData.contains(ticket)).toList());
+        var addedTickets = wrappedData.stream().filter(ticket -> filter.check(ticketFilter,ticket) &&!wrappedFilteredData.contains(ticket)).toList();
+
         var removedTickets = wrappedFilteredData.stream().filter(ticket ->!wrappedData.contains(ticket) || !filter.check(ticketFilter,ticket) ).toList();
+
+        wrappedFilteredData.addAll(addedTickets);
         wrappedFilteredData.removeAll(removedTickets);
+
     }
 
 
@@ -130,9 +134,13 @@ import java.util.stream.Collectors;
 
     }
      public void makeTicketSelected(Long id){
-         DrawingTicket drawingTicket = wrappedData.stream().filter(drawingTick -> drawingTick.getTicket().getId().equals(id)).findAny().get();
-         wrappedData.remove(drawingTicket);
-         wrappedData.add( new SelectedTicket(drawingTicket.getTicket(),drawingTicket.getColor()));
+         var drawingTicketOpt = wrappedData.stream().filter(drawingTick -> drawingTick.getTicket().getId().equals(id)).findAny();
+         if (drawingTicketOpt.isPresent()) {
+             var drawingTicket = drawingTicketOpt.get();
+             wrappedData.remove(drawingTicket);
+             wrappedData.add( new SelectedTicket(drawingTicket.getTicket(),drawingTicket.getColor()));
+
+         }
 
 
      }
@@ -153,8 +161,6 @@ import java.util.stream.Collectors;
         return randomColor;
     }
 
-    public Optional<DrawingTicket> findSelectedTicket() {
-        return wrappedFilteredData.stream().filter(drawingTicket -> drawingTicket instanceof SelectedTicket).findFirst();
-    }
+
 
 }

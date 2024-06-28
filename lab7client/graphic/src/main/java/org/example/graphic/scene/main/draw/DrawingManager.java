@@ -3,6 +3,7 @@ package org.example.graphic.scene.main.draw;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import lombok.Getter;
+import org.example.graphic.scene.Application;
 import org.example.graphic.scene.main.CreatorTable;
 import org.example.graphic.scene.main.storage.TicketStorage;
 import org.example.graphic.scene.main.ZoomableCartesianPlot;
@@ -81,10 +82,14 @@ public class DrawingManager {
                 if (mouseX >= rectX-rectWidth/2 && mouseX <= rectX + rectWidth/2 &&
                         mouseY >= rectY - rectHeight/2 && mouseY <= rectY + rectHeight/2) {
                     // Найден прямоугольник, на который было нажатие
+                    flag = true;
                     // Вы можете выполнить необходимые действия здесь
                     int index = creatorTable.getSortedData().indexOf(wrappedTicket.getTicket());
                     if (index >= 0) {
-                        selectedManager.tryToSelectTicket(ticket.getId());
+                        SelectedManager.setSelectedId(ticket.getId());
+                        selectedManager.tryToSelectTicket();
+                        Application.getMainSceneObj().getZoomableCartesianPlot().updateMap();
+
                     }
                     break;
 
@@ -92,7 +97,10 @@ public class DrawingManager {
 
             }
             if (!flag){
-                ticketTable.getSelectionModel().clearSelection();
+                SelectedManager.setSelectedId(null);
+                selectedManager.tryToSelectTicket();
+                Application.getMainSceneObj().getZoomableCartesianPlot().updateMap();
+
             }
         });
     }

@@ -20,7 +20,9 @@ import org.common.dto.TicketType;
 import org.common.dto.VenueType;
 import org.controller.MyController;
 import org.example.graphic.node.TableColumnAdapter;
+import org.example.graphic.scene.Application;
 import org.example.graphic.scene.main.draw.entity.DrawingTicket;
+import org.example.graphic.scene.main.draw.entity.SelectedTicket;
 import org.example.graphic.scene.main.draw.select.SelectedManager;
 import org.example.graphic.scene.main.storage.TicketStorage;
 import org.example.graphic.scene.main.utils.*;
@@ -157,12 +159,14 @@ public class CreatorTable {
                         table.edit(index, position.getTableColumn());
                     }
                 }else if (!row.isEmpty() && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1){
-                    selectedManager.tryToSelectTicket(row.getItem().getId());
-                    }
+                    SelectedManager.setSelectedId(row.getItem().getId());
+                    selectedManager.tryToSelectTicket();
+                    zoomableCartesianPlot.updateMap();
+
+                }
             });
             return row;
         });
-
 
         this.box = new VBox(table);
 //        this.box.setFillWidth(true); // Разрешаем VBox занимать всю доступную ширину
@@ -201,14 +205,7 @@ public class CreatorTable {
         int totalPageCount = (int) Math.ceil((double) sortedData.size() / ROWS_PER_PAGE);
         pagination = new Pagination(totalPageCount, 0);
         pagination.setPageFactory(this::createPage);
-//        pagination.currentPageIndexProperty().addListener(new ChangeListener<Number>() {
-//            @Override
-//            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-//                initPage(newValue.intValue());
-//                System.out.println("поменялась страница");
-//            }
-//        });
-//        pagination.setMinSize(800,400);
+
 
         return pagination;
     }
@@ -242,45 +239,40 @@ public class CreatorTable {
         table.setItems(pageData);
         box.requestFocus();
         box.getChildren().setAll(table);
-//        boxes.putIfAbsent(pageIndex,new VBox());
-        // Обновляем VBox
+        selectTicket(SelectedManager.getSelectedId(),false);
+
 
 
     }
 
-    public void selectTicket(Ticket ticket) {
+    public void selectTicket(Long id,boolean flipPage) {
+
         Platform.runLater(() -> {
 
-        var index =     sortedData.indexOf(ticket);
-        var itemsPerPage = ROWS_PER_PAGE;
-        var indexOfPage = index / itemsPerPage;
-        pagination.setCurrentPageIndex(indexOfPage);
+        var index =     sortedData.stream().map(Ticket::getId).toList().indexOf(id);
+        if (index!=-1){
+            var itemsPerPage = ROWS_PER_PAGE;
+            var indexOfPage = index / itemsPerPage;
+            if (pagination.getCurrentPageIndex()==indexOfPage || flipPage){
+                pagination.setCurrentPageIndex(indexOfPage);
 
-
-
-        int finalIndex = (index)% itemsPerPage;
-
+                int finalIndex = (index)% itemsPerPage;
                 table.getSelectionModel().clearAndSelect((finalIndex));
+            }
+        }
         });
+}
 
-    }
     public void updatePagination() {
 
         int totalPageCount = (int) Math.ceil((double) sortedData.size() / ROWS_PER_PAGE);
         pagination.setPageCount(totalPageCount);
-        selectTicket(ticketStorage.findSelectedTicket());
-
     }
 
 
 
 
-    public void selectTicket(Optional<DrawingTicket> selectedTicketOptional) {
 
-     selectedTicketOptional.ifPresent((selectedTicket)->{
-        var ticket = selectedTicket.getTicket();
-        selectTicket(ticket);
-    });
-    }
+
 
 }
