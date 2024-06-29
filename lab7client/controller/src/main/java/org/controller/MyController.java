@@ -24,7 +24,7 @@ public class MyController {
     private final ConsoleEventListenerImpl listener = Initializer.getListener();
     private final Authorization authorization = new Authorization();
     private final ValidatorTicket validatorTicket= new ValidatorTicket();
-    public  String login(String login,String password) throws Exception {
+    public synchronized   String login(String login,String password) throws Exception {
         authorization.setLogin(login);
         authorization.setPassword(password);
         Login command = new Login();
@@ -32,25 +32,25 @@ public class MyController {
         return  listener.getMessage();
 
     }
-    public String register(String login, String password) throws Exception {
+    public synchronized String register(String login, String password) throws Exception {
         authorization.setLogin(login);
         authorization.setPassword(password);
         Register command = new Register();
         sendCommand(command);
         return  listener.getMessage();
     }
-    public List<Ticket> show() throws Exception {
+    public synchronized List<Ticket> show() throws Exception {
         Show command = new Show();
         sendCommand(command);
         return  listener.getTickets();
     }
-    public ImmutablePair<String, List<Ticket>> remove(Long id) throws Exception {
+    public synchronized ImmutablePair<String, List<Ticket>> remove(Long id) throws Exception {
         RemoveKey command = new RemoveKey();
         command.setStringArg(id.toString());
         sendCommand(command);
         return  listener.getMessageAndTickets();
     }
-    public ImmutablePair<String, List<Ticket>> insert(Ticket ticket) throws Exception {
+    public synchronized ImmutablePair<String, List<Ticket>> insert(Ticket ticket) throws Exception {
         validatorTicket.validateTicket(ticket);
         Insert command = new Insert();
         command.setTicketArg(ticket);
@@ -61,7 +61,7 @@ public class MyController {
 
 
     }
-    public ImmutablePair<String, List<Ticket>> update(Ticket ticket) throws Exception {
+    public synchronized ImmutablePair<String, List<Ticket>> update(Ticket ticket) throws Exception {
         Update command = new Update();
         command.setTicketArg(ticket);
         command.setStringArg(ticket.getId().toString());
@@ -69,7 +69,7 @@ public class MyController {
         return  listener.getMessageAndTickets();
 
     }
-    private  void sendCommand(Command command) throws Exception {
+    private synchronized void sendCommand(Command command) throws Exception {
         command.setAuthorization(authorization);
         Main.handleCommand(command);
     }

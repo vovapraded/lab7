@@ -24,10 +24,12 @@ import org.example.graphic.scene.Application;
 import org.example.graphic.scene.main.draw.entity.DrawingTicket;
 import org.example.graphic.scene.main.draw.entity.SelectedTicket;
 import org.example.graphic.scene.main.draw.select.SelectedManager;
+
 import org.example.graphic.scene.main.storage.TicketStorage;
 import org.example.graphic.scene.main.utils.*;
 import org.example.graphic.scene.main.utils.conventer.*;
 
+import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -52,6 +54,8 @@ public class CreatorTable {
     private final      SelectedManager selectedManager;
     @Getter
     private VBox box;
+    private TableColumn sortColumn;
+    private boolean flag;
 
     public CreatorTable(TicketStorage ticketStorage, MainScene mainScene) {
         this.ticketStorage = ticketStorage;
@@ -129,20 +133,20 @@ public class CreatorTable {
         table.getSortOrder().add(price);
 
         table.setSortPolicy(var1 -> {
-            var comparator = var1.getComparator();
-            if (comparator == null) {
+            if (var1.getComparator() == null) {
+//                sortedData.setComparator(Comparator.comparing(Ticket::getPrice).thenComparing(Ticket::getId));
                 price.setSortType(TableColumn.SortType.ASCENDING);
-                return true;
-            }
-            comparator = comparator.thenComparing(Ticket::getId);
-            if (comparator.equals(sortedData.getComparator())) {
-                comparator = comparator.reversed();
-            }
-            sortedData.setComparator(comparator);
-            pagination.setPageFactory(this::createPage);
-            return false;
-        });
+                var1.getSortOrder().setAll(price);
 
+
+
+                return false;
+            }
+
+            Comparator<Ticket> comparator = var1.getComparator();
+            sortedData.setComparator(comparator.thenComparing(Ticket::getId));
+            return true;
+        });
 //
         table.setRowFactory(tv -> {
             TableRow<Ticket> row = new TableRow<>();
@@ -219,9 +223,10 @@ public class CreatorTable {
         int fromIndex = pageIndex * ROWS_PER_PAGE;
         int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, sortedData.size());
 
-        if (sortedData.getComparator() == null) {
-            sortedData.setComparator(Comparator.comparing(Ticket::getPrice).thenComparing(Ticket::getId));
-        }
+//        if (sortedData.getComparator() == null) {
+//            sortedData.setComparator(Comparator.comparing(Ticket::getPrice).thenComparing(Ticket::getId));
+//
+//        }
 
         // Создаем данные для текущей страницы
         ObservableList<Ticket> pageData = FXCollections.observableArrayList(sortedData.subList(fromIndex, toIndex));
