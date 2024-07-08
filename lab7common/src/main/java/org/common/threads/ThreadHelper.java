@@ -1,4 +1,4 @@
-package org.example.threads;
+package org.common.threads;
 
 import lombok.Getter;
 

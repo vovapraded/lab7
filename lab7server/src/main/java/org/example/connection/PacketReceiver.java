@@ -10,20 +10,24 @@ import java.nio.channels.SelectionKey;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 
+import org.common.network.RequestId;
 import org.example.managers.CurrentResponseManager;
-import org.example.threads.ThreadHelper;
+import org.common.threads.ThreadHelper;
 import org.example.utility.ReceiveDataException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PacketReceiver extends Thread {
     private UdpServer udpServer;
-    private static final int PACKET_SIZE = 1024;
+    private static final int PACKET_SIZE = UdpServer.getPACKET_SIZE();
     private final DatagramChannel datagramChannel;
     private final CurrentResponseManager responseManager;
     private Selector selector;
     private static final Logger logger = LoggerFactory.getLogger(PacketReceiver.class);
     ExecutorService poolForReceiving;
+
+
+
 
     public PacketReceiver(DatagramChannel datagramChannel, CurrentResponseManager responseManager) throws IOException {
         this.datagramChannel = datagramChannel;
@@ -36,11 +40,11 @@ public class PacketReceiver extends Thread {
         while (true) {
             var data=receiveData();
             if (data!=null){
-                poolForReceiving.submit(new PacketHandler(responseManager,data));
+                poolForReceiving.submit(new PacketHandler(responseManager, data));
             }
         }
     }
-    public ImmutablePair<SocketAddress,byte[]> receiveData() throws ReceiveDataException {
+    public ImmutablePair<RequestId,byte[]> receiveData() throws ReceiveDataException {
         ByteBuffer buffer = ByteBuffer.allocate(PACKET_SIZE);
         SocketAddress addr = null;
          try {
@@ -53,7 +57,7 @@ public class PacketReceiver extends Thread {
                         buffer.flip();
                         byte[] data = new byte[buffer.remaining()];
                         buffer.get(data);
-                        return new ImmutablePair<>(addr, data);
+                        return new ImmutablePair<>(new RequestId(addr,data[data.length-5]), data);
                     }
                 }
                 selectedKeys.clear();

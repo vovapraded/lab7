@@ -5,7 +5,7 @@ module lab7client {
     requires com.google.gson;
     requires guava.primitives.r03;
     requires org.apache.commons.lang3;
-    exports org.example.connector.to.controller;
+    requires java.sql;
     exports org.example.utility;
 
 }

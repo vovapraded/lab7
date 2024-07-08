@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.common.dto.Ticket;
 import org.controller.MyController;
 import org.example.graphic.scene.Application;
+import org.example.graphic.scene.Popup;
 import org.example.graphic.scene.main.command.filter.Filter;
 import org.example.graphic.scene.main.command.filter.TicketFilter;
 import org.example.graphic.scene.main.draw.animation.AnimatedTicket;
@@ -97,7 +98,8 @@ import java.util.stream.Collectors;
 
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            Popup.showError(e.getMessage());
+            e.printStackTrace();
         }
     }
 

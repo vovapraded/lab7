@@ -10,6 +10,7 @@ module lab7common {
     exports org.common;
     exports org.common.utility;
     exports org.common.network;
+    exports org.common.threads;
     exports org.common.serial;
     exports org.common.commands;
     exports org.common.commands.authorization;

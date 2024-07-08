@@ -1,22 +1,21 @@
 package org.example.connection;
 
+import lombok.Getter;
+import org.common.network.RequestId;
 import org.common.network.Response;
 import org.common.serial.SerializeException;
 import org.common.serial.Serializer;
 import org.common.utility.PropertyUtil;
 import org.example.managers.CurrentResponseManager;
-import org.example.threads.HashmapCleaner;
-import org.example.threads.ThreadHelper;
+import org.common.threads.ThreadHelper;
 import org.example.utility.ReceiveDataException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
-import java.util.AbstractMap;
 import java.util.concurrent.*;
 
 public class UdpServer implements ResponseListener {
@@ -26,8 +25,10 @@ public class UdpServer implements ResponseListener {
     private final ByteBuffer buffer = ByteBuffer.allocate(1024);
 
     private final CurrentResponseManager responseManager;
-    private final int PACKET_SIZE = 1024;
-    private final int DATA_SIZE = PACKET_SIZE - 4;
+    @Getter
+    private static final int PACKET_SIZE = 1024;
+    @Getter
+    private static final int DATA_SIZE = PACKET_SIZE - 5;
     private static final int RECEIVE_BUFFER_SIZE = 2 * 1024 * 1024; // 2 MB
 
     private static final Logger logger = LoggerFactory.getLogger(UdpServer.class);
@@ -45,7 +46,6 @@ public class UdpServer implements ResponseListener {
         logger.debug("Ресивер пакетов запущен");
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         // Запускаем поток HashmapCleaner с интервалом в TIMEOUT миллисекунд
-        scheduler.scheduleAtFixedRate(new HashmapCleaner(), 0, HashmapCleaner.getTIMEOUT(), TimeUnit.MILLISECONDS);
         logger.debug("Hashmap Cleaner запущен");
 
     }
@@ -87,13 +87,13 @@ public class UdpServer implements ResponseListener {
 
 
     @Override
-    public void onResponse(Response response, SocketAddress address) {
+    public void onResponse(Response response, RequestId requestId) {
         try {
-            responseSender.sendData(Serializer.serialize(response),address);
+            responseSender.sendData(Serializer.serialize(response),requestId);
         } catch (IOException e) {
-            logger.error("Не получилось отправить ответ клиенту: "+address);
+            logger.error("Не получилось отправить ответ на запрос: "+requestId);
         }catch (SerializeException e){
-            logger.error("Не получилось сериализовать ответ клиенту: "+address);
+            logger.error("Не получилось сериализовать ответ на запрос: "+requestId);
         }
     }
 }

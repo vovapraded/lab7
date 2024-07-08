@@ -23,7 +23,7 @@ public class RemoveGreater extends Command implements Serializable {
             ticketArg.setCreatedBy(getAuthorization().getLogin());
             collection.removeGreater(ticket,getAuthorization().getLogin());
             responseManager.addToSend("Операция прошла успешно",this);
-        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
+        loggingSuccess();
         responseManager.send(this);
 
     }

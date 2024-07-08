@@ -29,7 +29,7 @@ public class RemoveGreaterKey extends Command implements  Serializable {
 
             collection.removeGreaterKey(id,getAuthorization().getLogin());
             responseManager.addToSend("Операция успешно выполнена",this);
-        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
+        loggingSuccess();
         responseManager.send(this);
 
 

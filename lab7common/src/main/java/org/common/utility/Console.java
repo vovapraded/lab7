@@ -12,9 +12,6 @@ import java.util.Scanner;
 public interface     Console {
 
 
-    void sendToController(List<Ticket> tickets);
-     void sendToController(String s) ;
-     void sendToController(Exception e) ;
 
 
     public abstract void selectFileScanner(Scanner scanner);

@@ -21,6 +21,7 @@ public class TicketUpdater  extends Thread {
     }
 
     public void run(){
+        System.out.println("Обновляем билетыv");
             update(getNewData());
         }
         private static  TicketStorage ticketStorage = null;
@@ -55,6 +56,7 @@ public class TicketUpdater  extends Thread {
                     return controller.show();
                 }
                 catch (Exception e) {
+                    e.printStackTrace();
                 }
 
             }

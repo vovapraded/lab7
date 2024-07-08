@@ -8,7 +8,6 @@ import org.common.utility.Validator;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * Add item command
@@ -34,7 +33,8 @@ public class Insert extends Command implements Serializable {
         ticketArg.setCreationDate(LocalDateTime.now());
         collection.insertElement(ticketArg);
         responseManager.addToSend("SuccessInsert",this);
-        addTicketsAndSend();
+        addTicketsAndSendAndLogging();
+
     }
 
     @Override

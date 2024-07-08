@@ -19,7 +19,7 @@ public class Response implements Serializable {
     private List<Ticket> tickets;
 
 
-    private transient SocketAddress address;
+    private transient RequestId requestId;
     private boolean loginCorrect;
     private boolean passwordCorrect;
     public String getMessageBySingleString(){

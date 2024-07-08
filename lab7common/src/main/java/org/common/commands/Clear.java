@@ -15,7 +15,7 @@ public class Clear extends Command implements Serializable {
     public void execute() {
         collection.clearCollection(getAuthorization().getLogin());
         responseManager.addToSend("Коллекция пользователя "+getAuthorization().getLogin()+" очищена",this);
-        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
+        loggingSuccess();
         responseManager.send(this);
     }
 

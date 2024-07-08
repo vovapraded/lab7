@@ -29,7 +29,7 @@ public class ReplaceIfGreater extends Command implements Serializable {
         var result=collection.replaceIfGreater(ticketArg);
         var ne = result ? "" : "не ";
         responseManager.addToSend("Замена "+ne+"произошла",this);
-        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
+        loggingSuccess();
         responseManager.send(this);
     }
 

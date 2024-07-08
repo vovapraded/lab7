@@ -16,7 +16,7 @@ public class Show extends Command implements Serializable {
     @Override
     public void execute() {
 
-        addTicketsAndSend();
+        addTicketsAndSendAndLogging();
     }
 
     @Override

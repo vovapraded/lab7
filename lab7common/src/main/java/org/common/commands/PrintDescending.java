@@ -22,7 +22,7 @@ public class PrintDescending extends Command implements Serializable {
                     .sorted(Comparator.reverseOrder())
                     .forEach(ticket -> responseManager.addToSend(ticket.toString() ,this));
         }
-        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
+        loggingSuccess();
         responseManager.send(this);
 
     }

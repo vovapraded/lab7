@@ -1,7 +1,6 @@
 package org.common.commands;
 import lombok.Getter;
 import lombok.Setter;
-import org.common.commands.authorization.AuthorizationCommand;
 import org.common.commands.inner.objects.Authorization;
 import org.common.commands.inner.objects.LoggerHelper;
 import org.common.dto.Ticket;
@@ -11,7 +10,6 @@ import org.common.utility.*;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.net.SocketAddress;
 
 /**
  * Interface for the command
@@ -42,12 +40,16 @@ public abstract class Command implements Serializable {
         this.console = console;
     }
 
-    protected void addTicketsAndSend() {
+    protected void addTicketsAndSendAndLogging() {
         var tickets  = collection.getHashMap().values().stream()
                 .sorted()
                 .toList();
         responseManager.addToSend(tickets,this);
-        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
+        loggingSuccess();
         responseManager.send(this);
+    }
+    protected void loggingSuccess(){
+        loggerHelper.debug("Команда "+this.getClass().getName()+" запроса "+responseManager.getResponse(this).getRequestId() +" выполнена");
+
     }
 }

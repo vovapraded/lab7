@@ -32,7 +32,7 @@ public class FilterLessThanVenue extends Command implements Serializable {
             for (Ticket ticket : filtered){
                 responseManager.addToSend(ticket.toString(),this);
             }
-        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
+        loggingSuccess();
         responseManager.send(this);
 
     }

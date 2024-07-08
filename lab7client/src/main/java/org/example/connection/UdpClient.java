@@ -1,31 +1,19 @@
 package org.example.connection;
 import lombok.Getter;
-import lombok.SneakyThrows;
 
-import org.common.commands.Command;
-import org.common.network.Response;
-import org.common.network.SendException;
-import org.common.serial.DeserializeException;
-import org.common.serial.Deserializer;
-import org.common.serial.SerializeException;
-import org.common.serial.Serializer;
 import org.example.utility.CurrentConsole;
-import org.example.utility.NoResponseException;
 import org.common.utility.*;
 
 import java.io.IOException;
 import java.net.*;
-import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.util.*;
-import java.util.concurrent.*;
 
 
 public class UdpClient  {
-    private final int PACKET_SIZE = 1024;
-    private final int DATA_SIZE = PACKET_SIZE - 4;
+    @Getter
+    private static final int PACKET_SIZE = 1024;
+    @Getter
+    private static final int DATA_SIZE = PACKET_SIZE - 5;
     private static final int RECEIVE_BUFFER_SIZE = 2 * 1024 * 1024; // 2 MB
 
     private final Console currentConsole = CurrentConsole.getInstance();
@@ -67,9 +55,9 @@ public class UdpClient  {
 
     }
 @Getter
-    private final UdpSender udpSender = new UdpSender(PACKET_SIZE,client,serverSocketAddress);
+    private final UdpSender udpSender = new UdpSender(client,serverSocketAddress);
     @Getter
-    private final UdpReceiver udpReceiver = new UdpReceiver(PACKET_SIZE,client);
+    private final UdpReceiver udpReceiver = new UdpReceiver(client);
 
 
 

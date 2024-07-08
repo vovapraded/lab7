@@ -7,7 +7,6 @@ import org.common.utility.Validator;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * The command to update the ticket
@@ -32,7 +31,7 @@ public class Update extends Command implements Serializable {
         ticketArg.setCreationDate(LocalDateTime.now());
         collection.updateTicket(ticketArg, getAuthorization().getLogin());
         responseManager.addToSend("SuccessInsert",this);
-        addTicketsAndSend();
+        addTicketsAndSendAndLogging();
 
     }
 

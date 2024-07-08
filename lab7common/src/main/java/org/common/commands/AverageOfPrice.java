@@ -21,7 +21,7 @@ public class AverageOfPrice extends Command implements Serializable {
         } else {
             responseManager.addToSend("Средняя цена " + average.getAsDouble(),this);
         }
-        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
+        loggingSuccess();
         responseManager.send(this);
     }
 

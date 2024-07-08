@@ -27,7 +27,7 @@ public class Help extends Command implements Serializable {
         } else {
             responseManager.addToSend("ErrorInternalServer",this);
         }
-        loggerHelper.debug("Команда "+this.getClass().getName()+"от адресса "+responseManager.getResponse(this).getAddress() +" выполнена");
+        loggingSuccess();
         responseManager.send(this);
     }
 

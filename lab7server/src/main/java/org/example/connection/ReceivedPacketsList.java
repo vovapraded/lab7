@@ -9,5 +9,5 @@ public class ReceivedPacketsList {
     private final ArrayList<ReceivedPacket> packets = new ArrayList<ReceivedPacket>();
     private volatile int sizeOfRequest = Integer.MAX_VALUE;
     private volatile long timeOfLastPacket = System.currentTimeMillis();
-
+    private final long timeInit = System.currentTimeMillis();
 }
