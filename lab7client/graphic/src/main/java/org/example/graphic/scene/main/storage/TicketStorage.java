@@ -98,7 +98,7 @@ import java.util.stream.Collectors;
 
 
         } catch (Exception e) {
-            Popup.showError(e.getMessage());
+            Popup.showError(e);
             e.printStackTrace();
         }
     }

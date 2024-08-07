@@ -3,6 +3,7 @@ package org.example.graphic.scene.main.utils;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.StringConverter;
+import org.common.commands.authorization.NoAccessException;
 import org.common.dto.Ticket;
 import org.controller.MyController;
 import org.example.graphic.localizator.Localizator;
@@ -38,7 +39,7 @@ public class ColumnUtils {
             T newValue = event.getNewValue();
             Ticket ticket = event.getRowValue();
             if (!Application.getLogin().equals(ticket.getCreatedBy())){
-                Popup.showError(localizator.getKeyString("NoAccess"));
+                Popup.showError(new NoAccessException("NoAccess"));
                 event.consume(); // Отменяем событие
                 event.getTableView().refresh(); // Обновляем таблицу для возврата к старому значению
                 return;
@@ -59,7 +60,7 @@ public class ColumnUtils {
                         Popup.showDialog(localizator.getKeyString(message));
                     } catch (Exception e) {
                         setter.invoke(ticket, oldValue);
-                        Popup.showError(localizator.getKeyString(e.getMessage()));
+                        Popup.showError(e);
                         event.consume(); // Отменяем событие
                         event.getTableView().refresh(); // Обновляем таблицу для возврата к старому значению
 

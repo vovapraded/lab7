@@ -1,4 +1,4 @@
-package org.example.utility;
+package org.example.exception;
 
 public class InfinityRecursionException extends RuntimeException {
     private String message;

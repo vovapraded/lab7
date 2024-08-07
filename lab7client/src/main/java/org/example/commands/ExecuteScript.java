@@ -1,7 +1,7 @@
 package org.example.commands;
 import org.common.commands.Command;
 import org.common.utility.InvalidFormatException;
-import org.example.utility.InfinityRecursionException;
+import org.example.exception.InfinityRecursionException;
 
 import java.io.File;
 import java.io.FileNotFoundException;

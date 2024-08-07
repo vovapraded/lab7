@@ -1,20 +1,12 @@
 package org.example.connection;
 
-import com.google.common.primitives.Bytes;
-import lombok.SneakyThrows;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.common.network.ConnectionException;
-import org.common.network.RequestId;
+import org.example.exception.ConnectionException;
 import org.common.network.Response;
-import org.common.serial.Deserializer;
-import org.common.utility.CodingUtil;
-import org.example.utility.NoResponseException;
+import org.example.exception.NoResponseException;
+import org.example.exception.ReceivingException;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,7 +29,7 @@ public class UdpReceiver {
         packetHandler = new PacketHandler();
     }
 
-    public Response getResponse() throws NoResponseException {
+    public Response getResponse() throws ReceivingException {
         countOfRequests.incrementAndGet();
             packetReceiver.run(timeoutChecker);
 
@@ -50,16 +42,18 @@ public class UdpReceiver {
         System.out.println("Достали фьюче"+responseFuture);
         countOfRequests.decrementAndGet();
         if (responseFuture == null)
-            throw new NoResponseException("NoResponse");
+            throw new NoResponseException("NoResponse",null);
         Response response = null;
         try {
             response = responseFuture.get();
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
+        }finally {
+            if (countOfRequests.get() == 0) {
+                timeoutChecker.shutdown();
+            }
         }
-        if (countOfRequests.get() == 0) {
-            timeoutChecker.shutdown();
-        }
+
         return response;
 
 

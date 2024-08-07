@@ -2,10 +2,12 @@ package org.example.graphic.scene.main.storage;
 
 import javafx.application.Platform;
 import lombok.Getter;
-import lombok.Setter;
 import org.common.dto.Ticket;
 import org.controller.MyController;
+import org.example.exception.ReceivingException;
 import org.example.graphic.scene.Application;
+import org.example.graphic.scene.Popup;
+import org.example.exception.NoResponseException;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -27,7 +29,7 @@ public class TicketUpdater  extends Thread {
         private static  TicketStorage ticketStorage = null;
         private final MyController controller = MyController.getInstance();
         public static void update(List<Ticket> newData){
-            if (ticketStorage!=null) {
+            if (ticketStorage!=null && newData!=null){
                 var data = ticketStorage.getData();
                 Platform.runLater(() -> {
                     AtomicBoolean flag = new AtomicBoolean(false);
@@ -50,16 +52,23 @@ public class TicketUpdater  extends Thread {
             }
         }
         private List<Ticket> getNewData() {
-
-            while (true) {
                 try {
+                    System.out.println("Пытаемся");
                     return controller.show();
+
                 }
                 catch (Exception e) {
+                    if ( e instanceof ReceivingException){
+                        System.out.println("Поймалиошибку");
+                        Popup.showError(e);
+                    }
                     e.printStackTrace();
                 }
+            return null;
 
-            }
+
+
+
         }
 
 

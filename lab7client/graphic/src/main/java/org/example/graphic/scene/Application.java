@@ -1,9 +1,9 @@
 package org.example.graphic.scene;
 
 import javafx.stage.Stage;
-import lombok.Cleanup;
 import lombok.Getter;
 import lombok.Setter;
+import org.controller.connect.to.graphic.ExceptionListener;
 import org.example.graphic.scene.main.MainScene;
 import org.example.graphic.scene.main.draw.select.SelectedManager;
 import org.example.graphic.scene.main.storage.TicketStorage;
@@ -29,6 +29,7 @@ public class Application extends javafx.application.Application {
     @Override
     public void start(Stage stage) throws Exception {
         primaryStage = stage;
+        ExceptionListener exceptionListener = new CurrentExceptionListener();
         launchLoginStage();
     }
     private void launchLoginStage(){

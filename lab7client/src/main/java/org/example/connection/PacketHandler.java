@@ -11,6 +11,7 @@ import org.common.serial.Deserializer;
 import org.common.threads.ThreadHelper;
 import org.common.utility.*;
 
+import javax.swing.*;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -19,13 +20,13 @@ public class PacketHandler {
     @Setter
     private static volatile boolean interrupt = false;
     @Getter
-    private volatile boolean work=false ;
+    private static volatile boolean work=false ;
 
     private final ExecutorService poolForProcessing = ThreadHelper.getPoolForProcessing();
     private final int PACKET_SIZE = UdpClient.getPACKET_SIZE();
     private final int DATA_SIZE =UdpClient.getDATA_SIZE();
 
-    private final BlockingQueue<Future<ArrayList<byte[]>>> futures = PacketReceiver.getFutures();
+    private final BlockingQueue<CompletableFuture<ArrayList<byte[]>>> futures = PacketReceiver.getFutures();
     @Getter
     private  final BlockingQueue<Future<Response>> futuresOfResponses = new LinkedBlockingQueue<>() ;
 
@@ -47,8 +48,22 @@ public class PacketHandler {
             var future = futures.poll();
             if (future != null) {
                 if (future.isDone()) {
-                     handleArrayData(future.get());
 
+                    if (!future.isCompletedExceptionally())
+                        handleArrayData( future.get());
+                    else {
+                        try {
+                            future.get();
+                        }catch (Exception e){
+                            while (e instanceof ExecutionException){
+                                e = (Exception) e.getCause();
+                            }
+                            var resp =new Response();
+                            resp.setException(e);
+                            resp.setRequestId(new RequestId(null));
+                            futuresOfResponses.put(CompletableFuture.supplyAsync(()->resp));
+                        }
+                    }
                 } else {
                     futures.put(future);
                 }

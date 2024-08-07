@@ -27,6 +27,7 @@ module org.example.graphic {
     requires java.desktop;
     requires javafx.graphics;
     requires org.apache.commons.lang3;
+    requires lab7client;
 
 
 }

@@ -18,7 +18,6 @@ public class Response implements Serializable {
     private Exception exception;
     private List<Ticket> tickets;
 
-
     private transient RequestId requestId;
     private boolean loginCorrect;
     private boolean passwordCorrect;

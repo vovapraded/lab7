@@ -87,7 +87,7 @@ public abstract class Panel {
                 try {
                     onApply();
                 } catch (Exception e) {
-                    Popup.showError(e.getMessage());
+                    Popup.showError(e);
                 }
                 return;
             }

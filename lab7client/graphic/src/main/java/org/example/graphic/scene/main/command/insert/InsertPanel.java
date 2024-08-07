@@ -78,7 +78,7 @@ public class InsertPanel extends Panel {
             TicketUpdater.update(tickets);
             Popup.showDialog(localizator.getKeyString(message));
                  }catch (Exception e){
-            Popup.showError(localizator.getKeyString(e.getMessage()));
+            Popup.showError(e);
             }
 
 

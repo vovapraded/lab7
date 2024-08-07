@@ -8,13 +8,13 @@ import java.net.SocketAddress;
 @ToString
 public class RequestId {
     private final SocketAddress address;
-    private final byte id;
+    private final Byte id;
 
-    public RequestId(SocketAddress address,byte id ) {
+    public RequestId(SocketAddress address,Byte id ) {
         this.id = id;
         this.address = address;
     }
-    public RequestId(byte id ) {
+    public RequestId(Byte id ) {
         this.id = id;
         this.address = null;
     }

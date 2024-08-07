@@ -2,20 +2,15 @@ package org.example;
 
 import lombok.Getter;
 import org.common.commands.Command;
-import org.common.dto.Ticket;
 import org.common.network.Response;
 import org.common.utility.Console;
 import org.example.authorization.AuthorizationManager;
 import org.example.commands.ClientCommand;
 import org.example.connection.ResponseDistributor;
 import org.example.connection.UdpClient;
-import org.example.connection.UdpReceiver;
 import org.example.utility.CurrentConsole;
-import org.example.utility.NoResponseException;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -39,7 +34,7 @@ public class Main {
                     //если команда не клиентская
                     if (!(command instanceof ClientCommand)) {
                             var requestId=udpClient.getUdpSender().sendCommand(command);
-                                var resp = responseDistributor.getResponse(requestId);
+                                var resp = responseDistributor.getResponse(requestId,command);
                                 if (!resp.isPasswordCorrect() || !resp.isLoginCorrect()) {
                                     AuthorizationManager.resetAuth();
                                 }

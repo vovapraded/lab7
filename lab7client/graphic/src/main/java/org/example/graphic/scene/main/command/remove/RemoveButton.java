@@ -29,7 +29,7 @@ public class RemoveButton extends MyButton {
 
 
             } catch (Exception e) {
-                Popup.showError(localizator.getKeyString(e.getMessage()));
+                Popup.showError(e);
             }
         }
     }

@@ -67,24 +67,25 @@ public class LoginScene extends MyScene {
 
                 }
             } catch (Exception ex) {
-                Popup.showError(localizator.getKeyString(ex.getMessage()));
+                Popup.showError(ex);
 
             }
         });
 
         Button login = new Button();
         login.setOnAction(e -> {
-            try {
-                var message=controller.login(inputLogin.getText(),inputPassword.getText());
-                Popup.showDialog(localizator.getKeyString(message));
-                Application.setLogin(inputLogin.getText());
-                Application.switchToMainScene();
 
-            } catch (Exception ex) {
-                Popup.showError(localizator.getKeyString(ex.getMessage()));
+                        try {
+                            var message = controller.login(inputLogin.getText(), inputPassword.getText());
+                            Popup.showDialog(localizator.getKeyString(message));
+                            Application.setLogin(inputLogin.getText());
+                            Application.switchToMainScene();
 
-            }
-        });
+                        } catch (Exception ex) {
+                            Popup.showError(ex);
+
+                        }
+                });
 
         // Добавляем кнопки в HBox
         buttonBox.getChildren().addAll(login, register);

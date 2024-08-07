@@ -1,9 +1,13 @@
 package org.example.connection;
 
+import org.common.commands.Command;
+import org.example.exception.ConnectionException;
 import org.common.network.Response;
-import org.example.utility.NoResponseException;
+import org.example.exception.NoResponseException;
+import org.example.exception.ReceivingException;
 
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -14,24 +18,28 @@ public class ResponseDistributor {
         this.udpReceiver = udpReceiver;
     }
 
-    public Response getResponse(byte responseId){
+    public Response getResponse(Byte responseId, Command command) throws ReceivingException{
         Iterator<Response> iterator = queue.iterator();
         while (iterator.hasNext()) {
             Response resp = iterator.next();
-            if (resp.getRequestId().getId() == responseId) {
+            if (Objects.equals(resp.getRequestId().getId(), responseId)) {
                 iterator.remove();
                 return resp;
             }
         }
-        try {
             var newResp = udpReceiver.getResponse();
-            if (newResp.getRequestId().getId() == responseId){
+            if (newResp.getRequestId().getId() ==  responseId){
                 return newResp;
             }
-            queue.add(newResp);
-        }catch (NoResponseException ignored){
-        }
-        throw new NoResponseException("NoResponse");
+            if (newResp.getException() instanceof ReceivingException){
+                var e =(ReceivingException)newResp.getException();
+                e.setCommand(command);
+                throw e;
+            }
+            if (newResp.getRequestId().getId()!=null)
+                queue.add(newResp);
+
+        throw  new NoResponseException("NoResponse",command);
 
     }
 }
